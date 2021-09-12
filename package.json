@@ -1,25 +1,42 @@
 {
-  "name": "rest-decorator-metadata",
-  "version": "0.0.1",
-  "description": "Generate Restfull-API metadata scheme from typescript decorators.",
-  "main": "index.js",
-  "typings": "./dist/index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "typescript",
-    "REST-API",
-    "decorators",
-    "metadata",
-    "generation",
-    "decorator metadata"
-  ],
-
-  "author": {
-    "name": "Peter Placzek",
-    "email": "tadashi@animesu.net",
-    "url": "https:/github.com/Tada5hi"
-  },
-  "license": "MIT"
+    "name": "rest-decorator-metadata",
+    "version": "0.0.1",
+    "description": "Generate Restfull-API metadata scheme from typescript decorators.",
+    "main": "index.js",
+    "typings": "./dist/index.d.ts",
+    "scripts": {
+        "start": "tsc -w",
+        "build": "npm run clean && tsc",
+        "clean": "rimraf dist",
+        "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
+        "preblushOnly": "tsc -d"
+    },
+    "keywords": [
+        "typescript",
+        "REST-API",
+        "decorators",
+        "metadata",
+        "generation",
+        "decorator metadata"
+    ],
+    "author": {
+        "name": "Peter Placzek",
+        "email": "tadashi@animesu.net",
+        "url": "https:/github.com/Tada5hi"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@types/glob": "^7.1.4",
+        "@types/jest": "^27.0.1",
+        "@types/minimatch": "^3.0.5",
+        "@types/yup": "^0.29.13",
+        "jest": "^27.1.1",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.4.3"
+    },
+    "dependencies": {
+        "glob": "^7.1.7",
+        "minimatch": "^3.0.4",
+        "yup": "^0.32.9"
+    }
 }
