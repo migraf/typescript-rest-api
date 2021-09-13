@@ -1,4 +1,4 @@
-import {Identifier, isJSDocParameterTag, JSDoc, JSDocTag, Node, SyntaxKind} from 'typescript';
+import {Identifier, isJSDocParameterTag, JSDoc, JSDocTag, Node, SyntaxKind} from 'packages/metadata-generator/src/utils/typescript';
 import {ResolverError} from "../resolver/error";
 import {hasOwnProperty} from "../resolver/utils";
 

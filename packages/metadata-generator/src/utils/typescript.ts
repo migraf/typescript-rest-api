@@ -1,5 +1,5 @@
-import {join, isAbsolute} from "path";
-import {CompilerOptions, convertCompilerOptionsFromJson} from "typescript";
+import {join, isAbsolute} from "packages/metadata-generator/src/utils/path";
+import {CompilerOptions, convertCompilerOptionsFromJson} from "packages/metadata-generator/src/utils/typescript";
 
 export function getCompilerOptions(tsconfigPath?: string | null): CompilerOptions {
     const cwd = process.cwd();

@@ -1,8 +1,8 @@
 {
-    "name": "rest-decorator-metadata",
+    "name": "@ts-rest/metadata-generator",
     "version": "0.0.1",
-    "description": "Generate Restfull-API metadata scheme from typescript decorators.",
-    "main": "index.js",
+    "description": "Generate REST-API metadata scheme from TypeScript Decorators.",
+    "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
         "start": "tsc -w",

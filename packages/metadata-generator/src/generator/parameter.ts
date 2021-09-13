@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import {RepresentationManager} from "../decorator/representation";
 import {Decorator} from "../decorator/type";
-import {getDecorators} from '../decorator/utils/index';
+import {getDecorators} from '../decorator/utils';
 import {Generator} from './index';
 import {TypeNodeResolver} from '../resolver';
 import {Resolver} from "../resolver/type";

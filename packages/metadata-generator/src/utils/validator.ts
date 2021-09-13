@@ -1,4 +1,4 @@
-import {array, boolean, lazy, mixed, object, SchemaOf, string} from "yup";
+import {array, boolean, lazy, mixed, object, SchemaOf, string} from "packages/metadata-generator/src/utils/yup";
 import {Config} from "../type";
 import {useDecoratorConfigValidator} from "../decorator/utils/validator";
 

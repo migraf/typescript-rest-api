@@ -1,4 +1,4 @@
-import {BaseSchema} from "yup";
+import {BaseSchema} from "packages/metadata-generator/src/utils/yup";
 import Lazy from "yup/lib/Lazy";
 import Reference from "yup/lib/Reference";
 import {AnySchema} from "yup/lib/schema";

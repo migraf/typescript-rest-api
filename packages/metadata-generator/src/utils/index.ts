@@ -1,4 +1,4 @@
-import {CompilerOptions} from "typescript";
+import {CompilerOptions} from "packages/metadata-generator/src/utils/typescript";
 import {getCompilerOptions} from "./typescript";
 import {Config} from "../type";
 import {Generator} from "../generator";

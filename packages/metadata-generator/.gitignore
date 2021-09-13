@@ -7,7 +7,7 @@ node_modules
 coverage
 *.log
 npm-debug.log*
-.idea
+../../.idea
 reports
 writable
 coveralls.yml
