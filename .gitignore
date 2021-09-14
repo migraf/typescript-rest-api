@@ -2,12 +2,13 @@
 dist
 doc
 node_modules
+.idea
 .vscode
 .nyc_output
 coverage
 *.log
 npm-debug.log*
-.idea
+../../.idea
 reports
 writable
 coveralls.yml

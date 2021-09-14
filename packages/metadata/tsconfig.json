@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "module": "commonjs",
+        "newLine": "LF",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": false,
+        "noUnusedParameters": false,
+        "noUnusedLocals": true,
+        "sourceMap": true,
+        "strictNullChecks": false,
+        "target": "es5",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "baseUrl": ".",
+        "paths": {
+            "@trapi/core": ["../core/src"]
+        }
+    },
+    "include": [
+      "src/**/*.ts"
+    ],
+    "references": [
+        {
+            "path": "../core"
+        }
+    ]
+}

@@ -1,0 +1,65 @@
+{
+    "name": "@trapi/swagger",
+    "author": {
+        "name": "Peter Placzek",
+        "email": "tadashi@animesu.net",
+        "url": "https:/github.com/Tada5hi"
+    },
+    "license": "MIT",
+    "version": "0.1.2",
+    "description": "Generate Swagger files from a decorator APIs.",
+    "keywords": [
+        "typescript",
+        "typescript-rest",
+        "@decorators/express",
+        "swagger",
+        "open api",
+        "rest",
+        "microservice",
+        "codegen",
+        "generation",
+        "utility-types"
+    ],
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "scripts": {
+        "start": "tsc -w",
+        "build": "npm run clean && tsc",
+        "clean": "rimraf dist",
+        "lint": "tslint ./src/**/*.ts ./test/**/*.ts",
+        "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
+        "pretest": "cross-env NODE_ENV=test npm run build && npm run lint",
+        "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
+        "test:coverage": "cross-env NODE_ENV=test jest --config ./test/jest.config.js --coverage",
+        "tsc": "tsc",
+        "preblushOnly": "tsc -d"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.0.1",
+        "@types/node": "^16.9.1",
+        "@types/yamljs": "^0.2.31",
+        "jest": "^27.1.1",
+        "rimraf": "^3.0.2"
+    },
+    "dependencies": {
+        "@trapi/core": "^0.0.1",
+        "@trapi/metadata": "^0.0.1",
+        "typescript": "^4.4.3",
+        "yamljs": "^0.3.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tada5hi/trapi.git"
+    },
+    "bin": {
+        "swagger-generate": "dist/cli/index.js"
+    },
+    "directories": {
+        "lib": "dist",
+        "doc": "doc"
+    },
+    "engines": {
+        "node": ">=6.0.0"
+    },
+    "engineStrict": true
+}
