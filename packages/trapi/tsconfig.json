@@ -23,23 +23,23 @@
         "rootDir": "./src",
         "baseUrl": ".",
         "paths": {
-            "@trapi/utils": ["../utils/src"],
-            "@trapi/metadata": ["../metadata/src"],
-            "@trapi/swagger": ["../swagger/src"]
+            "@trapi/utils": ["../trapi-utils/src"],
+            "@trapi/metadata": ["../trapi-metadata/src"],
+            "@trapi/swagger": ["../trapi-swagger/src"]
         }
     },
     "include": [
-      "src/**/*.ts"
+        "src/**/*.ts"
     ],
     "references": [
         {
-            "path": "../metadata"
+            "path": "../trapi-metadata"
         },
         {
-            "path": "../swagger"
+            "path": "../trapi-swagger"
         },
         {
-            "path": "../utils"
+            "path": "../trapi-utils"
         }
     ]
 }

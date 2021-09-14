@@ -1,8 +1,8 @@
 import {readFile as fsReadFile} from "fs";
 import {join as pathJoin} from 'path';
 import {parse as yamlParse} from "yamljs";
-import {hasOwnProperty} from "../../metadata/resolver/utils";
-import {extendSwaggerConfig} from "../../swagger/config/utils";
+import {hasOwnProperty} from "@trapi/utils";
+import {extendSwaggerConfig} from "@trapi/swagger";
 import {Config} from "../type";
 import {parseConfig} from "./validator";
 
