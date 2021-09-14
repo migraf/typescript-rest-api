@@ -1,7 +1,6 @@
 import * as pathUtil from 'path';
 import * as ts from 'typescript';
 import {Decorator} from "../decorator/type";
-import {getDecorators} from '../decorator/utils';
 import {EndpointGenerator} from './endpoint';
 import {Generator} from './index';
 import {ParameterGenerator} from './parameter';
@@ -10,6 +9,7 @@ import {hasOwnProperty} from "@trapi/utils";
 import {Method, MethodType, Parameter, Response} from "../type";
 import {getJSDocDescription, getJSDocTagComment} from '../utils/js-doc';
 import MethodHttpVerbKey = Decorator.MethodHttpVerbType;
+import {getDecorators} from "../decorator/utils/node";
 
 
 export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {

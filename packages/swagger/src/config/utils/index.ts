@@ -1,1 +1,1 @@
-export {extendSwaggerConfig} from "./validator";
+export * from "./validator";

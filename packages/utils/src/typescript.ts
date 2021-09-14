@@ -1,9 +1,12 @@
+import {convertCompilerOptionsFromJson, CompilerOptions} from "typescript";
 import {join, isAbsolute} from "path";
-import {CompilerOptions, convertCompilerOptionsFromJson} from "typescript";
 
 export function getCompilerOptions(tsconfigPath?: string | null): CompilerOptions {
     const cwd = process.cwd();
-    tsconfigPath = tsconfigPath ? (isAbsolute(tsconfigPath) ? tsconfigPath : join(cwd, tsconfigPath)): join(cwd, 'tsconfig.json');
+    tsconfigPath = tsconfigPath
+        ? isAbsolute(tsconfigPath) ? tsconfigPath : join(cwd, tsconfigPath)
+        : join(cwd, 'tsconfig.json');
+
     try {
         const tsConfig = require(tsconfigPath);
         if (!tsConfig) {

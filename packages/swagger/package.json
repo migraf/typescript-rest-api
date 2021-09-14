@@ -25,7 +25,7 @@
     "scripts": {
         "start": "tsc -w",
         "build": "npm run clean && tsc",
-        "clean": "rimraf dist",
+        "clean": "rimraf dist && rm tsconfig.tsbuildinfo",
         "lint": "tslint ./src/**/*.ts ./test/**/*.ts",
         "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
         "pretest": "cross-env NODE_ENV=test npm run build && npm run lint",

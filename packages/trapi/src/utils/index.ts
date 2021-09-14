@@ -1,7 +1,7 @@
 import {CompilerOptions} from "typescript";
 import {createMetadataGenerator, Config as MetadataConfig} from "@trapi/metadata";
-import {createSpecGenerator, Specification} from "../specification";
-import {SwaggerDocumentationFormatData, SwaggerDocumentationFormatType} from "./type";
+import {createSpecGenerator, Specification} from "@trapi/swagger";
+import {SwaggerDocFormatData, SwaggerDocFormatType} from "../type";
 
 export async function generateDocumentation(
     config: {
@@ -9,7 +9,7 @@ export async function generateDocumentation(
         swagger: Specification.Config
     },
     tsConfig?: CompilerOptions | boolean
-): Promise<Record<SwaggerDocumentationFormatType, SwaggerDocumentationFormatData>> {
+): Promise<Record<SwaggerDocFormatType, SwaggerDocFormatData>> {
     const metadataGenerator = createMetadataGenerator(config.metadata, tsConfig);
 
     const metadata = metadataGenerator.generate();

@@ -16,14 +16,30 @@
         "noImplicitThis": false,
         "noUnusedParameters": false,
         "noUnusedLocals": true,
+        "sourceMap": true,
+        "strictNullChecks": false,
+        "target": "es5",
         "outDir": "./dist",
         "rootDir": "./src",
         "baseUrl": ".",
-        "sourceMap": true,
-        "strictNullChecks": false,
-        "target": "es5"
+        "paths": {
+            "@trapi/utils": ["../utils/src"],
+            "@trapi/metadata": ["../metadata/src"],
+            "@trapi/swagger": ["../swagger/src"]
+        }
     },
     "include": [
       "src/**/*.ts"
+    ],
+    "references": [
+        {
+            "path": "../metadata"
+        },
+        {
+            "path": "../swagger"
+        },
+        {
+            "path": "../utils"
+        }
     ]
 }

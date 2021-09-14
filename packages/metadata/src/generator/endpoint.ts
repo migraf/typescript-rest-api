@@ -4,11 +4,11 @@ import {ArrayLiteralExpression, isArrayLiteralExpression, Node, SyntaxKind, Type
 import {normalizePath} from "@trapi/utils";
 
 import {Decorator} from "../decorator/type";
-import { getDecorators } from '../decorator/utils';
 import {Generator} from './index';
 import {TypeNodeResolver} from '../resolver';
 import {isExistJSDocTag} from "../utils/js-doc";
 import {Response} from "../type";
+import {getDecorators} from "../decorator/utils/node";
 
 export abstract class EndpointGenerator<T extends Node> {
     protected path: string | undefined;

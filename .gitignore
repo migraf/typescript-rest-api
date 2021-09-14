@@ -12,3 +12,4 @@ npm-debug.log*
 reports
 writable
 coveralls.yml
+tsconfig.tsbuildinfo

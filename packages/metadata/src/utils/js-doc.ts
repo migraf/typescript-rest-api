@@ -10,7 +10,7 @@ export function getJSDocDescription(node: Node) : string | undefined {
         return undefined;
     }
 
-    const jsDocs = (node.jsDoc as JSDoc[])
+    const jsDocs = ((node as any).jsDoc as JSDoc[])
         .filter(jsDoc => typeof jsDoc.comment === 'string');
 
     if (jsDocs.length === 0) {
@@ -30,12 +30,14 @@ function getJSDoc(node: Node, index?: number) : undefined | JSDoc {
         return undefined;
     }
 
-    if(!node.jsDoc || !Array.isArray(node.jsDoc) || !node.jsDoc.length) {
+    const jsDoc : JSDoc | JSDoc[] | undefined = hasOwnProperty(node,'jsDoc') ? (node as any).jsDoc as JSDoc : undefined;
+
+    if(!jsDoc || !Array.isArray(jsDoc) || !jsDoc.length) {
         return undefined;
     }
 
     index = index ?? 0;
-    return node.jsDoc.length > index && index >= 0 ? node.jsDoc[index] : node.jsDoc[0];
+    return jsDoc.length > index && index >= 0 ? jsDoc[index] : jsDoc[0];
 }
 
 function getJSDocTags(

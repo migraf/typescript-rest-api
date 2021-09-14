@@ -1,20 +1,23 @@
 {
-    "name": "@trapi/utils",
+    "name": "trapi",
     "version": "0.0.1",
-    "description": "Utils library package for the trapi infrastructure.",
-    "main": "./dist/index.js",
-    "typings": "./dist/index.d.ts",
+    "description": "The main package and contains bundled functionality of all other package and a CLI to interact with them.",
+    "main": "./dist/cli/index.js",
+    "typings": "./dist/cli/index.d.ts",
     "scripts": {
         "start": "tsc -w",
         "build": "npm run clean && tsc",
-        "clean": "rimraf dist && rm tsconfig.tsbuildinfo",
+        "clean": "rimraf dist",
         "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
         "preblushOnly": "tsc -d"
     },
     "keywords": [
         "typescript",
         "REST-API",
-        "decorators"
+        "decorators",
+        "metadata",
+        "generation",
+        "decorator metadata"
     ],
     "author": {
         "name": "Peter Placzek",
@@ -23,17 +26,16 @@
     },
     "license": "MIT",
     "devDependencies": {
-        "@types/glob": "^7.1.4",
+        "@types/argparse": "^1.0.38",
         "@types/jest": "^27.0.1",
-        "@types/minimatch": "^3.0.5",
-        "@types/yup": "^0.29.13",
         "jest": "^27.1.1",
         "rimraf": "^3.0.2"
     },
     "dependencies": {
-        "glob": "^7.1.7",
-        "minimatch": "^3.0.4",
-        "yup": "^0.32.9",
+        "argparse": "^1.0.10",
+        "@trapi/metadata": "^0.0.1",
+        "@trapi/swagger": "^0.1.2",
+        "@trapi/utils": "^0.0.1",
         "typescript": "^4.4.3"
     }
 }

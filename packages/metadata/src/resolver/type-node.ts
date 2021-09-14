@@ -1,7 +1,6 @@
 import * as ts from 'typescript';
 import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../decorator/type";
-import {getDecorators} from "../decorator/utils";
 
 import {Generator} from '../generator';
 import {
@@ -15,6 +14,7 @@ import {
 } from "./type";
 import {getInitializerValue} from "./utils";
 import {Property} from "../type";
+import {getDecorators} from "../decorator/utils/node";
 
 const localReferenceTypeCache: { [typeName: string]: Resolver.ReferenceType } = {};
 const inProgressTypes: { [typeName: string]: boolean } = {};

@@ -1,2 +1,3 @@
+export * from './config';
 export * from './specification';
-export * from './documentation';
+export * from './type';

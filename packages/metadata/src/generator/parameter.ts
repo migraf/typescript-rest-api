@@ -1,12 +1,12 @@
 import * as ts from 'typescript';
 import {RepresentationManager} from "../decorator/representation";
 import {Decorator} from "../decorator/type";
-import {getDecorators} from '../decorator/utils';
 import {Generator} from './index';
 import {TypeNodeResolver} from '../resolver';
 import {Resolver} from "../resolver";
 import {getInitializerValue} from "../resolver";
 import {ArrayParameter, Parameter} from "../type";
+import {getDecorators} from "../decorator/utils/node";
 
 const supportedParameterKeys : Decorator.ParameterServerType[] = [
     'SERVER_CONTEXT',

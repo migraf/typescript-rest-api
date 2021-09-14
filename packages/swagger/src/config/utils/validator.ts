@@ -4,7 +4,7 @@ import {Specification} from "../../specification";
 
 let validatorInstance : undefined | SchemaOf<Specification.Config>;
 
-export function useSwaggerConfigValidator() : SchemaOf<Specification.Config> {
+export function useConfigValidator() : SchemaOf<Specification.Config> {
     if(typeof validatorInstance !== 'undefined') {
         return validatorInstance;
     }

@@ -4,29 +4,28 @@ import {Output, Property, Resolver} from "@trapi/metadata";
 import {SpecificationV2} from "./v2/type";
 import {SpecificationV3} from "./v3/type";
 
-import {SwaggerDocumentationFormatData, SwaggerDocumentationFormatType} from "../documentation";
+import {SwaggerDocFormatType, SwaggerDocFormatData} from "../type";
 import * as path from "path";
 import {promises, writeFile} from "fs";
 import {stringify} from "yamljs";
 import {Specification} from "./type";
-import Config = Specification.Config;
 
 export abstract class AbstractSpecGenerator<Spec extends SpecificationV2.Spec | SpecificationV3.Spec,
     Schema extends SpecificationV3.Schema | SpecificationV2.Schema> {
 
     protected spec: Spec;
 
-    constructor(protected readonly metadata: Output, protected readonly config: Config) {
+    constructor(protected readonly metadata: Output, protected readonly config: Specification.Config) {
 
     }
 
-    public async save(): Promise<Record<SwaggerDocumentationFormatType, SwaggerDocumentationFormatData>> {
+    public async save(): Promise<Record<SwaggerDocFormatType, SwaggerDocFormatData>> {
         const spec = this.build();
         const swaggerDir: string = path.resolve(this.config.outputDirectory);
 
         await promises.mkdir(swaggerDir, {recursive: true});
 
-        const data: Record<SwaggerDocumentationFormatType, SwaggerDocumentationFormatData> = {
+        const data: Record<SwaggerDocFormatType, SwaggerDocFormatData> = {
             json: {
                 path: path.join(swaggerDir, 'swagger.json'),
                 name: 'swagger.json',
@@ -46,11 +45,11 @@ export abstract class AbstractSpecGenerator<Spec extends SpecificationV2.Spec | 
         const filePromises: Array<Promise<void>> = [];
 
         for (const key in data) {
-            if (typeof data[key as SwaggerDocumentationFormatType] === 'undefined') {
+            if (typeof data[key as SwaggerDocFormatType] === 'undefined') {
                 continue;
             }
 
-            const output = data[key as SwaggerDocumentationFormatType];
+            const output = data[key as SwaggerDocFormatType];
 
             filePromises.push(new Promise(((resolve, reject) => {
                 return writeFile(output.path, output.content, (err: any) => {

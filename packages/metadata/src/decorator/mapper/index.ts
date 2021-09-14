@@ -2,10 +2,10 @@ import {Node} from "typescript";
 import {hasOwnProperty} from "@trapi/utils";
 import {RepresentationManager} from "../representation";
 import {Decorator} from "../type";
-import {getDecorators} from "../utils";
 import {InternalMapping} from "./config/internal";
 import {getLibraryMapping} from "./config/library/utils";
 import {isMappingTypeIncluded, reduceTypeRepresentationMapping} from "./utils";
+import {getDecorators} from "../utils/node";
 
 export class DecoratorMapper {
     protected mapping : Partial<Decorator.TypeRepresentationMap>;
