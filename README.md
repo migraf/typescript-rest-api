@@ -30,4 +30,8 @@ This package contains all functions, to generate metadata for TypeScript REST de
 
 This package contains all functions, to generate a fully featured documentation according the OpenAPI Specification from given metadata.
 
+## Credits
 
+Parts of the code base of the **@trapi/metadata** and **@trapi/swagger** package originates from a continued [fork repository](https://github.com/Tada5hi/typescript-swagger) of the 
+[typescript-rest-swagger](https://github.com/thiagobustamante/typescript-rest-swagger) library of [thiagobustamante](https://github.com/thiagobustamante)
+and was also inspired by the [tsoa](https://github.com/lukeautry/tsoa) library of [lukeatury](https://github.com/lukeautry).
