@@ -1,7 +1,7 @@
 # TRAPI - TypeScript Rest API 🌌
 
-[![main](https://github.com/Tada5hi/typescript-rest/actions/workflows/main.yml/badge.svg)](https://github.com/Tada5hi/typescript-rest/actions/workflows/main.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/Tada5hi/typescript-rest/badge.svg)](https://snyk.io/test/github/Tada5hi/typescript-rest)
+[![main](https://github.com/Tada5hi/typescript-rest-api/actions/workflows/main.yml/badge.svg)](https://github.com/Tada5hi/typescript-rest-api/actions/workflows/main.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/Tada5hi/typescript-rest-api/badge.svg)](https://snyk.io/test/github/Tada5hi/typescript-rest-api)
 
 ## What is it?
 **TRAPI** is a small collection of few standalone as well helper libraries, to simplify the process of creating REST-APIs and generating documentations.
