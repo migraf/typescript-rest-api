@@ -37,5 +37,8 @@
         "@trapi/swagger": "^0.1.2",
         "@trapi/utils": "^0.0.1",
         "typescript": "^4.4.3"
+    },
+    "bin": {
+        "trapi": "dist/cli/index.js"
     }
 }

@@ -25,7 +25,7 @@
     "scripts": {
         "start": "tsc -w",
         "build": "npm run clean && tsc",
-        "clean": "rimraf dist && rm tsconfig.tsbuildinfo",
+        "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
         "lint": "tslint ./src/**/*.ts ./test/**/*.ts",
         "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
         "pretest": "cross-env NODE_ENV=test npm run build && npm run lint",
@@ -50,9 +50,6 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/tada5hi/trapi.git"
-    },
-    "bin": {
-        "swagger-generate": "dist/cli/index.js"
     },
     "directories": {
         "lib": "dist",

@@ -23,15 +23,15 @@
         "rootDir": "./src",
         "baseUrl": ".",
         "paths": {
-            "@trapi/utils": ["../utils/src"]
+            "@trapi/utils": ["../trapi-utils/src"]
         }
     },
     "include": [
-      "src/**/*.ts"
+        "src/**/*.ts"
     ],
     "references": [
         {
-            "path": "../utils"
+            "path": "../trapi-utils"
         }
     ]
 }

@@ -15,7 +15,7 @@
     "scripts": {
         "start": "tsc -w",
         "build": "npm run clean && tsc",
-        "clean": "rimraf dist && rm tsconfig.tsbuildinfo",
+        "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
         "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
         "preblushOnly": "tsc -d"
     },
