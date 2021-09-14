@@ -1,4 +1,4 @@
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {Output, Property, Resolver} from "@trapi/metadata";
 
 import {SpecificationV2} from "./v2/type";

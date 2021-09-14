@@ -1,5 +1,5 @@
 import {Node} from "typescript";
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {RepresentationManager} from "../representation";
 import {Decorator} from "../type";
 import {getDecorators} from "../utils";

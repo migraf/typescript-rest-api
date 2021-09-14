@@ -15,10 +15,10 @@ Please follow the `README.md` instructions in the respective package folder.
 ## Packages
 The repository contains the following packages:
 
-### @trapi/core
-[![npm version](https://badge.fury.io/js/@trapi%2Fcore.svg)](https://badge.fury.io/js/@trapi%2Fcore)
+### @trapi/utils
+[![npm version](https://badge.fury.io/js/@trapi%2Futils.svg)](https://badge.fury.io/js/@trapi%2Futils)
 
-This Package contains all core functions, which are also partially required by other modules of this repository.
+This Package contains all util functions, which are also partially required by other modules of this repository.
 
 ### @trapi/metadata
 [![npm version](https://badge.fury.io/js/@trapi%2Fmetadata.svg)](https://badge.fury.io/js/@trapi%2Fmetadata)

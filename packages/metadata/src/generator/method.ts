@@ -6,7 +6,7 @@ import {EndpointGenerator} from './endpoint';
 import {Generator} from './index';
 import {ParameterGenerator} from './parameter';
 import {Resolver, TypeNodeResolver} from "../resolver";
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {Method, MethodType, Parameter, Response} from "../type";
 import {getJSDocDescription, getJSDocTagComment} from '../utils/js-doc';
 import MethodHttpVerbKey = Decorator.MethodHttpVerbType;

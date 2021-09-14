@@ -3,7 +3,7 @@ import {
     isArrayLiteralExpression,
     Node,
 } from "typescript";
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../../type";
 
 export function extendRepresentationPropertyConfig(property: Decorator.Property): Decorator.Property {

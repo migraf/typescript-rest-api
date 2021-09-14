@@ -1,4 +1,4 @@
-import {join} from "path";
+import {join} from "src/path";
 
 let projectPackageJsonpath : string | undefined;
 let projectPackageJson : Record<string, any> | undefined;

@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../decorator/type";
 import {getDecorators} from "../decorator/utils";
 

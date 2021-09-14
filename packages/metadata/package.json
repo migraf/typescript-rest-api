@@ -42,7 +42,7 @@
         "rimraf": "^3.0.2"
     },
     "dependencies": {
-        "@trapi/core": "^0.0.1",
+        "@trapi/utils": "^0.0.1",
         "glob": "^7.1.7",
         "minimatch": "^3.0.4",
         "yup": "^0.32.9",

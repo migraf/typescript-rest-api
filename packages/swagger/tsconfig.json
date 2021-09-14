@@ -22,7 +22,7 @@
         "rootDir": "./src",
         "baseUrl": ".",
         "paths": {
-            "@trapi/core": ["../common/src"],
+            "@trapi/utils": ["../utils/src"],
             "@trapi/metadata": ["../metadata/src"]
         }
     },
@@ -30,7 +30,7 @@
         "src/**/*.ts"
     ],
     "references": [
-        {"path":  "../core"},
+        {"path":  "../utils"},
         {"path": "../metadata"}
     ]
 }

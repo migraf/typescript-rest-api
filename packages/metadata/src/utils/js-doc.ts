@@ -1,5 +1,5 @@
 import {Identifier, isJSDocParameterTag, JSDoc, JSDocTag, Node, SyntaxKind} from 'typescript';
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {ResolverError} from "../resolver";
 
 // -----------------------------------------

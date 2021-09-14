@@ -1,4 +1,4 @@
-import {hasOwnProperty} from "@trapi/core";
+import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../type";
 import {extendRepresentationPropertyConfig, extractRepresentationPropertyValue} from "./property/utils";
 import TypePropertyMaps = Decorator.TypePropertyMaps;

@@ -1,7 +1,7 @@
 {
-    "name": "@trapi/core",
+    "name": "@trapi/utils",
     "version": "0.0.1",
-    "description": "Core library package for the trapi packages.",
+    "description": "Utils library package for the trapi infrastructure.",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {

@@ -1,5 +1,5 @@
 import {array, boolean, lazy, mixed, number, object, SchemaOf, string} from "yup";
-import {mapYupRuleForDictionary} from "@trapi/core";
+import {mapYupRuleForDictionary} from "@trapi/utils";
 import {Decorator} from "../type";
 
 let validatorInstance : undefined | SchemaOf<Decorator.Config>;

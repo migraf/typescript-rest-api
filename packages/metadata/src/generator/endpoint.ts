@@ -1,7 +1,7 @@
 'use strict';
 
 import {ArrayLiteralExpression, isArrayLiteralExpression, Node, SyntaxKind, TypeNode} from 'typescript';
-import {normalizePath} from "@trapi/core";
+import {normalizePath} from "@trapi/utils";
 
 import {Decorator} from "../decorator/type";
 import { getDecorators } from '../decorator/utils';
