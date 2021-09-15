@@ -23,8 +23,8 @@
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
-        "start": "tsc -w",
-        "build": "npm run clean && tsc",
+        "start": "tsc -p tsconfig.build.json -w",
+        "build": "npm run clean && tsc -p tsconfig.build.json",
         "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
         "lint": "tslint ./src/**/*.ts ./test/**/*.ts",
         "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",

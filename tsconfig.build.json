@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+
+        "declaration": true,
+        "declarationMap": true,
+
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+
+        "noEmitOnError": true,
+
+        "skipLibCheck": true,
+
+        "esModuleInterop": true,
+
+        "target": "ES6"
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
