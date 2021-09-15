@@ -1,27 +1,27 @@
 import {convertCompilerOptionsFromJson, CompilerOptions} from "typescript";
-import {join, isAbsolute} from "path";
+import fs from 'fs';
+import path from "path";
+import {hasOwnProperty} from "./object";
 
-export function getCompilerOptions(tsconfigPath?: string | null): CompilerOptions {
+export function getCompilerOptions(
+    filePath?: string,
+    fileName: string = 'tsconfig.json'
+): CompilerOptions {
     const cwd = process.cwd();
-    tsconfigPath = tsconfigPath
-        ? isAbsolute(tsconfigPath) ? tsconfigPath : join(cwd, tsconfigPath)
-        : join(cwd, 'tsconfig.json');
 
-    try {
-        const tsConfig = require(tsconfigPath);
-        if (!tsConfig) {
-            throw new Error('Invalid tsconfig');
-        }
-        return tsConfig.compilerOptions
-            ? convertCompilerOptionsFromJson(tsConfig.compilerOptions, cwd).options
-            : {};
-    } catch (err) {
-        if (err.code === 'MODULE_NOT_FOUND') {
-            throw Error(`No tsconfig file found at '${tsconfigPath}'`);
-        } else if (err.name === 'SyntaxError') {
-            throw Error(`Invalid JSON syntax in tsconfig at '${tsconfigPath}': ${err.message}`);
-        } else {
-            throw Error(`Unhandled error encountered loading tsconfig '${tsconfigPath}': ${err.message}`);
-        }
-    }
+    // get absolute file path
+    let fullPath : string = filePath ? path.isAbsolute(filePath) ? filePath : path.join(cwd, filePath)  : path.join(cwd, fileName);
+
+    // check permission to read file
+    fs.accessSync(fullPath, fs.constants.R_OK);
+
+    const fileStats = fs.lstatSync(fullPath);
+
+    fullPath = fileStats.isDirectory() ? path.join(fullPath, fileName) : fullPath;
+
+    const raw : string = fs.readFileSync(fullPath, {encoding: 'utf-8'});
+
+    const content : any = JSON.parse(raw);
+
+    return hasOwnProperty(content, 'compilerOptions') ? convertCompilerOptionsFromJson(content.compilerOptions, cwd).options : {};
 }

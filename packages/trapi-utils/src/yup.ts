@@ -2,7 +2,11 @@ import Lazy from "yup/lib/Lazy";
 import Reference from "yup/lib/Reference";
 import {AnySchema} from "yup/lib/schema";
 
-export function mapYupRuleForDictionary<T>(map: any, rule: T) : Record<string, AnySchema | Reference | Lazy<any, any>> {
+export function mapYupRuleForDictionary<T>(map: any, rule: T) : Record<string, AnySchema | Reference | Lazy<any, any> | T> {
+    if(!map) {
+        return {};
+    }
+
     return Object.keys(map).reduce((newMap, key) => ({
         ...newMap,
         [key]: rule
