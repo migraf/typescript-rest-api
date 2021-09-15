@@ -1,3 +1,4 @@
+import {URL} from "url";
 import {hasOwnProperty} from "@trapi/utils";
 import {Method, Parameter, Property, Resolver, Response} from "@trapi/metadata";
 import {Specification} from "../type";

@@ -1,5 +1,6 @@
 import {union} from "lodash";
 import {posix} from "path";
+import {URL} from 'url';
 
 import {hasOwnProperty} from "@trapi/utils";
 import {Method, Parameter, Property, Response, Resolver} from "@trapi/metadata";
