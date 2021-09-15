@@ -14,7 +14,10 @@
 
         "esModuleInterop": true,
 
-        "target": "ES6"
+        "target": "ES6",
+
+        "moduleResolution": "Node",
+        "module": "CommonJS"
     },
     "exclude": [
         "node_modules",
