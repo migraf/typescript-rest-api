@@ -28,14 +28,15 @@
     "devDependencies": {
         "@types/argparse": "^1.0.38",
         "@types/jest": "^27.0.1",
+        "@types/node": "^16.9.1",
         "jest": "^27.1.1",
         "rimraf": "^3.0.2"
     },
     "dependencies": {
-        "argparse": "^1.0.10",
         "@trapi/metadata": "^0.0.1",
         "@trapi/swagger": "^0.1.2",
         "@trapi/utils": "^0.0.1",
+        "argparse": "^1.0.10",
         "typescript": "^4.4.3"
     }
 }

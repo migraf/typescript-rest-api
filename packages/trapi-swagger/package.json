@@ -42,8 +42,8 @@
         "rimraf": "^3.0.2"
     },
     "dependencies": {
-        "@trapi/utils": "^0.0.1",
         "@trapi/metadata": "^0.0.1",
+        "@trapi/utils": "^0.0.1",
         "typescript": "^4.4.3",
         "yamljs": "^0.3.0"
     },
