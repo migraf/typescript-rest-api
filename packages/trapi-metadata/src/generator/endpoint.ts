@@ -1,7 +1,7 @@
 'use strict';
 
 import {ArrayLiteralExpression, isArrayLiteralExpression, Node, SyntaxKind, TypeNode} from 'typescript';
-import {normalizePath} from "@trapi/utils";
+import {normalizePathParameters} from "@trapi/utils";
 
 import {Decorator} from "../decorator/type";
 import {Generator} from './index';
@@ -35,7 +35,7 @@ export abstract class EndpointGenerator<T extends Node> {
             }
         }
 
-        this.path = normalizePath(values.join('/'));
+        this.path = normalizePathParameters(values.join('/'));
     }
 
     // --------------------------------------------------------------------

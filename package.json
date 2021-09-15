@@ -37,6 +37,7 @@
         "bootstrap": "lerna bootstrap",
         "clean": "lerna run clean",
         "build": "lerna run build",
+        "test": "lerna run test",
         "pub": "lerna publish"
     },
     "devDependencies": {

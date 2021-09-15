@@ -14,7 +14,6 @@
 
         "esModuleInterop": true,
         "lib": ["ES6"],
-        "types": ["node"],
         "target": "ESNext",
 
         "moduleResolution": "Node",
