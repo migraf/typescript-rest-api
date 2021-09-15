@@ -14,7 +14,7 @@
 
         "esModuleInterop": true,
 
-        "target": "ES6",
+        "target": "ESNext",
 
         "moduleResolution": "Node",
         "module": "CommonJS"

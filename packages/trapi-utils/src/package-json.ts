@@ -1,23 +1,23 @@
-import {join} from "path";
+import * as path from "path";
 
-let projectPackageJsonpath : string | undefined;
-let projectPackageJson : Record<string, any> | undefined;
+let cachedFilePath : string | undefined;
+let cachedFileContent : Record<string, any> | undefined;
 
-export function getPackageJsonStringValue(workingDir: string, key: string, defaultValue: string = ''): string {
-    const path = join(workingDir, 'package.json');
+export function getPackageJsonStringValue(workingDir: string, key: string, defaultValue: string = '') : string {
+    const filePath = path.join(workingDir, 'package.json');
 
     try {
         if (
-            typeof projectPackageJson === 'undefined' ||
-            typeof projectPackageJsonpath === 'undefined' ||
-            projectPackageJsonpath !== path
+            typeof cachedFileContent === 'undefined' ||
+            typeof cachedFilePath === 'undefined' ||
+            cachedFilePath !== filePath
         ) {
-            projectPackageJson = require(path);
+            cachedFileContent = require(filePath);
         }
 
-        projectPackageJsonpath = path;
+        cachedFilePath = filePath;
 
-        return projectPackageJson[key] || defaultValue;
+        return cachedFileContent[key] || defaultValue;
     } catch (e) {
         return defaultValue;
     }
