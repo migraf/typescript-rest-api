@@ -17,6 +17,7 @@ export function createMetadataGenerator(
         try {
             tscConfig ??= getCompilerOptions();
         } catch (e) {
+            /* istanbul ignore next */
             tscConfig = {};
         }
     }

@@ -2,17 +2,20 @@ import {Node} from "typescript";
 import {hasOwnProperty} from "@trapi/utils";
 import {RepresentationManager} from "../representation";
 import {Decorator} from "../type";
-import {InternalMapping} from "./config/internal";
-import {getLibraryMapping} from "./config/library/utils";
-import {isMappingTypeIncluded, reduceTypeRepresentationMapping} from "./utils";
-import {getDecorators} from "../utils/node";
+import {getDecoratorMap, isMappingTypeIncluded, reduceTypeRepresentationMapping} from "./utils";
+import {getNodeDecorators} from "../utils";
 
 export class DecoratorMapper {
-    protected mapping : Partial<Decorator.TypeRepresentationMap>;
+    protected mapping : Partial<Decorator.TypeRepresentationMap> = {};
 
     constructor(
         protected config?: Decorator.Config
     ) {
+        this.aggregate();
+    }
+
+    public setConfig(config?: Decorator.Config) {
+        this.config = config;
         this.aggregate();
     }
 
@@ -30,24 +33,14 @@ export class DecoratorMapper {
             return undefined;
         }
 
-        const decorators : Decorator.Data[] = Array.isArray(data) ? data : getDecorators(data);
+        const decorators : Decorator.Data[] = Array.isArray(data) ? data : getNodeDecorators(data);
 
-        const representations : Array<Decorator.Representation<T>> | Decorator.Representation<T> = this.mapping[type] as Array<Decorator.Representation<T>>;
-        if(Array.isArray(representations)) {
-            for(let i=0; i<representations.length; i++) {
-                const items = decorators.filter(decorator => decorator.text === representations[i].id);
-                if(items.length > 0) {
-                    return new RepresentationManager<T>(
-                        representations[i],
-                        items
-                    );
-                }
-            }
-        } else {
-            const items = decorators.filter(decorator => decorator.text === (representations as Decorator.Representation<T>).id);
+        const representations : Array<Decorator.Representation<T>> = (Array.isArray(this.mapping[type]) ? this.mapping[type] : [this.mapping[type]]) as Array<Decorator.Representation<T>>;
+        for(let i=0; i<representations.length; i++) {
+            const items = decorators.filter(decorator => decorator.text === representations[i].id);
             if(items.length > 0) {
                 return new RepresentationManager<T>(
-                    representations,
+                    representations[i],
                     items
                 );
             }
@@ -60,46 +53,46 @@ export class DecoratorMapper {
 
     private aggregate() : void {
         if(typeof this.config === 'undefined') {
+            this.mapping = {};
             return;
         }
 
         const items : Array<Partial<Decorator.TypeRepresentationMap>> = [];
 
         // mapping - internal
-        if(typeof this.config.useBuildIn === 'undefined') {
-            items.push(InternalMapping);
-        } else {
-            items.push(
-                reduceTypeRepresentationMapping(InternalMapping, (type) => {
-                    return isMappingTypeIncluded(type, this.config.useBuildIn);
+        const internalMap = getDecoratorMap('internal');
+        items.push(
+            typeof this.config.internal === 'undefined' ?
+                internalMap :
+                reduceTypeRepresentationMapping(internalMap, (type) => {
+                    return isMappingTypeIncluded(type, this.config.internal);
                 })
-            );
-        }
+        );
 
         // mapping - extension
-        if(typeof this.config.override !== 'undefined') {
-            items.push(this.config.override);
+        if(typeof this.config.map !== 'undefined') {
+            items.push(this.config.map);
         }
 
         // mapping - library
-        if(typeof this.config.useLibrary !== 'undefined') {
+        if(typeof this.config.library !== 'undefined') {
             // check if string or string[]
 
             if(
-                typeof this.config.useLibrary === 'string' ||
-                Array.isArray(this.config.useLibrary)
+                typeof this.config.library === 'string' ||
+                Array.isArray(this.config.library)
             ) {
-                const libraries : Decorator.Library[] = Array.isArray(this.config.useLibrary) ?
-                    this.config.useLibrary :
-                    [this.config.useLibrary];
+                const libraries : string[] = Array.isArray(this.config.library) ?
+                    this.config.library :
+                    [this.config.library];
 
-                items.push(...libraries.map(library => getLibraryMapping(library)));
+                items.push(...libraries.map(library => getDecoratorMap(library)));
             } else {
                 // tslint:disable-next-line:forin
-                for(const key in this.config.useLibrary) {
+                for(const key in this.config.library) {
                     items.push(
-                        reduceTypeRepresentationMapping(getLibraryMapping(key as Decorator.Library), (type) => {
-                            return isMappingTypeIncluded(type, this.config.useBuildIn);
+                        reduceTypeRepresentationMapping(getDecoratorMap(key), (type) => {
+                            return isMappingTypeIncluded(type, this.config.library[key]);
                         })
                     );
                 }

@@ -50,5 +50,32 @@ export function isMappingTypeIncluded(
             return hasOwnProperty((config as Record<Decorator.Type, boolean>), type) && (config as Record<Decorator.Type, boolean>)[type];
     }
 
+    /* istanbul ignore next */
     return false;
+}
+
+let decoratorMap : Record<string, Partial<Decorator.TypeRepresentationMap>> = {};
+
+export function getDecoratorMap(name: string) : Partial<Decorator.TypeRepresentationMap> {
+    if(hasOwnProperty(decoratorMap, name)) {
+        return decoratorMap[name];
+    }
+
+    const content = loadDecoratorMap(name);
+
+    (decoratorMap as Record<string, Partial<Decorator.TypeRepresentationMap>>)[name] = content;
+
+    return content;
+}
+
+/* istanbul ignore next */
+function loadDecoratorMap(library: string) : Partial<Decorator.TypeRepresentationMap> {
+    const exp = require(`./maps/${library}`);
+
+    if(hasOwnProperty(exp, 'default')) {
+        return exp.default;
+    }
+
+    /* istanbul ignore next */
+    return exp;
 }

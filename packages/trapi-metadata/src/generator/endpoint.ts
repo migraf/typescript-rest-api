@@ -8,7 +8,7 @@ import {Generator} from './index';
 import {TypeNodeResolver} from '../resolver';
 import {isExistJSDocTag} from "../utils/js-doc";
 import {Response} from "../type";
-import {getDecorators} from "../decorator/utils/node";
+import {getNodeDecorators} from "../decorator/utils/node";
 
 export abstract class EndpointGenerator<T extends Node> {
     protected path: string | undefined;
@@ -41,7 +41,7 @@ export abstract class EndpointGenerator<T extends Node> {
     // --------------------------------------------------------------------
 
     protected getDecoratorValues(decoratorName: string, acceptMultiple: boolean = false) : any[] {
-        const decorators = getDecorators(this.node, decorator => decorator.text === decoratorName);
+        const decorators = getNodeDecorators(this.node, decorator => decorator.text === decoratorName);
 
         if (!decorators || !decorators.length) { return []; }
 

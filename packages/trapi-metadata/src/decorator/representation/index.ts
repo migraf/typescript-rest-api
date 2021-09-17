@@ -8,7 +8,7 @@ export class RepresentationManager<T extends Decorator.Type> {
 
     constructor(
         protected representation: Decorator.Representation<T>,
-        public readonly decorators: Decorator.Data[]
+        public decorators: Decorator.Data[]
     ) {
 
     }

@@ -135,11 +135,18 @@ export namespace Decorator {
 
     // -------------------------------------------
 
+    export type PropertyStrategy = 'merge' | 'none' | ((...items: unknown[] | unknown[][]) => unknown | unknown[]);
+
     export interface Property {
         /**
          * Default: 'element'
          */
-        type?: 'element' | 'array' | 'src';
+        type?: 'element' | 'array';
+
+        /**
+         * Default: false
+         */
+        isType?: boolean;
 
         /**
          * Default: 'argument'
@@ -159,12 +166,7 @@ export namespace Decorator {
         /**
          * Default: 'none'
          */
-        srcArrayStrategy?: 'merge' | 'none' | ((...items: unknown[][]) => unknown[]);
-
-        /**
-         *
-         */
-        srcObjectStrategy?: 'merge' | 'none' | ((...items: unknown[]) => unknown);
+        srcStrategy?: PropertyStrategy
     }
 
     // -------------------------------------------
@@ -186,16 +188,15 @@ export namespace Decorator {
 
     export type Library = 'typescript-rest' | '@decorators/express';
 
-    export type ConfigLibrary =
-        Library |
-        Library[] |
-        Record<Library, ConfigMappingOption>;
+    export type ConfigLibrary = string | string[] | Record<string, ConfigMappingOption>;
 
     export interface Config {
-        useLibrary?: ConfigLibrary;
-        useBuildIn?: ConfigMappingOption;
-        override?: TypeRepresentationMap;
+        library?: ConfigLibrary;
+        internal?: ConfigMappingOption;
+        map?: Partial<TypeRepresentationMap>;
     }
 
-    export type ConfigMappingOption = boolean | Type | Type[] | Record<Type, boolean>;
+    export type ConfigMappingOption = boolean | Type | Type[] | {
+        [K in Type]?: boolean
+    };
 }

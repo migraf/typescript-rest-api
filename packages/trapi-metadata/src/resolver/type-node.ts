@@ -1,20 +1,20 @@
 import * as ts from 'typescript';
 import {hasOwnProperty} from "@trapi/utils";
-import {Decorator} from "../decorator/type";
+import {Decorator} from "../decorator";
 
 import {Generator} from '../generator';
 import {
     getJSDocTagComment,
     getJSDocTagNames,
     isExistJSDocTag
-} from '../utils/js-doc';
+} from '../utils';
 import {ResolverError} from "./error";
 import {
     Resolver
 } from "./type";
 import {getInitializerValue} from "./utils";
 import {Property} from "../type";
-import {getDecorators} from "../decorator/utils/node";
+import {getNodeDecorators} from "../decorator";
 
 const localReferenceTypeCache: { [typeName: string]: Resolver.ReferenceType } = {};
 const inProgressTypes: { [typeName: string]: boolean } = {};
@@ -501,7 +501,7 @@ export class TypeNodeResolver {
                 })
                 .map(name => name.toLowerCase());
 
-            const data : Decorator.Data[] = getDecorators(parentNode, identifier => [
+            const data : Decorator.Data[] = getNodeDecorators(parentNode, identifier => [
                 'isInt',
                 'isLong',
                 'isFloat',

@@ -79,7 +79,7 @@ export class Version3SpecGenerator extends AbstractSpecGenerator<SpecificationV3
         this.metadata.controllers.forEach(controller => {
             // construct documentation using all methods except @Hidden
             controller.methods
-                .filter(method => !method.isHidden)
+                .filter(method => !method.hidden)
                 .forEach(method => {
                     const path = removeFinalCharacter(removeRepeatingCharacter(`/${controller.path}/${method.path}`, '/'), '/');
                     paths[path] = paths[path] || {};

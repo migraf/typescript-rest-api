@@ -7,7 +7,10 @@ import {Decorator} from "../type";
  * @param node
  * @param isMatching
  */
-export function getDecorators(node: Node, isMatching?: (data: Decorator.Data) => boolean): Decorator.Data[] {
+export function getNodeDecorators(
+    node: Node,
+    isMatching?: (data: Decorator.Data) => boolean
+): Decorator.Data[] {
     const decorators = node.decorators;
     if (!decorators || !decorators.length) {
         return [];
@@ -19,6 +22,7 @@ export function getDecorators(node: Node, isMatching?: (data: Decorator.Data) =>
                 arguments: [],
                 typeArguments: []
             };
+
             let x: any = d.expression;
 
             if (isCallExpression(x)) {

@@ -9,7 +9,7 @@ import {hasOwnProperty} from "@trapi/utils";
 import {Method, MethodType, Parameter, Response} from "../type";
 import {getJSDocDescription, getJSDocTagComment} from '../utils/js-doc';
 import MethodHttpVerbKey = Decorator.MethodHttpVerbType;
-import {getDecorators} from "../decorator/utils/node";
+import {getNodeDecorators} from "../decorator/utils/node";
 
 
 export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {
@@ -53,11 +53,11 @@ export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {
 
         return {
             // todo: implement extensions
-            extensions: [],
-            isHidden: this.isHidden(this.node),
             consumes: this.getConsumes(),
             deprecated: this.isDeprecated(this.node),
             description: getJSDocDescription(this.node),
+            extensions: [],
+            hidden: this.isHidden(this.node),
             method: this.method,
             name: (this.node.name as ts.Identifier).text,
             parameters: this.buildParameters(),
@@ -106,7 +106,7 @@ export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {
     }
 
     private processMethodDecorators() {
-        const httpMethodDecorators = getDecorators(this.node, decorator => this.supportsPathMethod(decorator.text));
+        const httpMethodDecorators = getNodeDecorators(this.node, decorator => this.supportsPathMethod(decorator.text));
 
         if (!httpMethodDecorators || !httpMethodDecorators.length) { return; }
         if (httpMethodDecorators.length > 1) {

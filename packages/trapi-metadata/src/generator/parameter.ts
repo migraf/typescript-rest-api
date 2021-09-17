@@ -6,7 +6,7 @@ import {TypeNodeResolver} from '../resolver';
 import {Resolver} from "../resolver";
 import {getInitializerValue} from "../resolver";
 import {ArrayParameter, Parameter} from "../type";
-import {getDecorators} from "../decorator/utils/node";
+import {getNodeDecorators} from "../decorator/utils/node";
 
 const supportedParameterKeys : Decorator.ParameterServerType[] = [
     'SERVER_CONTEXT',
@@ -29,7 +29,7 @@ export class ParameterGenerator {
     ) { }
 
     public generate(): Parameter{
-        const decorators = getDecorators(this.parameter);
+        const decorators = getNodeDecorators(this.parameter);
 
         for(let i=0; i<supportedParameterKeys.length; i++) {
             const representation = this.current.decoratorMapper.match(supportedParameterKeys[i], decorators);

@@ -1,5 +1,5 @@
 import {Resolver} from "./resolver";
-import {Decorator} from "./decorator/type";
+import {Decorator} from "./decorator";
 
 export interface Config {
     /**
@@ -18,7 +18,7 @@ export interface Config {
     cache?: string | boolean;
 
     /**
-     *
+     * Decorator Mapper Config
      */
     decorator?: Decorator.Config;
 }
@@ -29,7 +29,7 @@ export interface Output {
 }
 
 export type OutputCache = {
-    sourceFileSize: number;
+    sourceFilesSize: number;
 } & Output;
 
 export interface Controller {
@@ -68,7 +68,7 @@ export interface Method {
     consumes: string[];
     produces: string[];
     // todo: check assignment
-    isHidden: boolean;
+    hidden: boolean;
 }
 
 export interface Extension {

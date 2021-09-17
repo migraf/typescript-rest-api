@@ -13,14 +13,16 @@ export class MetadataCache {
 
     // -------------------------------------------------------------------------
 
-    public save(data: OutputCache) : void {
+    public save(data: OutputCache) : string | undefined {
         if(!this.isEnabled()) {
-            return;
+            return undefined;
         }
 
         const filePath : string = this.buildFilePath();
 
         fs.writeFileSync(filePath, JSON.stringify(data));
+
+        return filePath;
     }
 
     public get(sourceFilesSize: number) : OutputCache | undefined {
@@ -40,12 +42,13 @@ export class MetadataCache {
             // todo: maybe add shape validation here :)
             const cache : OutputCache | undefined = JSON.parse(content) as OutputCache;
 
-            if (typeof cache === 'undefined' || cache.sourceFileSize !== sourceFilesSize) {
+            if (typeof cache === 'undefined' || cache.sourceFilesSize !== sourceFilesSize) {
                 return undefined;
             }
 
             return cache;
         } catch (e) {
+            /* istanbul ignore next */
             return undefined;
         }
     }
@@ -55,6 +58,7 @@ export class MetadataCache {
     /**
      * At a 10% chance, clear all cache files :)
      */
+    /* istanbul ignore next */
     public clear() : void {
         if(!this.isEnabled()) {
             return;
@@ -70,7 +74,7 @@ export class MetadataCache {
     }
 
     public isEnabled() : boolean {
-        return typeof this.config.cache === 'string' || (typeof this.config.cache === 'boolean' && this.config.cache);
+        return typeof this.config.cache === 'string' || (typeof this.config.cache === 'boolean' && !!this.config.cache);
     }
 
     private buildFilePath(hash?: string) : string {

@@ -72,7 +72,7 @@ export class Generator {
             cache = {
                 controllers: this.controllers,
                 referenceTypes: this.referenceTypes,
-                sourceFileSize: sourceFileSize
+                sourceFilesSize: sourceFileSize
             };
 
             this.cache.save(cache);

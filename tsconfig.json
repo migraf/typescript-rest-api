@@ -3,11 +3,6 @@
 
     "compilerOptions": {
         "baseUrl": ".",
-        "paths": {
-            "@trapi/utils": ["./packages/trapi-utils/src"],
-            "@trapi/metadata": ["./packages/trapi-metadata/src"],
-            "@trapi/swagger": ["./packages/trapi-swagger/src"]
-        },
         "noEmit": true
     }
 }

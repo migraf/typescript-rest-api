@@ -3,4 +3,4 @@ export * from './representation';
 export * from './utils';
 export * from './functions';
 export * from './type';
-export {getDecorators} from "./utils/node";
+export {getNodeDecorators} from "./utils/node";

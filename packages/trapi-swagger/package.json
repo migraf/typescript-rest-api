@@ -30,7 +30,6 @@
         "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
         "pretest": "cross-env NODE_ENV=test npm run build && npm run lint",
         "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
-        "test:coverage": "cross-env NODE_ENV=test jest --config ./test/jest.config.js --coverage",
         "tsc": "tsc",
         "preblushOnly": "tsc -d"
     },

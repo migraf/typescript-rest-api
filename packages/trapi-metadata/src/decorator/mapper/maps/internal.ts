@@ -1,6 +1,6 @@
-import {Decorator} from "../../../type";
+import {Decorator} from "../../type";
 
-export const InternalMapping: Partial<Decorator.TypeRepresentationMap> = {
+export default {
     EXTENSION: {
         id: 'Extension',
         properties: {
@@ -21,29 +21,29 @@ export const InternalMapping: Partial<Decorator.TypeRepresentationMap> = {
     RESPONSE_EXAMPLE: {
         id: 'ResponseExample',
         properties: {
-            TYPE: {type: "src", srcArgumentType: "typeArgument"},
-            PAYLOAD: {type: "src", srcArgumentType: "argument", srcPosition: 0}
+            TYPE: {isType: true, srcArgumentType: "typeArgument"},
+            PAYLOAD: {srcArgumentType: "argument", srcPosition: 0}
         }
     },
     RESPONSE_DESCRIPTION: {
         id: 'ResponseDescription',
         properties: {
-            TYPE: {type: "src", srcArgumentType: "typeArgument"},
+            TYPE: {isType: true, srcArgumentType: "typeArgument"},
             STATUS_CODE: {type: "element", srcArgumentType: "argument", srcPosition: 0},
             DESCRIPTION: {type: "element", srcArgumentType: "argument", srcPosition: 1},
-            PAYLOAD: {type: "src", srcArgumentType: "argument", srcPosition: 2}
+            PAYLOAD: {type: "element", srcArgumentType: "argument", srcPosition: 2}
         }
     },
     REQUEST_CONSUMES: {
         id: 'RequestConsumes',
         properties: {
-            DEFAULT: {type: 'array', srcArgumentType: "argument", srcAmount: -1, srcArrayStrategy: "merge"}
+            DEFAULT: {type: 'array', srcArgumentType: "argument", srcAmount: -1, srcStrategy: "merge"}
         }
     },
     RESPONSE_PRODUCES: {
         id: 'ResponseProduces',
         properties: {
-            DEFAULT: {type: 'array', srcArgumentType: "argument", srcAmount: -1, srcArrayStrategy: "merge"}
+            DEFAULT: {type: 'array', srcArgumentType: "argument", srcAmount: -1, srcStrategy: "merge"}
         }
     },
 
@@ -85,4 +85,4 @@ export const InternalMapping: Partial<Decorator.TypeRepresentationMap> = {
             DEFAULT: {}
         }
     },
-};
+} as Partial<Decorator.TypeRepresentationMap>;
