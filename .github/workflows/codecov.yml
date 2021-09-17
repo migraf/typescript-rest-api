@@ -33,4 +33,4 @@ jobs:
               uses: codecov/codecov-action@v2.0.3
               with:
                   token: ${{ secrets.codecov }}
-                  file: ./packages/**/writable/coverage/*.json
+                  files: ./packages/trapi-utils/writable/coverage/clover.xml, ./packages/trapi-metadata/writable/coverage/clover.xml
