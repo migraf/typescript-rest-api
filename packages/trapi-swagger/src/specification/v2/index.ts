@@ -2,7 +2,7 @@ import {union} from "lodash";
 import {posix} from "path";
 import {URL} from 'url';
 
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty, normalizePathParameters} from "@trapi/utils";
 import {Method, Parameter, Property, Response, Resolver} from "@trapi/metadata";
 
 import {Specification} from "../type";
@@ -221,7 +221,9 @@ export class Version2SpecGenerator extends AbstractSpecGenerator<SpecificationV2
 
         this.metadata.controllers.forEach(controller => {
             controller.methods.forEach(method => {
-                const fullPath : string = posix.join('/', (controller.path ? controller.path : ''), method.path);
+                let fullPath : string = posix.join('/', (controller.path ? controller.path : ''), method.path);
+                fullPath = normalizePathParameters(fullPath);
+
                 paths[fullPath] = paths[fullPath] || {};
                 method.consumes = union(controller.consumes, method.consumes);
                 method.produces = union(controller.produces, method.produces);

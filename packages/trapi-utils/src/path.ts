@@ -1,29 +1,23 @@
 'use strict';
 
-export function normalizePathParameters(path?: string) : string | undefined {
-    if (!path) {
-        return path;
-    }
+export function normalizePath(str: string) : string {
+    // remove slashes
+    str = str.replace(/^[/\\\s]+|[/\\\s]+$/g, '');
 
-    let parts = path.split('/');
-    parts = parts.map(part => {
-        if (isPathParameter(part)) {
-            part = `{${clearPathParameter(part)}}`;
-        }
+    str = str.replace(/([^:]\/)\/+/g, "$1");
 
-        return part;
-    });
-
-    return parts.join('/');
+    return str;
 }
 
-function isPathParameter(str : string) : boolean {
-    return [':', '<', '>'].some(character => str.includes(character));
-}
+export function normalizePathParameters(str: string) : string {
+    // <:id> -> {id}
+    str = str.replace(/<:([^\/]+)>/g, '{$1}');
 
-function clearPathParameter(str: string) {
-    str = str.replace(/:/g, '');
-    str = str.replace(/</g, '');
-    str = str.replace(/>/g, '');
+    // :id -> {id}
+    str = str.replace(/:([^\/]+)/g, '{$1}');
+
+    // <id> -> {id}
+    str = str.replace(/<([^\/]+)>/g, '{$1}');
+
     return str;
 }

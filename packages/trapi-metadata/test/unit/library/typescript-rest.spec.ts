@@ -2,10 +2,9 @@ import path from "path";
 const jsonata = require('jsonata');
 import {Config, Generator, Property, Resolver} from "../../../src";
 
-const entryFile : string = './test/data/library/typescript-rest/api.ts';
 const config : Config = {
-    entryFile: [entryFile],
-    cache: false,
+    entryFile: ['./test/data/library/typescript-rest/api.ts'],
+    cache: './writable',
     decorator: {
         internal: true,
         library: 'typescript-rest'

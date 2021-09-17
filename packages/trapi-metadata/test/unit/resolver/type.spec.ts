@@ -1,4 +1,4 @@
-import {Resolver} from "../../../../src/metadata/resolver/type";
+import {Resolver} from "../../../src";
 
 describe('type.ts', () => {
     it('check void type', () => {

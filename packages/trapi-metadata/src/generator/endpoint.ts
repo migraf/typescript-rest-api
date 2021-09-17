@@ -1,11 +1,11 @@
 'use strict';
 
 import {ArrayLiteralExpression, isArrayLiteralExpression, Node, SyntaxKind, TypeNode} from 'typescript';
-import {normalizePathParameters} from "@trapi/utils";
+import {normalizePath} from "@trapi/utils";
 
 import {Decorator} from "../decorator/type";
 import {Generator} from './index';
-import {TypeNodeResolver} from '../resolver';
+import {getInitializerValue, TypeNodeResolver} from '../resolver';
 import {isExistJSDocTag} from "../utils/js-doc";
 import {Response} from "../type";
 import {getNodeDecorators} from "../decorator/utils/node";
@@ -35,7 +35,7 @@ export abstract class EndpointGenerator<T extends Node> {
             }
         }
 
-        this.path = normalizePathParameters(values.join('/'));
+        this.path = normalizePath(values.join('/'));
     }
 
     // --------------------------------------------------------------------
@@ -97,41 +97,13 @@ export abstract class EndpointGenerator<T extends Node> {
 
         if (argument.properties) {
             argument.properties.forEach((p: any) => {
-                example[p.name.text] = this.getInitializerValue(p.initializer);
+                example[p.name.text] = getInitializerValue(p.initializer, this.current.typeChecker);
             });
         } else {
-            example = this.getInitializerValue(argument);
+            example = getInitializerValue(argument, this.current.typeChecker);
         }
 
         return example;
-    }
-
-    protected getInitializerValue(initializer: any) {
-        switch (initializer.kind as SyntaxKind) {
-            case SyntaxKind.ArrayLiteralExpression:
-                return initializer.elements.map((e: any) => this.getInitializerValue(e));
-            case SyntaxKind.StringLiteral:
-                return initializer.text;
-            case SyntaxKind.TrueKeyword:
-                return true;
-            case SyntaxKind.FalseKeyword:
-                return false;
-            case SyntaxKind.NumberKeyword:
-            case SyntaxKind.FirstLiteralToken:
-                return parseInt(initializer.text, 10);
-            case SyntaxKind.NullKeyword:
-                return null;
-            case SyntaxKind.ObjectLiteralExpression:
-                const nestedObject: any = {};
-
-                initializer.properties.forEach((p: any) => {
-                    nestedObject[p.name.text] = this.getInitializerValue(p.initializer);
-                });
-
-                return nestedObject;
-            default:
-                return undefined;
-        }
     }
 
     // -------------------------------------------
@@ -148,10 +120,6 @@ export abstract class EndpointGenerator<T extends Node> {
             const description = representation.getPropertyValue('DESCRIPTION', i) || 'Ok';
             const status = representation. getPropertyValue('STATUS_CODE', i) || '200';
             let examples : unknown | unknown[] = representation. getPropertyValue('PAYLOAD', i);
-
-            if(typeof examples !== 'undefined') {
-                examples = this.getExamplesValue(examples);
-            }
 
             const type = representation.getPropertyValue('TYPE');
 

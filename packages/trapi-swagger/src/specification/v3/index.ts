@@ -1,5 +1,5 @@
 import {URL} from "url";
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty, normalizePathParameters} from "@trapi/utils";
 import {Method, Parameter, Property, Resolver, Response} from "@trapi/metadata";
 import {Specification} from "../type";
 import {SpecificationV3} from "./type";
@@ -81,7 +81,8 @@ export class Version3SpecGenerator extends AbstractSpecGenerator<SpecificationV3
             controller.methods
                 .filter(method => !method.hidden)
                 .forEach(method => {
-                    const path = removeFinalCharacter(removeRepeatingCharacter(`/${controller.path}/${method.path}`, '/'), '/');
+                    let path = removeFinalCharacter(removeRepeatingCharacter(`/${controller.path}/${method.path}`, '/'), '/');
+                    path = normalizePathParameters(path);
                     paths[path] = paths[path] || {};
                     this.buildMethod(controller.name, method, paths[path]);
                 });
@@ -300,7 +301,7 @@ export class Version3SpecGenerator extends AbstractSpecGenerator<SpecificationV3
     }
 
     private buildServers() : SpecificationV3.Server[] {
-        const url = new URL(this.config.host);
+        const url = new URL(this.config.host || 'http://localhost:3000/');
         let host : string = (url.host + url.pathname).replace(/([^:]\/)\/+/g, "$1");
         host = host.substr(-1, 1) === '/' ? host.substr(0, host.length -1) : host;
 

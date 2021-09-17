@@ -165,11 +165,6 @@ export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {
             return [];
         }
 
-        value = this.getExamplesValue(value);
-        if(typeof value === 'undefined') {
-            return [];
-        }
-
         return value;
     }
 

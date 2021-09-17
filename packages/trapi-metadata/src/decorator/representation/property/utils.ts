@@ -1,10 +1,9 @@
 import {
-    ArrayLiteralExpression,
-    isArrayLiteralExpression,
-    Node
+    Expression
 } from "typescript";
 import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../../type";
+import {getInitializerValue} from "../../../resolver";
 
 export function extendRepresentationPropertyConfig(property: Decorator.Property): Decorator.Property {
     if(typeof property.isType === 'undefined') {
@@ -63,7 +62,7 @@ export function extractRepresentationPropertyValue<
         }
     }
 
-    const data : unknown[] | unknown[][] = srcAmount >= 1 ? items.slice(srcPosition, srcAmount) : items.slice(srcPosition);
+    const data : unknown[] | unknown[][] = srcAmount >= 1 ? items.slice(srcPosition, srcPosition + srcAmount) : items.slice(srcPosition);
 
     if(data.length === 0) {
         return (config.type === 'array' ? [] : undefined) as unknown as Decorator.TypePropertyMaps[T][P];
@@ -84,10 +83,11 @@ export function extractRepresentationPropertyValue<
             // if we dont have any merge strategy, we just return the first argument.
             switch (config.type) {
                 case 'array':
-                    return (Array.isArray(data[srcPosition]) ? data[srcPosition] : [data[srcPosition]]) as Decorator.TypePropertyMaps[T][P];
+                    const arr = Array.isArray(data[0]) ? data[0] : [data[0]];
+                    return arr as unknown as Decorator.TypePropertyMaps[T][P];
                 case 'element':
                 default:
-                    return data[srcPosition] as Decorator.TypePropertyMaps[T][P];
+                    return data[0] as Decorator.TypePropertyMaps[T][P];
             }
         default:
             if(typeof config.srcStrategy === 'function') {
@@ -132,21 +132,7 @@ function extractValueFromArgumentType(argument: unknown[]) {
             continue;
         }
 
-        const node : Node = argument[i] as Node;
-
-        switch (true) {
-            case isArrayLiteralExpression(node):
-                const elements : string[] = [];
-                const arrayExpression : ArrayLiteralExpression = node as ArrayLiteralExpression;
-                for(let j=0; j < arrayExpression.elements.length; j++) {
-                    const element : Record<string, any> = arrayExpression.elements[j];
-                    if(hasOwnProperty(element, 'text')) {
-                        elements.push(element.text as string);
-                    }
-                }
-                values.push(elements);
-                break;
-        }
+        values.push(getInitializerValue(argument[i] as Expression));
     }
 
     return values;

@@ -22,7 +22,7 @@ export default {
         id: 'ResponseExample',
         properties: {
             TYPE: {isType: true, srcArgumentType: "typeArgument"},
-            PAYLOAD: {srcArgumentType: "argument", srcPosition: 0}
+            PAYLOAD: {type: "element", srcArgumentType: "argument", srcPosition: 0}
         }
     },
     RESPONSE_DESCRIPTION: {

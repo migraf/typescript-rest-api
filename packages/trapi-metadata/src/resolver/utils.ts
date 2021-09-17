@@ -1,9 +1,14 @@
 import * as ts from 'typescript';
 import {Resolver} from "./type";
+import {hasOwnProperty} from "@trapi/utils";
 
-export function getInitializerValue(initializer?: ts.Expression, typeChecker?: ts.TypeChecker, type?: Resolver.Type) : unknown {
-    if (!initializer || !typeChecker) {
-        return;
+export function getInitializerValue(
+    initializer?: ts.Expression,
+    typeChecker?: ts.TypeChecker,
+    type?: Resolver.Type
+) : unknown {
+    if (!initializer) {
+        return undefined;
     }
 
     switch (initializer.kind) {
@@ -48,9 +53,21 @@ export function getInitializerValue(initializer?: ts.Expression, typeChecker?: t
             });
             return nestedObject;
         default:
-            const symbol = typeChecker.getSymbolAtLocation(initializer);
-            const extractedInitializer = symbol && symbol.valueDeclaration && hasInitializer(symbol.valueDeclaration) && (symbol.valueDeclaration.initializer as ts.Expression);
-            return extractedInitializer ? getInitializerValue(extractedInitializer, typeChecker) : undefined;
+            if(typeof initializer === 'undefined') {
+                return undefined;
+            } else {
+                if(typeof initializer.parent === 'undefined') {
+                    if(hasOwnProperty(initializer, 'text')) {
+                        return initializer.text;
+                    }
+
+                    return undefined;
+                }
+
+                const symbol = typeChecker.getSymbolAtLocation(initializer);
+                const extractedInitializer = symbol && symbol.valueDeclaration && hasInitializer(symbol.valueDeclaration) && (symbol.valueDeclaration.initializer as ts.Expression);
+                return extractedInitializer ? getInitializerValue(extractedInitializer, typeChecker) : undefined;
+            }
     }
 }
 

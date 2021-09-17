@@ -14,7 +14,7 @@ export async function generateDocumentation(
 
     const metadata = metadataGenerator.generate();
 
-    const specGenerator = createSpecGenerator(config.swagger, metadata);
+    const specGenerator = createSpecGenerator(metadata, config.swagger);
 
     specGenerator.build();
     return await specGenerator.save();

@@ -36,7 +36,7 @@ export class RepresentationManager<T extends Decorator.Type> {
             typeof decoratorOrIndex === 'undefined'
         ) {
             decoratorOrIndex = decoratorOrIndex ?? 0;
-            if (0 > decoratorOrIndex || decoratorOrIndex >= this.decorators.length) {
+            if (decoratorOrIndex < 0 || decoratorOrIndex >= this.decorators.length) {
                 return undefined;
             }
 

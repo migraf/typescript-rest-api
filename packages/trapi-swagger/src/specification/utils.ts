@@ -18,8 +18,8 @@ export function removeFinalCharacter(str: string, character: string) {
 }
 
 export function createSpecGenerator(
-    config: Specification.Config,
-    metadata: Output | Generator
+    metadata: Output | Generator,
+    config: Specification.Config = {}
 ) {
     const data : Output = metadata instanceof Generator ? metadata.generate() : metadata;
 
