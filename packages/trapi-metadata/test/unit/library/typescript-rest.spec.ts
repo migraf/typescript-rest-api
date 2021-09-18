@@ -7,7 +7,7 @@ const config : Config = {
     cache: {
         directoryPath: './writable',
         clearAtRandom: false,
-        enabled: true,
+        enabled: false,
         fileName: 'metadata.json'
     },
     decorator: {
