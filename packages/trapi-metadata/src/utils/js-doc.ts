@@ -25,22 +25,22 @@ export function getJSDocDescription(node: Node) : string | undefined {
 // Tag
 // -----------------------------------------
 
-function getJSDoc(node: Node, index?: number) : undefined | JSDoc {
+export function getJSDoc(node: Node, index?: number) : undefined | JSDoc {
     if(!hasOwnProperty(node, 'jsDoc')) {
         return undefined;
     }
 
-    const jsDoc : JSDoc | JSDoc[] | undefined = hasOwnProperty(node,'jsDoc') ? (node as any).jsDoc as JSDoc : undefined;
+    const jsDoc : JSDoc[] | undefined = (node as any).jsDoc as JSDoc[];
 
     if(!jsDoc || !Array.isArray(jsDoc) || !jsDoc.length) {
         return undefined;
     }
 
     index = index ?? 0;
-    return jsDoc.length > index && index >= 0 ? jsDoc[index] : jsDoc[0];
+    return jsDoc.length > index && index >= 0 ? jsDoc[index] : undefined; // jsDoc[0] else case
 }
 
-function getJSDocTags(
+export function getJSDocTags(
     node: Node,
     isMatching?: string | string[] | ((tag: JSDocTag) => boolean)
 ) : JSDocTag[] {
@@ -95,6 +95,7 @@ export function getJSDocTagComment(node: Node, tagName: ((tag: JSDocTag) => bool
 export function getJSDocTagNames(node: Node, requireTagName = false) : string[] {
     let tags: JSDocTag[];
 
+    /* istanbul ignore next */
     if (node.kind === SyntaxKind.Parameter) {
         const parameterName = ((node as any).name as Identifier).text;
         tags = getJSDocTags(node.parent as any, tag => {
@@ -109,10 +110,6 @@ export function getJSDocTagNames(node: Node, requireTagName = false) : string[] 
         tags = getJSDocTags(node as any, tag => {
             return requireTagName ? tag.comment !== undefined : true;
         });
-    }
-
-    if(typeof tags === 'undefined') {
-        return [];
     }
 
     return tags.map(tag => {

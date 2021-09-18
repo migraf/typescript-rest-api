@@ -4,7 +4,12 @@ import {Config, Generator, Property, Resolver} from "../../../src";
 
 const config : Config = {
     entryFile: ['./test/data/library/typescript-rest/api.ts'],
-    cache: './writable',
+    cache: {
+        directoryPath: './writable',
+        clearAtRandom: false,
+        enabled: true,
+        fileName: 'metadata.json'
+    },
     decorator: {
         internal: true,
         library: 'typescript-rest'

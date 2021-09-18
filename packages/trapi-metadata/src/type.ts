@@ -1,5 +1,6 @@
 import {Resolver} from "./resolver";
 import {Decorator} from "./decorator";
+import {CacheConfig} from "./cache/type";
 
 export interface Config {
     /**
@@ -15,7 +16,7 @@ export interface Config {
     /**
      * Directory to store and cache metadata cache files.
      */
-    cache?: string | boolean;
+    cache?: string | boolean | Partial<CacheConfig>;
 
     /**
      * Decorator Mapper Config

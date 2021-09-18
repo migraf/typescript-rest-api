@@ -1,24 +1,25 @@
-import * as crypto from "crypto";
 import * as fs from "fs";
 import * as glob from 'glob';
 import * as path from "path";
-import {Config, OutputCache} from "../type";
+import {OutputCache} from "../type";
+import {CacheConfig} from "./type";
+import {buildCacheConfig, buildFileHash} from "./utils";
 
-export class MetadataCache {
-    private readonly config : Config;
+export class Cache {
+    private readonly config : CacheConfig;
 
-    constructor(config: Config) {
-        this.config = config;
+    constructor(config: string | boolean | Partial<CacheConfig>) {
+        this.config = buildCacheConfig(config);
     }
 
     // -------------------------------------------------------------------------
 
     public save(data: OutputCache) : string | undefined {
-        if(!this.isEnabled()) {
+        if(!this.config.enabled) {
             return undefined;
         }
 
-        const filePath : string = this.buildFilePath();
+        const filePath : string = this.buildFilePath(undefined, data.sourceFilesSize);
 
         fs.writeFileSync(filePath, JSON.stringify(data));
 
@@ -26,13 +27,13 @@ export class MetadataCache {
     }
 
     public get(sourceFilesSize: number) : OutputCache | undefined {
-        if(!this.isEnabled()) {
+        if(!this.config.enabled) {
             return undefined;
         }
 
         this.clear();
 
-        const filePath : string = this.buildFilePath();
+        const filePath : string = this.buildFilePath(undefined, sourceFilesSize);
 
         try {
             const buffer: Buffer = fs.readFileSync(filePath);
@@ -60,7 +61,7 @@ export class MetadataCache {
      */
     /* istanbul ignore next */
     public clear() : void {
-        if(!this.isEnabled()) {
+        if(!this.config.enabled || !this.config.clearAtRandom) {
             return;
         }
 
@@ -73,26 +74,18 @@ export class MetadataCache {
         files.map(file => fs.unlinkSync(file));
     }
 
-    public isEnabled() : boolean {
-        return typeof this.config.cache === 'string' || (typeof this.config.cache === 'boolean' && !!this.config.cache);
+    // -------------------------------------------------------------------------
+
+    private buildFilePath(hash?: string, sourceFilesSize?: number) : string {
+        return path.join(this.config.directoryPath, this.buildFileName(hash, sourceFilesSize));
     }
 
-    private buildFilePath(hash?: string) : string {
-        return path.join(this.buildDirectoryPath(), `.swagger-${hash ?? this.buildFileHash()}.json`);
-    }
-
-    private buildDirectoryPath() : string {
-        return typeof this.config.cache === 'string' ?
-            path.isAbsolute(this.config.cache) ? this.config.cache : path.join(process.cwd(), this.config.cache) :
-            process.cwd();
-    }
-
-    private buildFileHash() : string {
-        const files : string[] = Array.isArray(this.config.entryFile) ? this.config.entryFile : [this.config.entryFile];
-        const hash = crypto.createHash('sha256');
-
-        files.map(file => hash.update(file));
-
-        return hash.digest('hex');
+    private buildFileName(hash?: string, sourceFilesSize?: number) : string {
+        if(typeof this.config.fileName === 'string') {
+            return this.config.fileName;
+        } else {
+            return `.swagger-${hash ?? buildFileHash(sourceFilesSize)}.json`;
+        }
     }
 }
+

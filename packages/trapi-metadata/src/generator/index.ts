@@ -16,7 +16,7 @@ import {
 } from 'typescript';
 import {Config, Controller, Output} from "../type";
 import {DecoratorMapper} from "../decorator/mapper";
-import {MetadataCache} from "../cache";
+import {Cache} from "../cache";
 import {ControllerGenerator} from './controller';
 import {TypeNodeResolver} from "../resolver";
 import {Resolver} from "../resolver";
@@ -33,7 +33,7 @@ export class Generator {
 
     private readonly program: Program;
 
-    private cache : MetadataCache;
+    private cache : Cache;
     private controllers: Controller[];
     private referenceTypes: Resolver.ReferenceTypes = {};
 
@@ -47,7 +47,7 @@ export class Generator {
     ) {
         this.config = config;
 
-        this.cache = new MetadataCache(config);
+        this.cache = new Cache(config.cache);
         this.decoratorMapper = new DecoratorMapper(config.decorator);
 
         TypeNodeResolver.clearCache();
