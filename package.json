@@ -1,5 +1,5 @@
 {
-    "name": "trapi",
+    "name": "@trapi/root",
     "private": true,
     "author": {
         "name": "Peter Placzek",
@@ -39,7 +39,7 @@
         "build": "lerna run build",
         "test": "lerna run test",
         "pub": "lerna publish",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "lerna run build"
     },
     "devDependencies": {
         "codecov": "^3.8.3",

@@ -15,5 +15,7 @@
             "registry": "https://npm.pkg.github.com"
         }
     },
-    "useWorkspaces": true
+    "npmClient": "npm",
+    "useWorkspaces": true,
+    "version": "independent"
 }

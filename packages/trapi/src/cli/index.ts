@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
  * Copyright (c) 2021.
  * Author Peter Placzek (tada5hi)
@@ -5,12 +7,11 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-#!/usr/bin/env node
 'use strict';
 
 import {ArgumentParser} from 'argparse';
 import {CompilerOptions} from "typescript";
-import {getConfig} from "../config/utils";
+import {getConfig} from "../config";
 import {createMetadataGenerator} from "@trapi/metadata";
 import {createSpecGenerator} from "@trapi/swagger";
 import {getCompilerOptions} from "@trapi/utils";

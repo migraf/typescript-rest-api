@@ -17,8 +17,9 @@ export function getParameterValidators(parameter: ParameterDeclaration, name: st
     const getCommentValue = (comment?: string) => comment && comment.split(' ')[0];
 
     const tags = getJSDocTags(parameter.parent, tag => {
-        const { comment } = tag;
-        return getSupportedParameterTags().some(value => !!comment && value === tag.tagName.text && getCommentValue(comment) === name);
+        let { comment } = tag;
+        const text : string = Array.isArray(comment) ? (comment.length > 0 ? comment[0].text : undefined) : comment;
+        return getSupportedParameterTags().some(value => !!comment && value === tag.tagName.text && getCommentValue(text) === name);
     });
 
     function getErrorMsg(comment?: string, isValue = true) : string {
