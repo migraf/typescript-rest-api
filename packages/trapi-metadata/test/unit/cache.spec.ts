@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2021.
+ * Author Peter Placzek (tada5hi)
+ * For the full copyright and license information,
+ * view the LICENSE file that was distributed with this source code.
+ */
+
 import {CacheDriver} from "../../src";
 import {getWritableDirPath} from "../../src/config";
 import * as fs from "fs";

@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2021.
+ * Author Peter Placzek (tada5hi)
+ * For the full copyright and license information,
+ * view the LICENSE file that was distributed with this source code.
+ */
+
 import { normalize } from "path";
 import { Node, TypeNode } from 'typescript';
 
 export class ResolverError extends Error {
     constructor(message?: string, node?: Node | TypeNode, onlyCurrent = false) {
         super(message);
-        
+
         if (node) {
             this.message = `${message!}\n${prettyLocationOfNode(node)}\n${prettyTroubleCause(node, onlyCurrent)}`;
         }

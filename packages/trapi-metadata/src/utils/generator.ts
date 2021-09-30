@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2021.
+ * Author Peter Placzek (tada5hi)
+ * For the full copyright and license information,
+ * view the LICENSE file that was distributed with this source code.
+ */
+
 import {CompilerOptions} from 'typescript';
 import {Config, GeneratorOutput} from "../type";
 import {MetadataGenerator} from "../generator";
