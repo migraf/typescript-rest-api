@@ -1,12 +1,12 @@
 import {CompilerOptions} from 'typescript';
-import {Config} from "../type";
-import {Generator} from "../generator";
+import {Config, GeneratorOutput} from "../type";
+import {MetadataGenerator} from "../generator";
 import {getCompilerOptions} from "@trapi/utils";
 
 export function createMetadataGenerator(
     config: Config,
     compilerOptions?: CompilerOptions | boolean
-): Generator {
+): MetadataGenerator {
     const skipLoad: boolean =
         (typeof compilerOptions === 'boolean' && !compilerOptions) ||
         (typeof compilerOptions !== 'boolean' && typeof compilerOptions !== 'undefined');
@@ -22,5 +22,14 @@ export function createMetadataGenerator(
         }
     }
 
-    return new Generator(config, tscConfig);
+    return new MetadataGenerator(config, tscConfig);
+}
+
+export function generateMetadata(
+    config: Config,
+    compilerOptions?: CompilerOptions | boolean
+) : GeneratorOutput {
+    const generator = createMetadataGenerator(config, compilerOptions);
+
+    return generator.generate();
 }

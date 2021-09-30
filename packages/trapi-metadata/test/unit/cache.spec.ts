@@ -1,10 +1,10 @@
-import {Cache} from "../../src";
+import {CacheDriver} from "../../src";
 import {getWritableDirPath} from "../../src/config";
 import * as fs from "fs";
 
 describe('src/cache/index.ts', function () {
     it('should save cache', () => {
-        const cache = new Cache(getWritableDirPath());
+        const cache = new CacheDriver(getWritableDirPath());
 
         const cachePath : string = cache.save({
             controllers: [],
@@ -24,7 +24,7 @@ describe('src/cache/index.ts', function () {
     });
 
     it('should not save & get cache', () => {
-        const cacheNone = new Cache(false);
+        const cacheNone = new CacheDriver(false);
 
         const cachePath : string = cacheNone.save({
             controllers: [],

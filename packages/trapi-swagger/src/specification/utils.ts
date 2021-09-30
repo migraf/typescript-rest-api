@@ -1,5 +1,5 @@
 // todo: implement character in regex matching
-import {Output, Generator} from "@trapi/metadata";
+import {GeneratorOutput, MetadataGenerator} from "@trapi/metadata";
 import {Specification} from "./type";
 import {Version2SpecGenerator} from "./v2";
 import {Version3SpecGenerator} from "./v3";
@@ -18,10 +18,10 @@ export function removeFinalCharacter(str: string, character: string) {
 }
 
 export function createSpecGenerator(
-    metadata: Output | Generator,
+    metadata: GeneratorOutput | MetadataGenerator,
     config: Specification.Config = {}
 ) {
-    const data : Output = metadata instanceof Generator ? metadata.generate() : metadata;
+    const data : GeneratorOutput = metadata instanceof MetadataGenerator ? metadata.generate() : metadata;
 
     const outputFormat : Specification.Specification = config.outputFormat || Specification.Specification.VERSION_2;
 

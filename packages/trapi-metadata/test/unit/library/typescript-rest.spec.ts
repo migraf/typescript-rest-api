@@ -1,6 +1,6 @@
 import path from "path";
 const jsonata = require('jsonata');
-import {Config, Generator, Property, Resolver} from "../../../src";
+import {Config, MetadataGenerator, Property, Resolver} from "../../../src";
 
 const config : Config = {
     entryFile: ['./test/data/library/typescript-rest/api.ts'],
@@ -16,7 +16,7 @@ const config : Config = {
     }
 };
 
-const generator = new Generator(config, {});
+const generator = new MetadataGenerator(config, {});
 
 const metadata = generator.generate();
 

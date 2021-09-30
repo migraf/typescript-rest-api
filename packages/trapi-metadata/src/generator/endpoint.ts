@@ -4,7 +4,7 @@ import {ArrayLiteralExpression, isArrayLiteralExpression, Node, SyntaxKind, Type
 import {normalizePath} from "@trapi/utils";
 
 import {Decorator} from "../decorator/type";
-import {Generator} from './index';
+import {MetadataGenerator} from './index';
 import {getInitializerValue, TypeNodeResolver} from '../resolver';
 import {isExistJSDocTag} from "../utils/js-doc";
 import {Response} from "../type";
@@ -16,7 +16,7 @@ export abstract class EndpointGenerator<T extends Node> {
 
     // -------------------------------------------
 
-    protected constructor(node: T, protected current: Generator) {
+    protected constructor(node: T, protected current: MetadataGenerator) {
         this.node = node;
     }
 

@@ -1,8 +1,8 @@
-import {CacheConfig} from "./type";
+import {Cache} from "./type";
 import path from "path";
 import crypto from "crypto";
 
-export function buildCacheConfig(config?: string | boolean | Partial<CacheConfig>) : CacheConfig {
+export function buildCacheConfig(config?: string | boolean | Partial<Cache.Config>) : Cache.Config {
     if(typeof config === 'string') {
         config = {
             enabled: true,
@@ -18,7 +18,7 @@ export function buildCacheConfig(config?: string | boolean | Partial<CacheConfig
 
     config ??= {};
 
-    let data : CacheConfig = {
+    let data : Cache.Config = {
         directoryPath: "",
         enabled: false,
         clearAtRandom: config.clearAtRandom ?? true

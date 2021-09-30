@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import {Resolver} from "./type";
+import {Resolver} from "../type";
 import {hasOwnProperty} from "@trapi/utils";
 
 export function getInitializerValue(
@@ -71,4 +71,4 @@ export function getInitializerValue(
     }
 }
 
-const hasInitializer = (node: ts.Node): node is ts.HasInitializer => node.hasOwnProperty('initializer');
+export const hasInitializer = (node: ts.Node): node is ts.HasInitializer => node.hasOwnProperty('initializer');

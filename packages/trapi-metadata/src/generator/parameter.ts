@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import {RepresentationManager} from "../decorator/representation";
 import {Decorator} from "../decorator/type";
-import {Generator} from './index';
+import {MetadataGenerator} from './index';
 import {TypeNodeResolver} from '../resolver';
 import {Resolver} from "../resolver";
 import {getInitializerValue} from "../resolver";
@@ -25,7 +25,7 @@ export class ParameterGenerator {
         private readonly parameter: ts.ParameterDeclaration,
         private readonly method: string,
         private readonly path: string,
-        private readonly current: Generator
+        private readonly current: MetadataGenerator
     ) { }
 
     public generate(): Parameter{

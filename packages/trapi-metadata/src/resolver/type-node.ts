@@ -2,7 +2,7 @@ import * as ts from 'typescript';
 import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../decorator";
 
-import {Generator} from '../generator';
+import {MetadataGenerator} from '../generator';
 import {
     getJSDocTagComment,
     getJSDocTagNames,
@@ -12,7 +12,7 @@ import {ResolverError} from "./error";
 import {
     Resolver
 } from "./type";
-import {getInitializerValue} from "./utils";
+import {getInitializerValue} from "./utils/initializer";
 import {Property} from "../type";
 import {getNodeDecorators} from "../decorator";
 
@@ -38,7 +38,7 @@ interface UtilityOptions {
 export class TypeNodeResolver {
     constructor(
         private readonly typeNode: ts.TypeNode,
-        private readonly current: Generator,
+        private readonly current: MetadataGenerator,
         private readonly parentNode?: ts.Node,
         private context: TypeNodeResolverContext = {},
         private readonly referencer?: ts.TypeNode,

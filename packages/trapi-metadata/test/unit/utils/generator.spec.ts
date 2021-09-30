@@ -1,4 +1,4 @@
-import {createMetadataGenerator} from "../../../src";
+import {generateMetadata, createMetadataGenerator} from "../../../src";
 
 describe('src/utils/factory.ts', () => {
     it('should create metadata generator', () => {
@@ -21,5 +21,14 @@ describe('src/utils/factory.ts', () => {
         }, false);
 
         expect(generator).toBeDefined();
+    });
+
+    it('should generate metadata', () => {
+        const data = generateMetadata({
+            entryFile: './test/fake-path'
+        });
+
+        expect(data).toBeDefined();
+        expect(data).toEqual({controllers: [], referenceTypes: {}});
     });
 })

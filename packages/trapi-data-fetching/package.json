@@ -1,0 +1,49 @@
+{
+    "name": "rest-api-utils",
+    "version": "0.0.6",
+    "description": "An tiny library which provides utility types/functions for request and response handling.",
+    "main": "./dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "build": "rm -rf ./dist && tsc",
+        "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
+        "test:coverage": "cross-env NODE_ENV=test jest --config ./test/jest.config.js --coverage"
+    },
+    "author": {
+        "name": "Peter Placzek",
+        "email": "tadashi@animesu.net",
+        "url": "https:/github.com/tada5hi"
+    },
+    "license": "MIT",
+    "keywords": [
+        "json",
+        "json-api",
+        "api",
+        "rest",
+        "api-utils",
+        "include",
+        "pagination",
+        "sort",
+        "fields",
+        "relations",
+        "typescript"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Tada5hi/rest-api-utils.git"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "@types/jest": "^27.0.2",
+        "@types/node": "^16.0.1",
+        "codecov": "^3.8.3",
+        "cross-env": "^7.0.3",
+        "jest": "^27.0.5",
+        "ts-jest": "^27.0.3",
+        "ts-node": "^10.0.0",
+        "tslint": "^6.1.3",
+        "tslint-config-prettier": "^1.18.0",
+        "typescript": "^4.4.3"
+    }
+}

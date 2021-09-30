@@ -1,10 +1,10 @@
 import {hasOwnProperty} from "@trapi/utils";
 import {Decorator} from "../type";
 import {extendRepresentationPropertyConfig, extractRepresentationPropertyValue} from "./property/utils";
-import TypePropertyMaps = Decorator.TypePropertyMaps;
+import TypePropertyMaps = Decorator.TypePropertyMap;
 
 export class RepresentationManager<T extends Decorator.Type> {
-    protected extendedProperties : Partial<Decorator.RepresentationProperties<Decorator.TypePropertyMaps[T]>> = {};
+    protected extendedProperties : Partial<Decorator.RepresentationProperties<Decorator.TypePropertyMap[T]>> = {};
 
     constructor(
         protected representation: Decorator.Representation<T>,
@@ -20,7 +20,7 @@ export class RepresentationManager<T extends Decorator.Type> {
      * @param type
      * @param decoratorOrIndex
      */
-    public getPropertyValue<P extends keyof Decorator.TypePropertyMaps[T]>(
+    public getPropertyValue<P extends keyof Decorator.TypePropertyMap[T]>(
         type: P,
         decoratorOrIndex?: number | Decorator.Data
     ) : TypePropertyMaps[T][P] | undefined {
@@ -50,7 +50,7 @@ export class RepresentationManager<T extends Decorator.Type> {
 
     // -------------------------------------------
 
-    public getPropertyConfiguration(type: keyof Decorator.TypePropertyMaps[T]) : Decorator.Property | undefined {
+    public getPropertyConfiguration(type: keyof Decorator.TypePropertyMap[T]) : Decorator.Property | undefined {
         if(!hasOwnProperty(this.representation.properties, type)) {
             return undefined;
         }
@@ -60,7 +60,7 @@ export class RepresentationManager<T extends Decorator.Type> {
 
     // -------------------------------------------
 
-    protected extendProperty<P extends keyof Decorator.TypePropertyMaps[T]>(type: P) : Decorator.Property {
+    protected extendProperty<P extends keyof Decorator.TypePropertyMap[T]>(type: P) : Decorator.Property {
         if(hasOwnProperty(this.extendedProperties, type)) {
             return this.extendedProperties[type];
         }

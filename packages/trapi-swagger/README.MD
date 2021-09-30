@@ -1,16 +1,17 @@
-[![npm version](https://badge.fury.io/js/typescript-swagger.svg)](https://badge.fury.io/js/typescript-swagger)
-[![codecov](https://codecov.io/gh/Tada5hi/typescript-swagger/branch/master/graph/badge.svg?token=OATCN9VJR9)](https://codecov.io/gh/Tada5hi/typescript-swagger)
-[![Master Workflow](https://github.com/Tada5hi/typescript-swagger/workflows/main/badge.svg)](https://github.com/Tada5hi/typescript-swagger)
-[![Known Vulnerabilities](https://snyk.io/test/github/Tada5hi/typescript-swagger/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Tada5hi/typescript-swagger?targetFile=package.json)
-# Swagger generation for decorator api(s) 🚀
-This is a tool to generate swagger files from a decorator library or your own definitions.
+# @trapi/swagger 🚀
+
+[![main](https://github.com/Tada5hi/typescript-rest-api/actions/workflows/main.yml/badge.svg)](https://github.com/Tada5hi/typescript-rest-api/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/Tada5hi/typescript-rest-api/branch/main/graph/badge.svg?token=ZUJ8F5TTSX)](https://codecov.io/gh/Tada5hi/typescript-rest-api)
+[![Known Vulnerabilities](https://snyk.io/test/github/Tada5hi/typescript-rest-api/badge.svg)](https://snyk.io/test/github/Tada5hi/typescript-rest-api)
+[![npm version](https://badge.fury.io/js/@trapi%2Fswagger.svg)](https://badge.fury.io/js/@trapi%2Fswagger)
+
+This is a tool to generate swagger documentation in `json` or `yml` format with a given metadata definition file.
 
 Please read the `CHANGELOG.md` in the repository for breaking changes.
 
 **Table of Contents**
 
 - [Installation](#installation)
-
 - [Build](#build)
   - [CLI](#cli)
   - [Runtime](#runtime)
@@ -36,7 +37,7 @@ Please read the `CHANGELOG.md` in the repository for breaking changes.
 ## Installation
 
 ```bash
-npm install typescript-swagger -g
+npm install --save @trapi/swagger
 ```
 
 ## Build

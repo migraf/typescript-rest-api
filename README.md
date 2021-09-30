@@ -23,13 +23,6 @@ This is the main package and contains the core functions of all other package an
 
 [README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi#README.md)
 
-### @trapi/utils
-[![npm version](https://badge.fury.io/js/@trapi%2Futils.svg)](https://badge.fury.io/js/@trapi%2Futils)
-
-This Package contains all util functions, which are also partially required by other modules of this repository.
-
-[README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi-utils#README.md)
-
 ### @trapi/metadata
 [![npm version](https://badge.fury.io/js/@trapi%2Fmetadata.svg)](https://badge.fury.io/js/@trapi%2Fmetadata)
 
@@ -43,6 +36,15 @@ This package contains all functions, to generate metadata for TypeScript REST de
 This package contains all functions, to generate a fully featured documentation according the OpenAPI Specification from given metadata.
 
 [README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi-swagger#README.md)
+
+### @trapi/data-fetching
+
+### @trapi/utils
+[![npm version](https://badge.fury.io/js/@trapi%2Futils.svg)](https://badge.fury.io/js/@trapi%2Futils)
+
+This Package contains all util functions, which are also partially required by other modules of this repository.
+
+[README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi-utils#README.md)
 
 ## Credits
 

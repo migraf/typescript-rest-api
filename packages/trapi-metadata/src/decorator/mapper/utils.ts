@@ -36,7 +36,7 @@ export function reduceTypeRepresentationMapping(
  */
 export function isMappingTypeIncluded(
     type: Decorator.Type,
-    config: Decorator.ConfigMappingOption
+    config: Decorator.TypeRepresentationConfig
 ): boolean {
     const allowedType = Object.prototype.toString.call(config);
     switch (allowedType) {

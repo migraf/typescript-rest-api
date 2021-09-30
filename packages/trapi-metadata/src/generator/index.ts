@@ -14,16 +14,16 @@ import {
     SyntaxKind,
     TypeChecker
 } from 'typescript';
-import {Config, Controller, Output} from "../type";
+import {Config, Controller, GeneratorOutput} from "../type";
 import {DecoratorMapper} from "../decorator/mapper";
-import {Cache} from "../cache";
 import {ControllerGenerator} from './controller';
 import {TypeNodeResolver} from "../resolver";
 import {Resolver} from "../resolver";
+import {CacheDriver} from "../cache/driver";
 
 const minimatch = require("minimatch");
 
-export class Generator {
+export class MetadataGenerator {
     public readonly nodes = new Array<Node>();
     public readonly typeChecker: TypeChecker;
 
@@ -33,7 +33,7 @@ export class Generator {
 
     private readonly program: Program;
 
-    private cache : Cache;
+    private cache : CacheDriver;
     private controllers: Controller[];
     private referenceTypes: Resolver.ReferenceTypes = {};
 
@@ -47,7 +47,7 @@ export class Generator {
     ) {
         this.config = config;
 
-        this.cache = new Cache(config.cache);
+        this.cache = new CacheDriver(config.cache);
         this.decoratorMapper = new DecoratorMapper(config.decorator);
 
         TypeNodeResolver.clearCache();
@@ -59,7 +59,7 @@ export class Generator {
 
     // -------------------------------------------------------------------------
 
-    public generate(): Output {
+    public generate(): GeneratorOutput {
         const sourceFileSize : number = this.buildNodesFromSourceFiles();
 
         let cache = this.cache.get(sourceFileSize);

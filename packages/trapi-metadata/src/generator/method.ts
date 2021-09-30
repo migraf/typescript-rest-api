@@ -2,7 +2,7 @@ import * as pathUtil from 'path';
 import * as ts from 'typescript';
 import {Decorator} from "../decorator/type";
 import {EndpointGenerator} from './endpoint';
-import {Generator} from './index';
+import {MetadataGenerator} from './index';
 import {ParameterGenerator} from './parameter';
 import {Resolver, TypeNodeResolver} from "../resolver";
 import {hasOwnProperty} from "@trapi/utils";
@@ -19,7 +19,7 @@ export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {
 
     constructor(
         node: ts.MethodDeclaration,
-        current: Generator,
+        current: MetadataGenerator,
         private readonly controllerPath: string
     ) {
         super(node, current);

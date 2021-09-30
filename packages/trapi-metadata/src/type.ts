@@ -1,46 +1,84 @@
 import {Resolver} from "./resolver";
 import {Decorator} from "./decorator";
-import {CacheConfig} from "./cache/type";
+import {Cache} from "./cache";
 
 export interface Config {
     /**
-     * The entry point to your API
+     * The entry point to your API.
      */
     entryFile: string | string[];
-
     /**
-     * Directory to ignore during TypeScript metadata scan.
+     * Directory to ignore during TypeScript files scan.
+     * Default: []
      */
     ignore?: string[];
-
     /**
      * Directory to store and cache metadata cache files.
+     * Default: false
      */
-    cache?: string | boolean | Partial<CacheConfig>;
-
+    cache?: string | boolean | Partial<Cache.Config>;
     /**
-     * Decorator Mapper Config
+     * Decorator config.
+     * Default: {
+     *      library: ['decorators-express', 'typescript-rest'],
+     *      internal: true
+     * }
      */
     decorator?: Decorator.Config;
 }
 
-export interface Output {
+/**
+ * The output specification for metadata generation.
+ */
+export interface GeneratorOutput {
+    /**
+     * A Controller is a collection of grouped methods (GET, POST, ...)
+     * for a common URL path (i.e /users) or an more explicit URL path (i.e. /users/:id).
+     */
     controllers: Controller[];
+    /**
+     * ReferenceTypes is an object of found types (interfaces, type, ...),
+     * and classes which were detected during code analysis.
+     */
     referenceTypes: Resolver.ReferenceTypes;
 }
 
-export type OutputCache = {
-    sourceFilesSize: number;
-} & Output;
-
 export interface Controller {
+    /**
+     * File Location of the Controller.
+     */
     location: string;
+    /**
+     * Array of found method ( class functions )
+     * for a specific controller (class)
+     */
     methods: Method[];
     name: string;
+    /**
+     * The relative URL Path, i.e /users
+     */
     path: string;
+    /**
+     * Allowed Content-Types to pass
+     * data according the definition.
+     *
+     * i.e. ['application/json']
+     */
     consumes: string[];
+    /**
+     * Possible Content-Types to receive
+     * data according the definition.
+     *
+     * i.e. ['application/json']
+     */
     produces: string[];
     responses: Response[];
+    /**
+     * Tags can be used to group controllers
+     * by a name together.
+     *
+     * i.e. ['auth']
+     */
     tags: string[];
     security?: Security[];
 }
@@ -49,8 +87,6 @@ export interface Security {
     name: string;
     scopes?: string[];
 }
-
-export type MethodType = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head' | 'patch';
 
 export interface Method {
     operationId?: string;
@@ -68,9 +104,10 @@ export interface Method {
     summary?: string;
     consumes: string[];
     produces: string[];
-    // todo: check assignment
     hidden: boolean;
 }
+
+export type MethodType = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head' | 'patch';
 
 export interface Extension {
     key: string;
@@ -108,10 +145,8 @@ export interface ArrayParameter extends Parameter {
 }
 
 export interface Validator {
-    [key: string]: {
-        value?: unknown,
-        message?: string
-    };
+    value?: unknown,
+    message?: string
 }
 
 export interface Property {
@@ -127,19 +162,13 @@ export interface Property {
 }
 
 export interface Response {
-    // todo: add in metadata generation
-    name: string;
-    headers?: Resolver.NestedObjectLiteralType | Resolver.RefObjectType;
-
     description: string;
+    examples?: unknown[] | unknown;
+    headers?: Resolver.NestedObjectLiteralType | Resolver.RefObjectType;
+    name: string;
     status: string;
     schema?: Resolver.BaseType;
-    examples?: unknown[] | unknown;
-}
 
-export interface ResponseData {
-    status: string;
-    type: Resolver.BaseType;
 }
 
 

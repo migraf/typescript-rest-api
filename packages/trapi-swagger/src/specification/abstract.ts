@@ -1,5 +1,5 @@
 import {hasOwnProperty} from "@trapi/utils";
-import {Output, Property, Resolver} from "@trapi/metadata";
+import {GeneratorOutput, Property, Resolver} from "@trapi/metadata";
 
 import {SpecificationV2} from "./v2/type";
 import {SpecificationV3} from "./v3/type";
@@ -15,7 +15,7 @@ export abstract class AbstractSpecGenerator<Spec extends SpecificationV2.Spec | 
 
     protected spec: Spec;
 
-    constructor(protected readonly metadata: Output, protected readonly config: Specification.Config) {
+    constructor(protected readonly metadata: GeneratorOutput, protected readonly config: Specification.Config) {
 
     }
 

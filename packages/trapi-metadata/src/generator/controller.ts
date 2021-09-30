@@ -1,6 +1,6 @@
 import {ClassDeclaration, MethodDeclaration, SyntaxKind} from 'typescript';
 import {EndpointGenerator} from './endpoint';
-import {Generator} from './index';
+import {MetadataGenerator} from './index';
 import {MethodGenerator} from './method';
 import {Controller, Method} from "../type";
 
@@ -9,7 +9,7 @@ export class ControllerGenerator extends EndpointGenerator<ClassDeclaration> {
 
     // --------------------------------------------------------------------
 
-    constructor(node: ClassDeclaration, current: Generator) {
+    constructor(node: ClassDeclaration, current: MetadataGenerator) {
         super(node, current);
 
         this.generatePath('CLASS_PATH');

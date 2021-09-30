@@ -5,13 +5,70 @@ export namespace Decorator {
         typeArguments: any[];
     }
 
+    // -------------------------------------------
+
+    export interface Config {
+        /**
+         * Use a pre defined third party TypeRepresentationMap in full scope or
+         * only use a partial amount of defined type representations.
+         *
+         * Default: []
+         */
+        library?: ConfigLibrary;
+        /**
+         * Use all internal defined type representations or only use a subset.
+         * Default: true
+         */
+        internal?: TypeRepresentationConfig;
+        /**
+         * Set up self defined type representations.
+         */
+        map?: Partial<TypeRepresentationMap>;
+    }
+
+    // -------------------------------------------
+
+    /**
+     * These are the current by default supported third party libraries.
+     */
+    export type Library = 'typescript-rest' | 'decorators-express';
+    export type ConfigLibrary = Library | Library[] | Record<string, TypeRepresentationConfig>;
+
+    // -------------------------------------------
+
+    /**
+     * Activate/Deactivate specific type representations of a TypeRepresentationMap.
+     */
+    export type TypeRepresentationConfig = boolean | Type | Type[] | { [K in Type]?: boolean };
+
+    // -------------------------------------------
+
+    /**
+     * This type maps a decorator type to its representation config.
+     */
+    export type TypeRepresentationMap = {
+        [T in keyof TypePropertyMap]: Representation<T> | Array<Representation<T>>;
+    };
+
+    /**
+     * The id property is the name/text of the defined decorator.
+     */
+    export interface Representation<T extends keyof TypePropertyMap> {
+        id: string;
+        properties?: RepresentationProperties<TypePropertyMap[T]>;
+    }
+
+    export type RepresentationProperties<P> = {
+        [K in keyof P]: Property
+    };
+
 
     /**
      * A decorator type is an identifier which is associated
      * to specific decorator names.
      */
 
-    export interface TypePropertyMaps {
+    export interface TypePropertyMap {
         // Class Type
         SWAGGER_TAGS: {
             DEFAULT: string[]
@@ -123,7 +180,7 @@ export namespace Decorator {
         };
     }
 
-    export type Type = keyof TypePropertyMaps;
+    export type Type = keyof TypePropertyMap;
 
     export type MethodHttpVerbType = Extract<Type, 'ALL' | 'GET' | 'POST' | 'PUT' | 'DELETE' |
         'PATCH' | 'OPTIONS' | 'HEAD'>;
@@ -168,35 +225,4 @@ export namespace Decorator {
          */
         srcStrategy?: PropertyStrategy
     }
-
-    // -------------------------------------------
-
-    export type TypeRepresentationMap = {
-        [T in keyof TypePropertyMaps]: Representation<T> | Array<Representation<T>>;
-    };
-
-    export interface Representation<T extends keyof TypePropertyMaps> {
-        id: string;
-        properties?: RepresentationProperties<TypePropertyMaps[T]>;
-    }
-
-    export type RepresentationProperties<P> = {
-        [K in keyof P]: Property
-    };
-
-    // -------------------------------------------
-
-    export type Library = 'typescript-rest' | '@decorators/express';
-
-    export type ConfigLibrary = string | string[] | Record<string, ConfigMappingOption>;
-
-    export interface Config {
-        library?: ConfigLibrary;
-        internal?: ConfigMappingOption;
-        map?: Partial<TypeRepresentationMap>;
-    }
-
-    export type ConfigMappingOption = boolean | Type | Type[] | {
-        [K in Type]?: boolean
-    };
 }

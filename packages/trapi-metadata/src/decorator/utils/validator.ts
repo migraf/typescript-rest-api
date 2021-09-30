@@ -9,7 +9,7 @@ export function useDecoratorConfigValidator() : SchemaOf<Decorator.Config> {
         return validatorInstance;
     }
 
-    const configMappingOptionValidator : SchemaOf<Decorator.ConfigMappingOption> = lazy(value => {
+    const configMappingOptionValidator : SchemaOf<Decorator.TypeRepresentationConfig> = lazy(value => {
         if(typeof value === 'boolean') {
             return boolean();
         }
@@ -28,11 +28,11 @@ export function useDecoratorConfigValidator() : SchemaOf<Decorator.Config> {
         }
 
         return mixed().optional().default(undefined);
-    }) as unknown as SchemaOf<Decorator.ConfigMappingOption>;
+    }) as unknown as SchemaOf<Decorator.TypeRepresentationConfig>;
 
     const useLibraryValidator : SchemaOf<Decorator.ConfigLibrary> = lazy(value => {
         if(typeof value === 'string') {
-            return mixed().oneOf(['typescript-rest', '@decorators/express'] as Decorator.Library[]);
+            return string();
         }
 
         if(Array.isArray(value)) {

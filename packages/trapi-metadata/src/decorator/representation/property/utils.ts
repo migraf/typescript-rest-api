@@ -30,11 +30,11 @@ export function extendRepresentationPropertyConfig(property: Decorator.Property)
 
 export function extractRepresentationPropertyValue<
     T extends Decorator.Type,
-    P extends keyof Decorator.TypePropertyMaps[T]
+    P extends keyof Decorator.TypePropertyMap[T]
     >(
     decorator: Decorator.Data,
     config: Decorator.Property
-): Decorator.TypePropertyMaps[T][P] | undefined {
+): Decorator.TypePropertyMap[T][P] | undefined {
     let items : unknown[] = [];
 
     switch (config.srcArgumentType) {
@@ -58,14 +58,14 @@ export function extractRepresentationPropertyValue<
             case 'element':
                 return undefined;
             case 'array':
-                return [] as unknown as Decorator.TypePropertyMaps[T][P];
+                return [] as unknown as Decorator.TypePropertyMap[T][P];
         }
     }
 
     const data : unknown[] | unknown[][] = srcAmount >= 1 ? items.slice(srcPosition, srcPosition + srcAmount) : items.slice(srcPosition);
 
     if(data.length === 0) {
-        return (config.type === 'array' ? [] : undefined) as unknown as Decorator.TypePropertyMaps[T][P];
+        return (config.type === 'array' ? [] : undefined) as unknown as Decorator.TypePropertyMap[T][P];
     }
 
     const srcStrategy : Decorator.PropertyStrategy = config.srcStrategy ?? 'none';
@@ -74,27 +74,27 @@ export function extractRepresentationPropertyValue<
         case "merge":
             switch (config.type) {
                 case 'array':
-                    return mergeArrayArguments(data) as unknown as Decorator.TypePropertyMaps[T][P];
+                    return mergeArrayArguments(data) as unknown as Decorator.TypePropertyMap[T][P];
                 case 'element':
                 default:
-                    return mergeObjectArguments(data) as Decorator.TypePropertyMaps[T][P];
+                    return mergeObjectArguments(data) as Decorator.TypePropertyMap[T][P];
             }
         case "none":
             // if we dont have any merge strategy, we just return the first argument.
             switch (config.type) {
                 case 'array':
                     const arr = Array.isArray(data[0]) ? data[0] : [data[0]];
-                    return arr as unknown as Decorator.TypePropertyMaps[T][P];
+                    return arr as unknown as Decorator.TypePropertyMap[T][P];
                 case 'element':
                 default:
-                    return data[0] as Decorator.TypePropertyMaps[T][P];
+                    return data[0] as Decorator.TypePropertyMap[T][P];
             }
         default:
             if(typeof config.srcStrategy === 'function') {
-                return config.srcStrategy(data) as Decorator.TypePropertyMaps[T][P];
+                return config.srcStrategy(data) as Decorator.TypePropertyMap[T][P];
             }
 
-            return (config.type === 'array' ? [] : undefined) as unknown as Decorator.TypePropertyMaps[T][P];
+            return (config.type === 'array' ? [] : undefined) as unknown as Decorator.TypePropertyMap[T][P];
     }
 }
 
