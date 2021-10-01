@@ -8,7 +8,7 @@
 type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 
 type OnlyScalar<T> = T extends string | number | boolean | undefined | null ? T : never;
-type OnlySingleObject<T> = T extends { [key: string]: unknown } ? T : never;
+type OnlySingleObject<T> = T extends { [key: string]: any } ? T : never;
 type OnlyObject<T> = Flatten<T> extends OnlySingleObject<Flatten<T>> ? T | Flatten<T> : never;
 
 type ToOneAndMany<T> = T extends Array<infer Item> ? (Item | Item[]) : (T[] | T);
@@ -91,7 +91,7 @@ export enum RequestRecordKey {
 
 // -----------------------------------------------------------
 
-export type RequestRecord<A extends Record<RequestRecordKey, any>> = {
+export type RequestRecord<A extends Record<string, any>> = {
     filter?: FilterRecord<A>,
     fields?: FieldRecord<A>,
     sort?: SortRecord<A>,

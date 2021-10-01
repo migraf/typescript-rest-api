@@ -9,10 +9,10 @@
 import {buildQuery, formatRequestRecord, RequestRecordKey} from "../../../src";
 
 describe('src/request/utils.ts', () => {
-    type ChildEntity = {
-        id: number,
-        name: string,
-        age: number
+    class ChildEntity {
+        id: number;
+        name: string;
+        age: number;
     }
 
     type Entity = {
