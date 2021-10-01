@@ -7,7 +7,7 @@
 
 import {hasOwnProperty} from "../utils";
 import {buildQuery} from "./query";
-import {FieldRecord, RequestRecord, RequestRecordKey, SortRecord} from "./type";
+import {FieldRecord, IncludeRecord, RequestRecord, RequestRecordKey, SortRecord} from "./type";
 
 export function formatRequestRecord<T extends Record<string, any>>(record?: RequestRecord<T>) : string {
     if(typeof record === 'undefined' || record === null) return '';
@@ -30,6 +30,10 @@ export function formatRequestRecord<T extends Record<string, any>>(record?: Requ
 
     if(typeof record[RequestRecordKey.SORT] !== 'undefined') {
         query[RequestRecordKey.SORT] = formatRequestSort(record[RequestRecordKey.SORT]);
+    }
+
+    if(typeof record[RequestRecordKey.INCLUDE] !== 'undefined') {
+        query[RequestRecordKey.INCLUDE] = formatRequestIncludes(record[RequestRecordKey.INCLUDE]);
     }
 
     return buildQuery(query);
@@ -89,4 +93,11 @@ export function formatRequestSort<T>(data: SortRecord<T>) {
         default:
             return flattenNestedProperties(data as Record<string, any>);
     }
+}
+
+export function formatRequestIncludes<T>(data: IncludeRecord<T>) : string[] {
+    const properties : Record<string, boolean> = flattenNestedProperties(data);
+    const keys : string[] = Object.keys(properties);
+
+    return Array.from(new Set(keys));
 }

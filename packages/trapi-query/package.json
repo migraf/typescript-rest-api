@@ -1,7 +1,7 @@
 {
-    "name": "rest-api-utils",
-    "version": "0.0.6",
-    "description": "An tiny library which provides utility types/functions for request and response handling.",
+    "name": "@trapi/query",
+    "version": "0.0.1",
+    "description": "An tiny library which provides utility types/functions for request and response query handling.",
     "main": "./dist/index.js",
     "typings": "dist/index.d.ts",
     "scripts": {
@@ -16,6 +16,7 @@
     },
     "license": "MIT",
     "keywords": [
+        "query",
         "json",
         "json-api",
         "api",
@@ -30,10 +31,12 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Tada5hi/rest-api-utils.git"
+        "url": "git+https://github.com/Tada5hi/typescript-rest-api.git"
     },
-    "dependencies": {
+    "bugs": {
+        "url": "https://github.com/Tada5hi/typescript-rest-api/issues"
     },
+    "homepage": "https://github.com/Tada5hi/typescript-rest-api#readme",
     "devDependencies": {
         "@types/jest": "^27.0.2",
         "@types/node": "^16.0.1",

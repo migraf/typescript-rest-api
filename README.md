@@ -37,7 +37,7 @@ This package contains all functions, to generate a fully featured documentation 
 
 [README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi-swagger#README.md)
 
-### @trapi/data-fetching
+### @trapi/query
 [![npm version](https://badge.fury.io/js/@trapi%2Fdata-fetching.svg)](https://badge.fury.io/js/@trapi%2Fdata-fetching)
 
 This is a library for building `JSON:API` like REST-APIs.

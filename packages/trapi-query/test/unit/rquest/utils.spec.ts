@@ -11,13 +11,15 @@ import {buildQuery, formatRequestRecord, RequestRecordKey} from "../../../src";
 describe('src/request/utils.ts', () => {
     type ChildEntity = {
         id: number,
-        name: string
+        name: string,
+        age: number
     }
 
     type Entity = {
         id: number,
         name: string,
-        child: ChildEntity
+        child: ChildEntity,
+        siblings: Entity[]
     }
 
     it('should format filter record', () => {
@@ -38,6 +40,16 @@ describe('src/request/utils.ts', () => {
         });
 
         expect(record).toEqual(buildQuery({filter: {['child.id']: 1}}));
+
+        record = formatRequestRecord<Entity>({
+            filter: {
+                siblings: {
+                    id: 1
+                }
+            }
+        });
+
+        expect(record).toEqual(buildQuery({filter: {['siblings.id']: 1}}));
 
         record = formatRequestRecord<Entity>({
             filter: {
@@ -125,6 +137,16 @@ describe('src/request/utils.ts', () => {
         });
 
         expect(record).toEqual(buildQuery({sort: ['id', 'name']}));
+
+        record = formatRequestRecord<Entity>({
+            sort: {
+                child: {
+                    id: 'DESC'
+                }
+            }
+        });
+
+        expect(record).toEqual(buildQuery({sort: {'child.id': 'DESC'}}));
     });
 
     it('should format page record', () => {
@@ -136,5 +158,18 @@ describe('src/request/utils.ts', () => {
         });
 
         expect(record).toEqual(buildQuery({[RequestRecordKey.PAGE]: {limit: 10, offset: 0}}));
+    });
+
+    it('should format include record', () => {
+        let record = formatRequestRecord<Entity>({
+            [RequestRecordKey.INCLUDE]: {
+                child: true,
+                siblings: {
+                    child: true
+                }
+            }
+        });
+
+        expect(record).toEqual(buildQuery({[RequestRecordKey.INCLUDE]: ['child', 'siblings.child']}));
     });
 });
