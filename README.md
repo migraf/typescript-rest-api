@@ -30,18 +30,18 @@ This package contains all functions, to generate metadata for TypeScript REST de
 
 [README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi-metadata#README.md)
 
+### @trapi/query
+[![npm version](https://badge.fury.io/js/@trapi%2Fquery.svg)](https://badge.fury.io/js/@trapi%2Fquery)
+
+This is a library for building `JSON:API` like REST-APIs.
+It extends the specification format between request- & response-handling for querying and fetching data.
+
 ### @trapi/swagger
 [![npm version](https://badge.fury.io/js/@trapi%2Fswagger.svg)](https://badge.fury.io/js/@trapi%2Fswagger)
 
 This package contains all functions, to generate a fully featured documentation according the OpenAPI Specification from given metadata.
 
 [README.md](https://github.com/Tada5hi/typescript-rest-api/tree/main/packages/trapi-swagger#README.md)
-
-### @trapi/query
-[![npm version](https://badge.fury.io/js/@trapi%2Fquery.svg)](https://badge.fury.io/js/@trapi%2Fquery)
-
-This is a library for building `JSON:API` like REST-APIs.
-It extends the specification format between request- & response-handling for querying and fetching data.
 
 ### @trapi/utils
 [![npm version](https://badge.fury.io/js/@trapi%2Futils.svg)](https://badge.fury.io/js/@trapi%2Futils)
