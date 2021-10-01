@@ -23,6 +23,50 @@ describe('src/build.ts', () => {
         siblings: Entity[]
     }
 
+    it('should build with different query keys', () => {
+        let record = buildQuery<Entity>({
+            fields: [
+                'id',
+                'name',
+            ],
+            filter: {
+                id: 1
+            },
+            include: {
+                child: true
+            },
+            page: {
+                limit: 20,
+                offset: 0
+            },
+            sort: '-id'
+        }, {
+            key: {
+                filter: 'filters',
+                include: 'includes',
+                page: 'pagination',
+                fields: 'fields',
+                sort: 'sort'
+            }
+        });
+
+        expect(record).toEqual(buildURLQueryString({
+            fields: [
+                'id',
+                'name',
+            ],
+            filters: {
+                id: 1
+            },
+            includes: ['child'],
+            pagination: {
+                limit: 20,
+                offset: 0
+            },
+            sort: '-id'
+        }));
+    });
+
     it('should format filter record', () => {
         let record = buildQuery<Entity>({
             filter: {

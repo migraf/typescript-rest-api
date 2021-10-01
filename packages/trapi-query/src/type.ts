@@ -11,6 +11,14 @@ import {IncludeRecord} from "./includes";
 import {PaginationRecord} from "./pagination";
 import {SortRecord} from "./sort";
 
+export type BuildQueryKeyOption = {
+    [Key in QueryRecordKey]?: string
+}
+
+export type QueryBuildOptions = {
+    key?: BuildQueryKeyOption
+};
+
 // -----------------------------------------------------------
 
 export enum QueryRecordKey {
