@@ -1,4 +1,4 @@
-# @trapi/metadata 🏗
+# @trapi/metadata 📚
 
 [![main](https://github.com/Tada5hi/typescript-rest-api/actions/workflows/main.yml/badge.svg)](https://github.com/Tada5hi/typescript-rest-api/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/Tada5hi/typescript-rest-api/branch/main/graph/badge.svg?token=ZUJ8F5TTSX)](https://codecov.io/gh/Tada5hi/typescript-rest-api)
@@ -170,3 +170,10 @@ console.log(metadata);
 ```
 
 ## Structure
+
+**coming soon**
+
+## Credits
+Parts of this package **@trapi/metadata** code rest on a continued fork repository ([typescript-swagger](https://github.com/Tada5hi/typescript-swagger)) of the
+[typescript-rest-swagger](https://github.com/thiagobustamante/typescript-rest-swagger) library of [thiagobustamante](https://github.com/thiagobustamante)
+and was also inspired by the [tsoa](https://github.com/lukeautry/tsoa) library of [lukeatury](https://github.com/lukeautry).

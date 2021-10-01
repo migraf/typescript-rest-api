@@ -8,7 +8,7 @@
 import {CompilerOptions} from 'typescript';
 import {Config, GeneratorOutput} from "../type";
 import {MetadataGenerator} from "../generator";
-import {getCompilerOptions} from "@trapi/utils";
+import {getCompilerOptions} from "@trapi/metadata-utils";
 
 export function createMetadataGenerator(
     config: Config,

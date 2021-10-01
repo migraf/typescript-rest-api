@@ -833,4 +833,6 @@ How to provide the representation for decorators is described in the section of 
 
 ### Credits
 
-It was originally a fork of the [typescript-rest-swagger](https://github.com/thiagobustamante/typescript-rest-swagger) project.
+Parts of this package **@trapi/swagger** code rest on a continued fork repository ([typescript-swagger](https://github.com/Tada5hi/typescript-swagger)) of the
+[typescript-rest-swagger](https://github.com/thiagobustamante/typescript-rest-swagger) library of [thiagobustamante](https://github.com/thiagobustamante)
+and was also inspired by the [tsoa](https://github.com/lukeautry/tsoa) library of [lukeatury](https://github.com/lukeautry).

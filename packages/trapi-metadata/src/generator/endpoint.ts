@@ -7,15 +7,15 @@
 
 'use strict';
 
-import {ArrayLiteralExpression, isArrayLiteralExpression, Node, SyntaxKind, TypeNode} from 'typescript';
-import {normalizePath} from "@trapi/utils";
+import {ArrayLiteralExpression, isArrayLiteralExpression, Node, TypeNode} from 'typescript';
+import {normalizePath} from "@trapi/metadata-utils";
 
-import {Decorator} from "../decorator/type";
+import {Decorator} from "../decorator";
 import {MetadataGenerator} from './index';
 import {getInitializerValue, TypeNodeResolver} from '../resolver';
-import {isExistJSDocTag} from "../utils/js-doc";
+import {isExistJSDocTag} from "../utils";
 import {Response} from "../type";
-import {getNodeDecorators} from "../decorator/utils/node";
+import {getNodeDecorators} from "../decorator";
 
 export abstract class EndpointGenerator<T extends Node> {
     protected path: string | undefined;

@@ -6,7 +6,7 @@
  */
 
 import * as ts from 'typescript';
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {Decorator} from "../decorator";
 
 import {MetadataGenerator} from '../generator';
@@ -19,7 +19,7 @@ import {ResolverError} from "./error";
 import {
     Resolver
 } from "./type";
-import {getInitializerValue} from "./utils/initializer";
+import {getInitializerValue} from "./utils";
 import {Property} from "../type";
 import {getNodeDecorators} from "../decorator";
 

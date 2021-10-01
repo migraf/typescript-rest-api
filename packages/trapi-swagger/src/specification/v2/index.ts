@@ -9,13 +9,12 @@ import {union} from "lodash";
 import {posix} from "path";
 import {URL} from 'url';
 
-import {hasOwnProperty, normalizePathParameters} from "@trapi/utils";
+import {hasOwnProperty, normalizePathParameters} from "@trapi/metadata-utils";
 import {Method, Parameter, Property, Response, Resolver} from "@trapi/metadata";
 
 import {Specification} from "../type";
 import {SpecificationV2} from "./type";
 import {AbstractSpecGenerator} from "../abstract";
-
 
 export class Version2SpecGenerator extends AbstractSpecGenerator<SpecificationV2.Spec, SpecificationV2.Schema> {
     public getSwaggerSpec(): SpecificationV2.Spec {

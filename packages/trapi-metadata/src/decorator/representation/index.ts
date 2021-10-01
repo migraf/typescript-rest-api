@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {Decorator} from "../type";
 import {extendRepresentationPropertyConfig, extractRepresentationPropertyValue} from "./property/utils";
 import TypePropertyMaps = Decorator.TypePropertyMap;

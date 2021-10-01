@@ -7,16 +7,16 @@
 
 import * as pathUtil from 'path';
 import * as ts from 'typescript';
-import {Decorator} from "../decorator/type";
+import {Decorator} from "../decorator";
 import {EndpointGenerator} from './endpoint';
 import {MetadataGenerator} from './index';
 import {ParameterGenerator} from './parameter';
 import {Resolver, TypeNodeResolver} from "../resolver";
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {Method, MethodType, Parameter, Response} from "../type";
-import {getJSDocDescription, getJSDocTagComment} from '../utils/js-doc';
+import {getJSDocDescription, getJSDocTagComment} from '../utils';
 import MethodHttpVerbKey = Decorator.MethodHttpVerbType;
-import {getNodeDecorators} from "../decorator/utils/node";
+import {getNodeDecorators} from "../decorator";
 
 
 export class MethodGenerator extends EndpointGenerator<ts.MethodDeclaration> {

@@ -5,4 +5,9 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
+export * from './field';
+export * from './flatten';
+export * from './include';
 export * from './object';
+export * from './type';
+export * from './url';

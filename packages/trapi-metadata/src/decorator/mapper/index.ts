@@ -6,7 +6,7 @@
  */
 
 import {Node} from "typescript";
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {RepresentationManager} from "../representation";
 import {Decorator} from "../type";
 import {getDecoratorMap, isMappingTypeIncluded, reduceTypeRepresentationMapping} from "./utils";

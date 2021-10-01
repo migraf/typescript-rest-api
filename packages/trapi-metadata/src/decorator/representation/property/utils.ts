@@ -8,7 +8,7 @@
 import {
     Expression
 } from "typescript";
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {Decorator} from "../../type";
 import {getInitializerValue} from "../../../resolver";
 

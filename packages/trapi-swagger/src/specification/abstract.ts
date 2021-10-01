@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {GeneratorOutput, Property, Resolver} from "@trapi/metadata";
 
 import {SpecificationV2} from "./v2/type";

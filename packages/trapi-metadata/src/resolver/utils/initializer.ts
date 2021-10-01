@@ -7,7 +7,7 @@
 
 import * as ts from 'typescript';
 import {Resolver} from "../type";
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 
 export function getInitializerValue(
     initializer?: ts.Expression,

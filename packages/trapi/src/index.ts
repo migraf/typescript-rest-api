@@ -5,11 +5,9 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {setFlagsFromString} from "v8";
-
 export * from './cli';
 export * from './utils';
 
 export {createMetadataGenerator, MetadataGenerator, generateMetadata} from '@trapi/metadata';
-export {RequestRecord, formatRequestRecord} from "@trapi/query";
+export {QueryRecord, buildQuery} from "@trapi/query";
 export {createSpecGenerator, Version3SpecGenerator, Version2SpecGenerator, Specification} from "@trapi/swagger";

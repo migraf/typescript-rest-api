@@ -6,7 +6,7 @@
  */
 
 import {Identifier, isJSDocParameterTag, JSDoc, JSDocTag, Node, SyntaxKind} from 'typescript';
-import {hasOwnProperty} from "@trapi/utils";
+import {hasOwnProperty} from "@trapi/metadata-utils";
 import {ResolverError} from "../resolver";
 
 // -----------------------------------------

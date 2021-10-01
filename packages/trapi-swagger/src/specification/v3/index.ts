@@ -6,7 +6,7 @@
  */
 
 import {URL} from "url";
-import {hasOwnProperty, normalizePathParameters} from "@trapi/utils";
+import {hasOwnProperty, normalizePathParameters} from "@trapi/metadata-utils";
 import {Method, Parameter, Property, Resolver, Response} from "@trapi/metadata";
 import {Specification} from "../type";
 import {SpecificationV3} from "./type";

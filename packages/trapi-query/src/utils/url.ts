@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-export function buildQuery(data?: any, withQuestionMark: boolean = true) {
+export function buildURLQueryString(data?: any, withQuestionMark: boolean = true) {
     if (typeof data === 'undefined' || data === null) return '';
 
     // If the data is already a string, return it as-is
