@@ -7,7 +7,8 @@
     "scripts": {
         "build": "rm -rf ./dist && tsc -p tsconfig.build.json",
         "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
-        "test:coverage": "cross-env NODE_ENV=test jest --config ./test/jest.config.js --coverage"
+        "test:coverage": "cross-env NODE_ENV=test jest --config ./test/jest.config.js --coverage",
+        "prepublishOnly": "npm run build"
     },
     "author": {
         "name": "Peter Placzek",

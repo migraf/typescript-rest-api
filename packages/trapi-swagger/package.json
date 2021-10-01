@@ -29,7 +29,7 @@
         "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
         "test:coverage": "cross-env NODE_ENV=test jest --config ./test/jest.config.js --coverage",
         "tsc": "tsc",
-        "preblushOnly": "tsc -d"
+        "preblushOnly": "npm run build"
     },
     "devDependencies": {
         "@types/jest": "^27.0.1",

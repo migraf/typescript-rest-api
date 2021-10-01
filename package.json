@@ -38,8 +38,7 @@
         "clean": "lerna run clean",
         "build": "lerna run build",
         "test": "lerna run test",
-        "pub": "lerna publish",
-        "prepublishOnly": "lerna run build"
+        "pub": "lerna publish"
     },
     "devDependencies": {
         "codecov": "^3.8.3",
