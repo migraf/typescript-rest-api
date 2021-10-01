@@ -10,6 +10,5 @@ coverage
 npm-debug.log*
 ../../.idea
 reports
-writable
 coveralls.yml
 tsconfig.tsbuildinfo
