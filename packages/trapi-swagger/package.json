@@ -55,5 +55,6 @@
     "engines": {
         "node": ">=6.0.0"
     },
-    "engineStrict": true
+    "engineStrict": true,
+    "gitHead": "f931516f93b31fa0fc3c04926713a6cc91680f39"
 }
