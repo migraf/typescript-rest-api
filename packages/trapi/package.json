@@ -1,6 +1,6 @@
 {
     "name": "trapi",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "The main package and contains bundled functionality of all other package and a CLI to interact with them.",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -8,8 +8,7 @@
         "start": "tsc -p tsconfig.build.json -w",
         "build": "npm run clean && tsc -p tsconfig.build.json",
         "clean": "rimraf dist",
-        "test": "cross-env NODE_ENV=test jest --config ./test/jest.config.js",
-        "preblushOnly": "tsc -d"
+        "preblushOnly": "npm run build"
     },
     "keywords": [
         "typescript",
@@ -34,11 +33,11 @@
     },
     "dependencies": {
         "@trapi/metadata": "^0.1.1",
-        "@trapi/query": "^1.0.0",
+        "@trapi/query": "^1.0.1",
         "@trapi/swagger": "^0.2.1",
         "@trapi/utils": "^0.0.2",
         "argparse": "^1.0.10",
         "typescript": "^4.4.3"
     },
-    "gitHead": "f931516f93b31fa0fc3c04926713a6cc91680f39"
+    "gitHead": "4355a7f0d19c3df26929981011a621e7f70590e6"
 }

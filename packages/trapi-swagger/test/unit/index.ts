@@ -5,12 +5,12 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {Output} from "@trapi/metadata";
+import {GeneratorOutput} from "@trapi/metadata";
 import {createSpecGenerator, Version3SpecGenerator} from "../../src";
 
 const jsonata = require('jsonata');
 
-const metadata : Output = require('../data/metadata.json');
+const metadata : GeneratorOutput = require('../data/metadata.json');
 
 const specGenerator = createSpecGenerator(metadata, {
     host: 'http://localhost:3000/'
