@@ -105,7 +105,9 @@ export async function getAPIUsers(record: QueryRecord<User>): Promise<ResponsePa
         }
     };
 
-    // console.log(tranformQueryRecord);
+    const query = buildQuery(record);
+
+    // console.log(query);
     // ?filter[id]=1&fields=id,name&page[limit]=20&page[offset]=10&sort=-id&include=profile
 
     let response = await getAPIUsers(record);
