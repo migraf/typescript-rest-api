@@ -16,7 +16,7 @@ export type IncludesOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[],
     includeParents?: boolean | string[] | string,
-    queryAlias?: string
+    defaultAlias?: string
 };
 
 // -----------------------------------------------------------

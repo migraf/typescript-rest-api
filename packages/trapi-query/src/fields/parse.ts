@@ -16,12 +16,12 @@ export function buildDomainFields(
     data: Record<string, string[]> | string[],
     options?: FieldsOptions
 ) {
-    options = options ?? {queryAlias: DEFAULT_ALIAS_ID};
+    options = options ?? {defaultAlias: DEFAULT_ALIAS_ID};
 
     let domainFields : Record<string, string[]> = {};
 
     if(Array.isArray(data)) {
-        domainFields[options.queryAlias] = data;
+        domainFields[options.defaultAlias] = data;
     } else {
         domainFields = data;
     }
@@ -45,7 +45,7 @@ export function parseFields(
 
     options.aliasMapping ??= {};
     options.includes ??= [];
-    options.queryAlias ??= DEFAULT_ALIAS_ID;
+    options.defaultAlias ??= DEFAULT_ALIAS_ID;
 
     let allowedDomainFields : Record<string, string[]> | undefined;
     if(options.allowed) {
@@ -62,11 +62,11 @@ export function parseFields(
     }
 
     if(prototype === '[object String]') {
-        data = {[options.queryAlias]: data};
+        data = {[options.defaultAlias]: data};
     }
 
     if(prototype === '[object Array]') {
-        data = {[options.queryAlias]: data};
+        data = {[options.defaultAlias]: data};
     }
 
     let transformed : FieldsParsed = [];
@@ -107,7 +107,7 @@ export function parseFields(
         // is not default domain && includes are defined?
         if(
             alias !== DEFAULT_ALIAS_ID &&
-            alias !== options.queryAlias &&
+            alias !== options.defaultAlias &&
             typeof options.includes !== 'undefined'
         ) {
             const includesMatched = options.includes.filter(include => include.alias === alias);

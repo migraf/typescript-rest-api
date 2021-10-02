@@ -7,7 +7,7 @@
 
 import {
     buildObjectFromStringArray,
-    buildFieldWithQueryAlias,
+    buildFieldWithAlias,
     FieldDetails,
     getFieldDetails,
     isFieldAllowedByIncludes
@@ -98,16 +98,16 @@ export function parseFilters(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {queryAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 
-        const keyWithQueryAlias : string = buildFieldWithQueryAlias(fieldDetails, options.defaultAlias);
+        const keyWithAlias : string = buildFieldWithAlias(fieldDetails, options.defaultAlias);
 
         if(
             typeof options.allowed !== 'undefined' &&
             options.allowed.indexOf(key) === -1 &&
-            options.allowed.indexOf(keyWithQueryAlias) === -1
+            options.allowed.indexOf(keyWithAlias) === -1
         ) {
             continue;
         }
@@ -123,7 +123,7 @@ export function parseFilters(
                 fieldDetails.alias
             ;
 
-        temp[keyWithQueryAlias] = {
+        temp[keyWithAlias] = {
             key: fieldDetails.name,
             ...(alias ? {alias} : {}),
             value: value as string | boolean | number

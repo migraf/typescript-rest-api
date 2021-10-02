@@ -137,7 +137,7 @@ export function parseIncludes(
     return items
         .map(relation => {
             return {
-                property: relation.includes('.') ? relation.split('.').slice(-2).join('.') : (options.queryAlias ? options.queryAlias + '.' + relation : relation),
+                property: relation.includes('.') ? relation.split('.').slice(-2).join('.') : (options.defaultAlias ? options.defaultAlias + '.' + relation : relation),
                 alias: relation.split('.').pop()
             };
         });

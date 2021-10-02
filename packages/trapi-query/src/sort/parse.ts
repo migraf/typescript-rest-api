@@ -6,7 +6,7 @@
  */
 
 import {
-    buildFieldWithQueryAlias,
+    buildFieldWithAlias,
     buildObjectFromStringArray,
     FieldDetails,
     getFieldDetails,
@@ -105,17 +105,17 @@ export function parseSort(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {queryAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 
-        const keyWithQueryAlias : string = buildFieldWithQueryAlias(fieldDetails, options.defaultAlias);
+        const keyWithAlias : string = buildFieldWithAlias(fieldDetails, options.defaultAlias);
 
         if(
             typeof options.allowed !== 'undefined' &&
             !isMultiDimensionalArray(options.allowed) &&
             options.allowed.indexOf(key) === -1 &&
-            options.allowed.indexOf(keyWithQueryAlias) === -1
+            options.allowed.indexOf(keyWithAlias) === -1
         ) {
             continue;
         }
@@ -131,7 +131,7 @@ export function parseSort(
                 fieldDetails.alias
         ;
 
-        items[keyWithQueryAlias] = {
+        items[keyWithAlias] = {
             key: fieldDetails.name,
             ...(alias ? {alias} : {}),
             value: direction

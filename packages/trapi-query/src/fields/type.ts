@@ -14,7 +14,7 @@ export type FieldsOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: Record<string, string[]> | string[],
     includes?: IncludesParsed,
-    queryAlias?: string
+    defaultAlias?: string
 };
 
 export type FieldParsed = {

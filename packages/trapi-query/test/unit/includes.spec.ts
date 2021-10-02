@@ -27,7 +27,7 @@ describe('src/includes/index.ts', () => {
         // with nested alias
         allowedIncludes = parseIncludes(['abc.photos'], {
             allowed: ['profile.photos'],
-            queryAlias: 'user',
+            defaultAlias: 'user',
             aliasMapping: {'abc.photos': 'profile.photos'}
         });
         expect(allowedIncludes).toEqual([
@@ -38,7 +38,7 @@ describe('src/includes/index.ts', () => {
         // with nested alias & includeParents
         allowedIncludes = parseIncludes(['abc.photos'], {
             allowed: ['profile.photos'],
-            queryAlias: 'user',
+            defaultAlias: 'user',
             aliasMapping: {'abc.photos': 'profile.photos'},
             includeParents: false
         });
@@ -49,7 +49,7 @@ describe('src/includes/index.ts', () => {
         // with nested alias & limited includeParents ( no user_roles rel)
         allowedIncludes = parseIncludes(['abc.photos', 'user_roles.role'], {
             allowed: ['profile.photos', 'user_roles.role'],
-            queryAlias: 'user',
+            defaultAlias: 'user',
             aliasMapping: {'abc.photos': 'profile.photos'},
             includeParents: ['profile.**']
         });
@@ -73,14 +73,14 @@ describe('src/includes/index.ts', () => {
         expect(allowedIncludes).toEqual([{property: 'profile', alias: 'profile'}]);
 
         // nested data with alias
-        allowedIncludes = parseIncludes(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos'], queryAlias: 'user'});
+        allowedIncludes = parseIncludes(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos'], defaultAlias: 'user'});
         expect(allowedIncludes).toEqual([
             {property: 'user.profile', alias: 'profile'},
             {property: 'profile.photos', alias: 'photos'}
         ]);
 
         // nested data with alias
-        allowedIncludes = parseIncludes(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos**'], queryAlias: 'user'});
+        allowedIncludes = parseIncludes(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos**'], defaultAlias: 'user'});
         expect(allowedIncludes).toEqual([
             {property: 'user.profile', alias: 'profile'},
             {property: 'profile.photos', alias: 'photos'},

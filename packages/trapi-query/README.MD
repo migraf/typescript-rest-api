@@ -241,14 +241,14 @@ export async function getUsers(req: Request, res: Response) {
     });
 
     const fieldsParsed = parseFields(fields, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
         includes: includesParsed
     });
 
     const filterParsed = parseFilters(filter, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
         includes: includesParsed
     });
@@ -258,7 +258,7 @@ export async function getUsers(req: Request, res: Response) {
     });
 
     const sortParsed = parseSort(sort, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
         includes: includesParsed
     });
@@ -328,11 +328,11 @@ export async function getUsers(req: Request, res: Response) {
 
     const output: QueryParseOutput = parseQuery({
         [QueryKey.FIELDS]: {
-            queryAlias: 'user',
+            defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id', 'profile.avatar']
         },
         [QueryKey.FILTER]: {
-            queryAlias: 'user',
+            defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id']
         },
         [QueryKey.INCLUDE]: {
@@ -342,7 +342,7 @@ export async function getUsers(req: Request, res: Response) {
             maxLimit: 20
         },
         [QueryKey.SORT]: {
-            queryAlias: 'user',
+            defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id']
         }
     });
@@ -415,19 +415,19 @@ export async function getUsers(req: Request, res: Response) {
     // -----------------------------------------------------
 
     const includes = applyIncludes(query, include, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['profile']
     });
 
     applySort(query, sort, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
         includes: includes
     });
 
     applyFields(query, fields, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // porfile fields can only be included, if the relation 'profile' is included.
         includes: includes
@@ -435,7 +435,7 @@ export async function getUsers(req: Request, res: Response) {
 
     // only allow filtering users by id & name
     applyFilters(query, filter, {
-        queryAlias: 'user',
+        defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'],
         // porfile.id can only be used as a filter, if the relation 'profile' is included.
         includes: includes
@@ -668,6 +668,11 @@ export type QueryParseOutput = {
 #### FieldsParsed
 
 ```typescript
+export enum FieldOperator {
+    INCLUDE = '+',
+    EXCLUDE = '-'
+}
+
 export type FieldParsed = {
     key: string,
     alias?: string,
@@ -741,7 +746,7 @@ export type FieldsOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: Record<string, string[]> | string[],
     includes?: IncludesParsed,
-    queryAlias?: string
+    defaultAlias?: string
 };
 ```
 
@@ -751,7 +756,7 @@ export type FiltersOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[],
     includes?: IncludesParsed,
-    queryAlias?: string,
+    defaultAlias?: string,
     queryBindingKeyFn?: (key: string) => string
 };
 ```
@@ -762,7 +767,7 @@ export type IncludesOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[],
     includeParents?: boolean | string[] | string
-    queryAlias?: string,
+    defaultAlias?: string,
 };
 ```
 
@@ -779,6 +784,6 @@ export type SortOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[] | string[][],
     includes?: IncludesParsed,
-    queryAlias?: string
+    defaultAlias?: string
 };
 ```

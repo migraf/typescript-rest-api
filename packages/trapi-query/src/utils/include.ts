@@ -11,7 +11,7 @@ import {FieldDetails, getFieldDetails} from "./field";
 export function isFieldAllowedByIncludes(
     field: string | FieldDetails,
     includes?: IncludesParsed,
-    options?: {queryAlias?: string}
+    options?: {defaultAlias?: string}
 ) : boolean {
     if(typeof includes === 'undefined') {
         return true;
@@ -31,8 +31,8 @@ export function isFieldAllowedByIncludes(
 
     // check if field is associated to the default domain.
     if(
-        details.path === options.queryAlias ||
-        details.alias === options.queryAlias
+        details.path === options.defaultAlias ||
+        details.alias === options.defaultAlias
     ) {
         return true;
     }
@@ -40,9 +40,9 @@ export function isFieldAllowedByIncludes(
     return includes.filter(include => include.alias === details.path || include.alias === details.alias).length > 0;
 }
 
-export function buildFieldWithQueryAlias(
+export function buildFieldWithAlias(
     field: string | FieldDetails,
-    queryAlias?: string
+    defaultAlias?: string
 ) : string {
 
     const details : FieldDetails = typeof field === 'string' ? getFieldDetails(field) : field;
@@ -52,7 +52,7 @@ export function buildFieldWithQueryAlias(
         typeof details.alias === 'undefined'
     ) {
         // try to use query alias
-        return queryAlias ? queryAlias + '.' + details.name : details.name;
+        return defaultAlias ? defaultAlias + '.' + details.name : details.name;
     }
 
     return details.alias + '.' + details.name;
