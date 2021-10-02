@@ -12,7 +12,7 @@ import {
     getFieldDetails,
     isFieldAllowedByIncludes
 } from "../utils";
-import {FilterOperator, FilterOperatorLabel, FiltersOptions, FiltersTransformed, FilterTransformed} from "./type";
+import {FilterOperator, FilterOperatorLabel, FiltersOptions, FiltersParsed, FilterParsed} from "./type";
 
 // --------------------------------------------------
 
@@ -35,7 +35,7 @@ function buildOptions(options?: FiltersOptions) : FiltersOptions {
 export function parseFilters(
     data: unknown,
     options?: FiltersOptions
-) : FiltersTransformed {
+) : FiltersParsed {
     options = options ?? {};
 
     // If it is an empty array nothing is allowed
@@ -130,7 +130,7 @@ export function parseFilters(
         };
     }
 
-    const items : FiltersTransformed = [];
+    const items : FiltersParsed = [];
 
     /* istanbul ignore next */
     for (const key in temp) {
@@ -139,7 +139,7 @@ export function parseFilters(
             continue;
         }
 
-        const filter : FilterTransformed = {
+        const filter : FilterParsed = {
             ...(temp[key].alias ? {alias:  temp[key].alias} : {}),
             key: temp[key].key,
             value:  temp[key].value

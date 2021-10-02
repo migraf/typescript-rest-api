@@ -6,7 +6,7 @@
  */
 
 
-import {buildQuery, FilterOperator, QueryKey} from "../../src";
+import {buildQuery, FilterOperator, QueryKey, SortDirection} from "../../src";
 import {buildURLQueryString} from "../../src/utils";
 
 describe('src/build.ts', () => {
@@ -139,7 +139,7 @@ describe('src/build.ts', () => {
     it('should format sort record', () => {
         let record = buildQuery<Entity>({
             sort: {
-                id: 'DESC'
+                id: SortDirection.DESC
             }
         });
 
@@ -160,7 +160,7 @@ describe('src/build.ts', () => {
         record = buildQuery<Entity>({
             sort: {
                 child: {
-                    id: 'DESC'
+                    id: SortDirection.DESC
                 }
             }
         });

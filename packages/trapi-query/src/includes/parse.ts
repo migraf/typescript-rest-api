@@ -8,7 +8,7 @@
 import minimatch from 'minimatch';
 import {buildObjectFromStringArray} from "../utils";
 
-import {IncludesOptions, IncludesTransformed} from "./type";
+import {IncludesOptions, IncludesParsed} from "./type";
 
 // --------------------------------------------------
 
@@ -60,7 +60,7 @@ function includeParents(
 export function parseIncludes(
     data: unknown,
     options?: IncludesOptions
-): IncludesTransformed {
+): IncludesParsed {
     options ??= {};
 
     // If it is an empty array nothing is allowed

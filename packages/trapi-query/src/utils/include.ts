@@ -5,12 +5,12 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {IncludesTransformed} from "../includes";
+import {IncludesParsed} from "../includes";
 import {FieldDetails, getFieldDetails} from "./field";
 
 export function isFieldAllowedByIncludes(
     field: string | FieldDetails,
-    includes?: IncludesTransformed,
+    includes?: IncludesParsed,
     options?: {queryAlias?: string}
 ) : boolean {
     if(typeof includes === 'undefined') {

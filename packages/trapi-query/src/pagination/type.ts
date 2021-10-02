@@ -8,7 +8,7 @@
 export type PaginationOptions = {
     maxLimit?: number
 };
-export type PaginationTransformed = {
+export type PaginationParsed = {
     limit?: number,
     offset?: number
 };

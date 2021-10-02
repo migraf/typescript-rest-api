@@ -10,7 +10,7 @@ import {
     DEFAULT_ALIAS_ID,
     FieldOperator,
     FieldsOptions,
-    FieldsTransformed,
+    FieldsParsed,
     parseFields,
     parseIncludes
 } from "../../src";
@@ -41,50 +41,50 @@ describe('src/fields/index.ts', () => {
 
         // fields as array
         data = parseFields(['id'], options);
-        expect(data).toEqual([{key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
 
         // fields as string
         data = parseFields('id', options);
-        expect(data).toEqual([{key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
 
         // multiple fields but only one valid field
         data = parseFields(['id', 'avatar'], options);
-        expect(data).toEqual([{key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
 
         // field as string and append fields
         data = parseFields('+id', options);
-        expect(data).toEqual([{key: 'id', operator: FieldOperator.INCLUDE}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id', operator: FieldOperator.INCLUDE}] as FieldsParsed);
 
         data = parseFields('-id', options);
-        expect(data).toEqual([{key: 'id', operator: FieldOperator.EXCLUDE}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id', operator: FieldOperator.EXCLUDE}] as FieldsParsed);
 
         // fields as string and append fields
         data = parseFields('id,+name', options);
-        expect(data).toEqual([{key: 'id'}, {key: 'name', operator: FieldOperator.INCLUDE}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id'}, {key: 'name', operator: FieldOperator.INCLUDE}] as FieldsParsed);
 
         // empty allowed -> allows nothing
         data = parseFields('id', {...options, allowed: []});
-        expect(data).toEqual([] as FieldsTransformed);
+        expect(data).toEqual([] as FieldsParsed);
 
         // undefined allowed -> allows everything
         data = parseFields('id', {...options, allowed: undefined});
-        expect(data).toEqual([{key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
 
         // field not allowed
         data = parseFields('avatar', options);
-        expect(data).toEqual([] as FieldsTransformed);
+        expect(data).toEqual([] as FieldsParsed);
 
         // field with invalid value
         data = parseFields({id: null}, options);
-        expect(data).toEqual([] as FieldsTransformed);
+        expect(data).toEqual([] as FieldsParsed);
 
         // if only one domain is given, try to parse request field to single domain.
         data = parseFields( ['id'], {allowed: {domain: ['id']}});
-        expect(data).toEqual([{alias: 'domain', key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{alias: 'domain', key: 'id'}] as FieldsParsed);
 
         // if multiple possibilities are available for request field, than parse to none
         data = parseFields( ['id'], {allowed: {domain: ['id'], domain2: ['id']}});
-        expect(data).toEqual([] as FieldsTransformed);
+        expect(data).toEqual([] as FieldsParsed);
     });
 
     it('should transform fields with includes', () => {
@@ -92,11 +92,11 @@ describe('src/fields/index.ts', () => {
 
         // simple domain match
         let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, includes: includes});
-        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
 
         // only single domain match
         data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, includes: includes});
-        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsTransformed);
+        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
     });
 
     it('should transform allowed fields', () => {

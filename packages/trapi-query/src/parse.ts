@@ -7,10 +7,10 @@
 
 import {parseFields} from "./fields";
 import {parseFilters} from "./filters";
-import {parseIncludes} from "./includes";
+import {IncludesParsed, parseIncludes} from "./includes";
 import {parsePagination} from "./pagination";
 import {parseSort} from "./sort";
-import {QueryParseOptions, QueryParseOutput, QueryKey, QueryParseInput} from "./type";
+import {QueryKey, QueryKeyOption, QueryParseInput, QueryParseOptions, QueryParseOutput} from "./type";
 
 export function parseQuery(
     input: QueryParseInput,
@@ -22,35 +22,56 @@ export function parseQuery(
 
     const nonEnabled : boolean = Object.keys(options).length === 0;
 
-    for(let key in QueryKey) {
-        const enabled = !!options[QueryKey[key]] ||
+    let includes : IncludesParsed | undefined;
+    if(!!options[QueryKey.INCLUDE] || nonEnabled) {
+        includes = parseIncludes(input[QueryKey.INCLUDE], getOptionsForQueryKey(options, QueryKey.INCLUDE));
+        output[QueryKey.INCLUDE] = includes;
+    }
+
+    const keys : QueryKey[] = [
+        QueryKey.FIELDS,
+        QueryKey.FILTER,
+        QueryKey.PAGE,
+        QueryKey.SORT
+    ];
+
+    for(let i=0; i< keys.length; i++) {
+        const enabled = !!options[keys[i]] ||
             nonEnabled;
 
         if(!enabled) continue;
 
-        const keyOptions = typeof options[QueryKey[key]] === 'boolean' ||
-            typeof options[QueryKey[key]] === 'undefined' ?
-                {} :
-                options[QueryKey[key]];
+        const key : QueryKey = keys[i];
 
-        switch (QueryKey[key]){
+        switch (key){
             case QueryKey.FIELDS:
-                output[QueryKey[key]] = parseFields(input[QueryKey[key]], keyOptions);
+                output[key] = parseFields(input[key], getOptionsForQueryKey(options, key, includes));
                 break;
             case QueryKey.FILTER:
-                output[QueryKey[key]] = parseFilters(input[QueryKey[key]], keyOptions);
-                break;
-            case QueryKey.INCLUDE:
-                output[QueryKey[key]] = parseIncludes(input[QueryKey[key]], keyOptions);
+                output[key] = parseFilters(input[key], getOptionsForQueryKey(options, key, includes));
                 break;
             case QueryKey.PAGE:
-                output[QueryKey[key]] = parsePagination(input[QueryKey[key]], keyOptions);
+                output[key] = parsePagination(input[key], getOptionsForQueryKey(options, key, includes));
                 break;
             case QueryKey.SORT:
-                output[QueryKey[key]] = parseSort(input[QueryKey[key]], keyOptions);
+                output[key] = parseSort(input[key], getOptionsForQueryKey(options, key, includes));
                 break;
         }
     }
 
     return output;
+}
+
+function getOptionsForQueryKey<K extends QueryKey>(
+    options: QueryParseOptions,
+    key: K,
+    includeParsed?: K extends Extract<QueryKey,QueryKey.INCLUDE> ? never : IncludesParsed
+) : QueryKeyOption<K> {
+    return typeof options[key] === 'boolean' ||
+    typeof options[key] === 'undefined' ?
+        {} as QueryKeyOption<K> :
+        {
+            ...(options[key] as QueryKeyOption<K>),
+            ...(key === QueryKey.INCLUDE ? {} : {includes: includeParsed})
+        };
 }

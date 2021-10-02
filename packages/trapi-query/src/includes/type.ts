@@ -7,11 +7,11 @@
 
 import {Flatten, OnlyObject} from "../utils";
 
-export type IncludeTransformed = {
+export type IncludeParsed = {
     property: string,
     alias: string
 };
-export type IncludesTransformed = IncludeTransformed[];
+export type IncludesParsed = IncludeParsed[];
 export type IncludesOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[],

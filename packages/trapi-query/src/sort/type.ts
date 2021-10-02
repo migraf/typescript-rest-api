@@ -5,17 +5,26 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {IncludesTransformed} from "../includes";
+import {IncludesParsed} from "../includes";
 import {Flatten, KeyWithOptionalPrefix, OnlyObject, OnlyScalar} from "../utils";
 
 export type SortOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[] | string[][],
-    includes?: IncludesTransformed,
-    queryAlias?: string,
+    includes?: IncludesParsed,
+    defaultAlias?: string,
 };
-export type SortDirection = 'ASC' | 'DESC';
-export type SortTransformed = Record<string, SortDirection>;
+export enum SortDirection {
+    ASC = 'ASC',
+    DESC = 'DESC'
+}
+
+export type SortElementParsed = {
+    alias?: string,
+    key: string,
+    value: SortDirection
+}
+export type SortParsed = SortElementParsed[];
 
 // -----------------------------------------------------------
 

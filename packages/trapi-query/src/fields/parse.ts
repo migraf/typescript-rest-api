@@ -6,7 +6,7 @@
  */
 
 import {hasOwnProperty} from "../utils";
-import {DEFAULT_ALIAS_ID, FieldOperator, FieldsOptions, FieldsTransformed, FieldTransformed} from "./type";
+import {DEFAULT_ALIAS_ID, FieldOperator, FieldsOptions, FieldsParsed, FieldParsed} from "./type";
 
 // --------------------------------------------------
 
@@ -32,7 +32,7 @@ export function buildDomainFields(
 export function parseFields(
     data: unknown,
     options: FieldsOptions
-): FieldsTransformed {
+): FieldsParsed {
     options ??= {};
 
     // If it is an empty array nothing is allowed
@@ -69,7 +69,7 @@ export function parseFields(
         data = {[options.queryAlias]: data};
     }
 
-    let transformed : FieldsTransformed = [];
+    let transformed : FieldsParsed = [];
 
     for (const alias in (data as Record<string, string[] | string>)) {
         if (!data.hasOwnProperty(alias) || typeof alias !== 'string') {
@@ -79,7 +79,7 @@ export function parseFields(
         const fieldsArr : string[] = buildArrayFieldsRepresentation((data as Record<string, string[]>)[alias]);
         if(fieldsArr.length === 0) continue;
 
-        let fields : FieldTransformed[] = [];
+        let fields : FieldParsed[] = [];
 
         for(let i=0; i<fieldsArr.length; i++) {
             let operator: FieldOperator | undefined;

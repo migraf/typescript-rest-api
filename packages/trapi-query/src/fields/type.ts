@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {IncludesTransformed} from "../includes";
+import {IncludesParsed} from "../includes";
 import {Flatten, KeyWithOptionalPrefix, OnlyObject, ToOneAndMany} from "../utils";
 
 export const DEFAULT_ALIAS_ID: string = '__DEFAULT__';
@@ -13,17 +13,17 @@ export const DEFAULT_ALIAS_ID: string = '__DEFAULT__';
 export type FieldsOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: Record<string, string[]> | string[],
-    includes?: IncludesTransformed,
+    includes?: IncludesParsed,
     queryAlias?: string
 };
 
-export type FieldTransformed = {
+export type FieldParsed = {
     key: string,
     alias?: string,
     operator?: FieldOperator
 };
 
-export type FieldsTransformed = FieldTransformed[];
+export type FieldsParsed = FieldParsed[];
 
 // -----------------------------------------------------------
 

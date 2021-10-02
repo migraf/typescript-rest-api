@@ -8,10 +8,18 @@
 This is a library for building `JSON:API` like REST-APIs.
 
 It extends the specification format between request- & response-handling for querying and fetching data according the following query parameters:
+- `fields` Return only specific fields or extend the default selection.
 - `filter`: Filter the data set, according specific criteria.
 - `include` Include related resources of the primary data.
 - `page` Limit the number of resources returned of the whole set.
-- `fields` Return only specific fields or extend the default selection.
+- `sort` Sort the resources according one or more keys in asc/desc direction.
+
+---
+**Important NOTE**
+
+The examples in the [Parsing](#parsing-) section, are not available with current release of the `typeorm-extension@0.3.0` library.
+
+---
 
 **Table of Contents**
 
@@ -31,12 +39,12 @@ It extends the specification format between request- & response-handling for que
   - [Parse](#parse)
     - [QueryParseOption](#queryparseoptions)
     - [QueryParseOutput](#queryparseoutput)
-  - [Transformed](#transformed)
-      - [FieldsTransformed](#fieldstransformed)
-      - [FiltersTransformed](#filterstransformed)
-      - [IncludeTransformed](#includestransformed)
-      - [PaginationTransformed](#paginationtransformed)
-      - [SortTransformed](#sorttransformed)
+  - [Parsed](#parsed)
+      - [FieldsParsed](#fieldsparsed)
+      - [FiltersParsed](#filtersparsed)
+      - [IncludeParsed](#includesparsed)
+      - [PaginationParsed](#paginationparsed)
+      - [SortParsed](#sortparsed)
   - [Options](#options)
       - [FieldsOptions](#fieldsoptions)
       - [FiltersOptions](#filtersoptions)
@@ -176,7 +184,7 @@ export class Profile {
 }
 ```
 In this example [typeorm](https://www.npmjs.com/package/typeorm) is used as the object-relational mapping (ORM) and [typeorm-extension](https://www.npmjs.com/package/typeorm-extension) is used
-to apply the transformed request query parameters on the db query.
+to apply the parsed request query parameters on the db query.
 
 When you use [express](https://www.npmjs.com/package/express) or another library, you can use the API utils accordingly to the
 following code snippet:
@@ -197,7 +205,7 @@ import {
 } from "@trapi/query";
 
 import {
-    applyTransformed
+    applyParsed
 } from "typeorm-extension";
 
 /**
@@ -228,41 +236,41 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const includesTransformed = parseIncludes(include, {
+    const includesParsed = parseIncludes(include, {
         allowed: 'profile'
     });
 
-    const fieldsTransformed = parseFields(fields, {
+    const fieldsParsed = parseFields(fields, {
         queryAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includesTransformed
+        includes: includesParsed
     });
 
-    const filterTransformed = parseFilters(filter, {
+    const filterParsed = parseFilters(filter, {
         queryAlias: 'user',
         allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includesTransformed
+        includes: includesParsed
     });
 
-    const pageTransformed = parsePagination(page, {
+    const pageParsed = parsePagination(page, {
         maxLimit: 20
     });
 
-    const sortTransformed = parseSort(sort, {
+    const sortParsed = parseSort(sort, {
         queryAlias: 'user',
         allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includesTransformed
+        includes: includesParsed
     });
 
-    const transformed = applyTransformed(query, {
-        [QueryKey.FIELDS]: fieldsTransformed,
+    const parsed = applyParsed(query, {
+        [QueryKey.FIELDS]: fieldsParsed,
         // only allow filtering users by id & name
-        [QueryKey.FILTER]: filterTransformed,
-        [QueryKey.INCLUDE]: includesTransformed,
+        [QueryKey.FILTER]: filterParsed,
+        [QueryKey.INCLUDE]: includesParsed,
         // only allow to select 20 items at maximum.
-        [QueryKey.PAGE]: pageTransformed,
-        [QueryKey.SORT]: sortTransformed
+        [QueryKey.PAGE]: pageParsed,
+        [QueryKey.SORT]: sortParsed
     });
 
     // -----------------------------------------------------
@@ -274,7 +282,7 @@ export async function getUsers(req: Request, res: Response) {
             data: entities,
             meta: {
                 total,
-                ...transformed[QueryKey.PAGE]
+                ...parsed[QueryKey.PAGE]
             }
         }
     });
@@ -292,7 +300,7 @@ import {
 } from "@trapi/query";
 
 import {
-    applyTransformed
+    applyParsed
 } from "typeorm-extension";
 
 /**
@@ -321,15 +329,11 @@ export async function getUsers(req: Request, res: Response) {
     const output: QueryParseOutput = parseQuery({
         [QueryKey.FIELDS]: {
             queryAlias: 'user',
-            allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
-            // porfile fields can only be included, if the relation 'profile' is included.
-            includes: includes
+            allowed: ['id', 'name', 'profile.id', 'profile.avatar']
         },
         [QueryKey.FILTER]: {
             queryAlias: 'user',
-            allowed: ['id', 'name', 'profile.id'],
-            // porfile.id can only be used as a filter, if the relation 'profile' is included.
-            includes: includes
+            allowed: ['id', 'name', 'profile.id']
         },
         [QueryKey.INCLUDE]: {
             allowed: ['profile']
@@ -339,9 +343,7 @@ export async function getUsers(req: Request, res: Response) {
         },
         [QueryKey.SORT]: {
             queryAlias: 'user',
-            allowed: ['id', 'name', 'profile.id'],
-            // profile.id can only be used as sorting key, if the relation 'profile' is included.
-            includes: includes
+            allowed: ['id', 'name', 'profile.id']
         }
     });
 
@@ -350,7 +352,7 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const transformed = applyTransformed(query, output);
+    const parsed = applyParsed(query, output);
 
     // -----------------------------------------------------
 
@@ -368,10 +370,9 @@ export async function getUsers(req: Request, res: Response) {
 }
 ```
 
-This can even be much easier, because `typeorm-extension` uses `@trapi/query` under the hood ⚡.
+#### Parse - Third Party Library
 
-#### Parse - Individual
-
+It can even be much easier to parse the query key values, because `typeorm-extension` uses `@trapi/query` under the hood ⚡.
 This is much shorter than the previous example and has less direct dependencies 😁.
 
 ```typescript
@@ -519,7 +520,7 @@ I.e. `/users?page[limit]=10&page[offset]=0&include=profile&filter[id]=1&fields[u
 
 Parse a query string to an efficient data structure ⚡. The output will
 be an object with each possible value of the [QueryKey](#querykey) enum as property key and the
-transformed data as value.
+parsed data as value.
 
 #### Example
 **`Simple`**
@@ -621,19 +622,19 @@ export type QueryRecordType<
                     never;
 ```
 
-#### QueryRecordTransformed
+#### QueryRecordParsed
 ```typescript
-export type QueryRecordTransformed<T extends QueryKey> =
+export type QueryRecordParsed<T extends QueryKey> =
     T extends QueryKey.FIELDS ?
-    FieldsTransformed :
+    FieldsParsed :
     T extends QueryKey.FILTER ?
-        FiltersTransformed :
+        FiltersParsed :
         T extends QueryKey.INCLUDE ?
-            IncludesTransformed :
+            IncludesParsed :
             T extends QueryKey.PAGE ?
-                PaginationTransformed :
+                PaginationParsed :
                 T extends QueryKey.SORT ?
-                    SortTransformed :
+                    SortParsed :
                     never;
 ```
 
@@ -658,29 +659,25 @@ export type QueryParseOutput = {
 #### QueryParseOutput
 ```typescript
 export type QueryParseOutput = {
-    [K in QueryKey]?: QueryRecordTransformed<K>
+    [K in QueryKey]?: QueryRecordParsed<K>
 }
 ```
 
-### Transformed
+### Parsed
 
-#### FieldsTransformed
+#### FieldsParsed
 
 ```typescript
-export enum FieldOperator {
-    INCLUDE = '+',
-    EXCLUDE = '-'
-}
-
-export type FieldTransformed = {
+export type FieldParsed = {
     key: string,
+    alias?: string,
     operator?: FieldOperator
 };
 
-export type FieldsTransformed = Record<string, FieldTransformed[]> | FieldTransformed[];
+export type FieldsParsed = FieldParsed[];
 ```
 
-#### FiltersTransformed
+#### FiltersParsed
 
 ```typescript
 export enum FilterOperatorLabel {
@@ -689,7 +686,7 @@ export enum FilterOperatorLabel {
     IN = 'in'
 }
 
-export type FilterTransformed = {
+export type FilterParsed = {
     key: string,
     alias?: string,
     operator?: {
@@ -698,33 +695,42 @@ export type FilterTransformed = {
     value: FilterValue<string | number | boolean | null>
 };
 
-export type FiltersTransformed = FilterTransformed[];
+export type FiltersParsed = FilterParsed[];
 ```
 
-#### IncludesTransformed
+#### IncludesParsed
 
 ```typescript
-export type IncludeTransformed = {
+export type IncludeParsed = {
     property: string,
     alias: string
 };
-export type IncludesTransformed = IncludeTransformed[];
+export type IncludesParsed = IncludeParsed[];
 ```
 
-#### PaginationTransformed
+#### PaginationParsed
 
 ```typescript
-export type PaginationTransformed = {
+export type PaginationParsed = {
     limit?: number,
     offset?: number
 };
 ```
 
-#### SortTransformed
+#### SortParsed
 
 ```typescript
-export type SortDirection = 'ASC' | 'DESC';
-export type SortTransformed = Record<string, SortDirection>;
+export enum SortDirection {
+    ASC = 'ASC',
+    DESC = 'DESC'
+}
+
+export type SortElementParsed = {
+    alias?: string,
+    key: string,
+    value: SortDirection
+}
+export type SortParsed = SortElementParsed[];
 ```
 
 ### Options
@@ -734,7 +740,7 @@ export type SortTransformed = Record<string, SortDirection>;
 export type FieldsOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: Record<string, string[]> | string[],
-    includes?: IncludesTransformed,
+    includes?: IncludesParsed,
     queryAlias?: string
 };
 ```
@@ -744,7 +750,7 @@ export type FieldsOptions = {
 export type FiltersOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[],
-    includes?: IncludesTransformed,
+    includes?: IncludesParsed,
     queryAlias?: string,
     queryBindingKeyFn?: (key: string) => string
 };
@@ -772,7 +778,7 @@ export type PaginationOptions = {
 export type SortOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[] | string[][],
-    includes?: IncludesTransformed,
+    includes?: IncludesParsed,
     queryAlias?: string
 };
 ```

@@ -33,7 +33,7 @@ describe('src/parse.ts', function () {
             [QueryKey.FILTER]: [],
             [QueryKey.INCLUDE]: [],
             [QueryKey.PAGE]: {},
-            [QueryKey.SORT]: {}
+            [QueryKey.SORT]: []
         } as QueryParseOutput);
     })
 });

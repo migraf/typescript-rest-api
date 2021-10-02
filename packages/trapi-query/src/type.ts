@@ -5,15 +5,11 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {FieldRecord, FieldsOptions, FieldsTransformed} from "./fields";
-import {FilterRecord, FiltersOptions, FiltersTransformed} from "./filters";
-import {IncludeRecord, IncludesOptions, IncludesTransformed} from "./includes";
-import {PaginationOptions, PaginationRecord, PaginationTransformed} from "./pagination";
-import {SortOptions, SortRecord, SortTransformed} from "./sort";
-
-export type QueryKeyAlias = {
-    [K in QueryKey]?: string;
-}
+import {FieldRecord, FieldsOptions, FieldsParsed} from "./fields";
+import {FilterRecord, FiltersOptions, FiltersParsed} from "./filters";
+import {IncludeRecord, IncludesOptions, IncludesParsed} from "./includes";
+import {PaginationOptions, PaginationRecord, PaginationParsed} from "./pagination";
+import {SortOptions, SortRecord, SortParsed} from "./sort";
 
 // -----------------------------------------------------------
 
@@ -76,13 +72,13 @@ export type QueryKeyOption<T extends QueryKey> = T extends QueryKey.FIELDS ?
 
 
 export type QueryRecordTransformed<T extends QueryKey> = T extends QueryKey.FIELDS ?
-        FieldsTransformed :
+        FieldsParsed :
     T extends QueryKey.FILTER ?
-            FiltersTransformed :
+            FiltersParsed :
         T extends QueryKey.INCLUDE ?
-                IncludesTransformed :
+                IncludesParsed :
             T extends QueryKey.PAGE ?
-                    PaginationTransformed :
+                    PaginationParsed :
                 T extends QueryKey.SORT ?
-                        SortTransformed :
+                        SortParsed :
                         never;

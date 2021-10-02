@@ -6,13 +6,13 @@
  */
 
 import {
-    buildObjectFromStringArray,
     buildFieldWithQueryAlias,
+    buildObjectFromStringArray,
     FieldDetails,
     getFieldDetails,
     isFieldAllowedByIncludes
 } from "../utils";
-import {SortDirection, SortOptions, SortTransformed} from "./type";
+import {SortDirection, SortOptions, SortParsed} from "./type";
 
 // --------------------------------------------------
 
@@ -34,7 +34,7 @@ function isMultiDimensionalArray(arr: unknown) : arr is unknown[][] {
 export function parseSort(
     data: unknown,
     options?: SortOptions
-) : SortTransformed {
+) : SortParsed {
     options = options ?? {};
 
     // If it is an empty array nothing is allowed
@@ -42,12 +42,10 @@ export function parseSort(
         Array.isArray(options.allowed) &&
         options.allowed.length === 0
     ) {
-        return {};
+        return [];
     }
 
     options.aliasMapping = options.aliasMapping ? buildObjectFromStringArray(options.aliasMapping) : {};
-
-    const items : SortTransformed = {};
 
     const prototype = Object.prototype.toString.call(data);
 
@@ -57,7 +55,7 @@ export function parseSort(
         prototype !== '[object Array]' &&
         prototype !== '[object Object]'
     ) {
-        return items;
+        return [];
     }
 
     let parts : string[] = [];
@@ -87,10 +85,16 @@ export function parseSort(
         }
     }
 
+    const items : Record<string, {
+        alias?: string,
+        key: string,
+        value: SortDirection
+    }> = {};
+
     for(let i=0; i<parts.length; i++) {
-        let direction: SortDirection = 'ASC';
+        let direction: SortDirection = SortDirection.ASC;
         if (parts[i].substr(0, 1) === '-') {
-            direction = 'DESC';
+            direction = SortDirection.DESC;
             parts[i] = parts[i].substr(1);
         }
 
@@ -101,11 +105,11 @@ export function parseSort(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {queryAlias: options.queryAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {queryAlias: options.defaultAlias})) {
             continue;
         }
 
-        const keyWithQueryAlias : string = buildFieldWithQueryAlias(fieldDetails, options.queryAlias);
+        const keyWithQueryAlias : string = buildFieldWithQueryAlias(fieldDetails, options.defaultAlias);
 
         if(
             typeof options.allowed !== 'undefined' &&
@@ -116,20 +120,36 @@ export function parseSort(
             continue;
         }
 
-        items[keyWithQueryAlias] = direction;
+        const alias : string | undefined =  typeof fieldDetails.path === 'undefined' &&
+            typeof fieldDetails.alias === 'undefined' ?
+                (
+                    options.defaultAlias ?
+                        options.defaultAlias :
+                        undefined
+                )
+                :
+                fieldDetails.alias
+        ;
+
+        items[keyWithQueryAlias] = {
+            key: fieldDetails.name,
+            ...(alias ? {alias} : {}),
+            value: direction
+        };
     }
 
     if(isMultiDimensionalArray(options.allowed)) {
         outerLoop:
         for(let i=0; i<options.allowed.length; i++) {
-            const temp : SortTransformed = {};
+            const temp : SortParsed = [];
 
             for(let j=0; j<options.allowed[i].length; j++) {
                 const keyWithAlias : string = options.allowed[i][j];
                 const key : string = keyWithAlias.includes('.') ? keyWithAlias.split('.').pop() : keyWithAlias;
 
                 if(items.hasOwnProperty(key) || items.hasOwnProperty(keyWithAlias)) {
-                    temp[keyWithAlias] = items.hasOwnProperty(key) ? items[key] : items[keyWithAlias];
+                    const item = items.hasOwnProperty(key) ? items[key] : items[keyWithAlias];
+                    temp.push(item);
                 } else {
                     continue outerLoop;
                 }
@@ -139,10 +159,10 @@ export function parseSort(
         }
 
         // if we get no match, the sort data is invalid.
-        return {};
+        return [];
     }
 
-    return items;
+    return Object.values(items);
 }
 
 

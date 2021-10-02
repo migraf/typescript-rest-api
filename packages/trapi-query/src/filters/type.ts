@@ -6,17 +6,17 @@
  */
 
 
-import {IncludesTransformed} from "../includes";
+import {IncludesParsed} from "../includes";
 import {Flatten, OnlyObject, OnlyScalar} from "../utils";
 
 export type FiltersOptions = {
     aliasMapping?: Record<string, string>,
     allowed?: string[],
-    includes?: IncludesTransformed,
+    includes?: IncludesParsed,
     defaultAlias?: string,
     queryBindingKeyFn?: (key: string) => string
 };
-export type FilterTransformed = {
+export type FilterParsed = {
     key: string,
     alias?: string,
     operator?: {
@@ -25,7 +25,7 @@ export type FilterTransformed = {
     value: FilterValue<string | number | boolean | null>
 };
 
-export type FiltersTransformed = FilterTransformed[];
+export type FiltersParsed = FilterParsed[];
 
 // -----------------------------------------------------------
 
