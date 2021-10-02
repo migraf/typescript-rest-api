@@ -181,7 +181,7 @@ to apply the transformed request query parameters on the db query.
 When you use [express](https://www.npmjs.com/package/express) or another library, you can use the API utils accordingly to the
 following code snippet:
 
-#### Parsing - Extended
+#### Parse - In Detail
 
 ```typescript
 import {getRepository} from "typeorm";
@@ -192,15 +192,12 @@ import {
     parseFilters,
     parseIncludes,
     parsePagination,
-    parseSort
+    parseSort,
+    QueryKey
 } from "@trapi/query";
 
 import {
-    applyFieldsTransformed,
-    applyFiltersTransformed,
-    applyIncludesTransformed,
-    applyPaginationTransformed,
-    applySortTransformed
+    applyTransformed
 } from "typeorm-extension";
 
 /**
@@ -231,32 +228,42 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const includes = applyIncludesTransformed(query, parseIncludes(include));
+    const includesTransformed = parseIncludes(include, {
+        allowed: 'profile'
+    });
 
-    applySortTransformed(query, parseSort(sort, {
-        queryAlias: 'user',
-        allowed: ['id', 'name', 'profile.id'],
-        // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includes
-    }));
-
-    applyFieldsTransformed(query, parseFields(fields, {
+    const fieldsTransformed = parseFields(fields, {
         queryAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
-        // porfile fields can only be included, if the relation 'profile' is included.
-        includes: includes
-    }));
+        // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        includes: includesTransformed
+    });
 
-    // only allow filtering users by id & name
-    applyFiltersTransformed(query, parseFilters(filter, {
+    const filterTransformed = parseFilters(filter, {
         queryAlias: 'user',
-        allowed: ['id', 'name', 'profile.id'],
-        // porfile.id can only be used as a filter, if the relation 'profile' is included.
-        includes: includes
-    }));
+        allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        includes: includesTransformed
+    });
 
-    // only allow to select 20 items at maximum.
-    const pagination = applyPaginationTransformed(query, parsePagination(page, {maxLimit: 20}));
+    const pageTransformed = parsePagination(page, {
+        maxLimit: 20
+    });
+
+    const sortTransformed = parseSort(sort, {
+        queryAlias: 'user',
+        allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        includes: includesTransformed
+    });
+
+    const transformed = applyTransformed(query, {
+        [QueryKey.FIELDS]: fieldsTransformed,
+        // only allow filtering users by id & name
+        [QueryKey.FILTER]: filterTransformed,
+        [QueryKey.INCLUDE]: includesTransformed,
+        // only allow to select 20 items at maximum.
+        [QueryKey.PAGE]: pageTransformed,
+        [QueryKey.SORT]: sortTransformed
+    });
 
     // -----------------------------------------------------
 
@@ -267,7 +274,7 @@ export async function getUsers(req: Request, res: Response) {
             data: entities,
             meta: {
                 total,
-                ...pagination
+                ...transformed[QueryKey.PAGE]
             }
         }
     });
@@ -285,11 +292,7 @@ import {
 } from "@trapi/query";
 
 import {
-    applyFieldsTransformed,
-    applyFiltersTransformed,
-    applyIncludesTransformed,
-    applyPaginationTransformed,
-    applySortTransformed
+    applyTransformed
 } from "typeorm-extension";
 
 /**
@@ -347,12 +350,7 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const includes = applyIncludesTransformed(query, output[QueryKey.INCLUDE]);
-
-    applyFieldsTransformed(query, output[QueryKey.FIELDS]);
-    applyFiltersTransformed(query, output[QueryKey.FILTER]);
-    applySortTransformed(query, output[QueryKey.SORT]);
-    const pagination = applyPaginationTransformed(query, output[QueryKey.PAGE]);
+    const transformed = applyTransformed(query, output);
 
     // -----------------------------------------------------
 
@@ -372,7 +370,7 @@ export async function getUsers(req: Request, res: Response) {
 
 This can even be much easier, because `typeorm-extension` uses `@trapi/query` under the hood ⚡.
 
-#### Transform - Simple
+#### Parse - Individual
 
 This is much shorter than the previous example and has less direct dependencies 😁.
 
