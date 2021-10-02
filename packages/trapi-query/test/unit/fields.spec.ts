@@ -80,7 +80,7 @@ describe('src/fields/index.ts', () => {
 
         // if only one domain is given, try to parse request field to single domain.
         data = parseFields( ['id'], {allowed: {domain: ['id']}});
-        expect(data).toEqual({domain: [{key: 'id'}]} as FieldsTransformed);
+        expect(data).toEqual([{alias: 'domain', key: 'id'}] as FieldsTransformed);
 
         // if multiple possibilities are available for request field, than parse to none
         data = parseFields( ['id'], {allowed: {domain: ['id'], domain2: ['id']}});
@@ -92,11 +92,11 @@ describe('src/fields/index.ts', () => {
 
         // simple domain match
         let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, includes: includes});
-        expect(data).toEqual({profile: [{key: 'id'}]} as FieldsTransformed);
+        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsTransformed);
 
         // only single domain match
         data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, includes: includes});
-        expect(data).toEqual({profile: [{key: 'id'}]} as FieldsTransformed);
+        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsTransformed);
     });
 
     it('should transform allowed fields', () => {

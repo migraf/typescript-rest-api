@@ -69,7 +69,7 @@ export function parseFields(
         data = {[options.queryAlias]: data};
     }
 
-    const transformed : FieldsTransformed = {};
+    let transformed : FieldsTransformed = [];
 
     for (const alias in (data as Record<string, string[] | string>)) {
         if (!data.hasOwnProperty(alias) || typeof alias !== 'string') {
@@ -121,6 +121,7 @@ export function parseFields(
                 const fullKey : string = alias + '.' + field.key;
 
                 return {
+                    ...(targetKey && targetKey !== DEFAULT_ALIAS_ID ? {alias: targetKey} : {}),
                     ...field,
                     key: options.aliasMapping.hasOwnProperty(fullKey) ? options.aliasMapping[fullKey].split('.').pop() : field.key
                 };
@@ -135,7 +136,7 @@ export function parseFields(
             });
 
         if(fields.length > 0) {
-            transformed[targetKey] = fields;
+            transformed = [...transformed, ...fields];
         }
     }
 
@@ -146,8 +147,6 @@ export function parseFields(
             return transformed[keys[0]];
         }
     }
-
-    if(keys.length === 0) return [];
 
     return transformed;
 }

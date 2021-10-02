@@ -19,10 +19,11 @@ export type FieldsOptions = {
 
 export type FieldTransformed = {
     key: string,
+    alias?: string,
     operator?: FieldOperator
 };
 
-export type FieldsTransformed = Record<string, FieldTransformed[]> | FieldTransformed[];
+export type FieldsTransformed = FieldTransformed[];
 
 // -----------------------------------------------------------
 
