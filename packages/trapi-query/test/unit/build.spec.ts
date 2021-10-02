@@ -6,7 +6,7 @@
  */
 
 
-import {buildQuery, QueryRecordKey} from "../../src";
+import {buildQuery, QueryKey} from "../../src";
 import {buildURLQueryString} from "../../src/utils";
 
 describe('src/build.ts', () => {
@@ -41,7 +41,7 @@ describe('src/build.ts', () => {
             },
             sort: '-id'
         }, {
-            key: {
+            alias: {
                 filter: 'filters',
                 include: 'includes',
                 page: 'pagination',
@@ -196,18 +196,18 @@ describe('src/build.ts', () => {
 
     it('should format page record', () => {
         let record = buildQuery<Entity>({
-            [QueryRecordKey.PAGE]: {
+            [QueryKey.PAGE]: {
                 limit: 10,
                 offset: 0
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({[QueryRecordKey.PAGE]: {limit: 10, offset: 0}}));
+        expect(record).toEqual(buildURLQueryString({[QueryKey.PAGE]: {limit: 10, offset: 0}}));
     });
 
     it('should format include record', () => {
         let record = buildQuery<Entity>({
-            [QueryRecordKey.INCLUDE]: {
+            [QueryKey.INCLUDE]: {
                 child: true,
                 siblings: {
                     child: true
@@ -215,6 +215,6 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({[QueryRecordKey.INCLUDE]: ['child', 'siblings.child']}));
+        expect(record).toEqual(buildURLQueryString({[QueryKey.INCLUDE]: ['child', 'siblings.child']}));
     });
 });

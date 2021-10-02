@@ -17,6 +17,7 @@ export type FieldsOptions = {
     queryAlias?: string
 };
 
+/*
 export type AliasFields = {
     addFields?: boolean,
     alias?: string,
@@ -24,13 +25,25 @@ export type AliasFields = {
 };
 
 export type FieldsTransformed = AliasFields[];
+ */
+
+export type FieldTransformed = {
+    key: string,
+    operator?: FieldOperator
+};
+
+export type FieldsTransformed = Record<string, FieldTransformed[]> | FieldTransformed[];
 
 // -----------------------------------------------------------
 
-type FieldOperatorAdd = '+';
+export enum FieldOperator {
+    INCLUDE = '+',
+    EXCLUDE = '-'
+}
+
 type FieldWithOperator<T extends Record<string, any>> =
-    KeyWithOptionalPrefix<keyof T, FieldOperatorAdd> |
-    KeyWithOptionalPrefix<keyof T, FieldOperatorAdd>[];
+    KeyWithOptionalPrefix<keyof T, FieldOperator> |
+    KeyWithOptionalPrefix<keyof T, FieldOperator>[];
 
 export type FieldRecord<T> =
     {
@@ -38,6 +51,6 @@ export type FieldRecord<T> =
         (FieldRecord<Flatten<T[K]>> | FieldWithOperator<Flatten<T[K]>>) : never
     } |
     {
-        [key: string]: ToOneAndMany<KeyWithOptionalPrefix<keyof T, FieldOperatorAdd>[]>,
+        [key: string]: ToOneAndMany<KeyWithOptionalPrefix<keyof T, FieldOperator>[]>,
     } |
     FieldWithOperator<T>;

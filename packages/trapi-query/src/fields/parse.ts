@@ -6,7 +6,7 @@
  */
 
 import {hasOwnProperty} from "../utils";
-import {AliasFields, DEFAULT_ALIAS_ID, FieldsOptions, FieldsTransformed} from "./type";
+import {DEFAULT_ALIAS_ID, FieldOperator, FieldsOptions, FieldsTransformed, FieldTransformed} from "./type";
 
 // --------------------------------------------------
 
@@ -69,93 +69,110 @@ export function parseFields(
         data = {[options.queryAlias]: data};
     }
 
-    const transformed : FieldsTransformed = [];
+    const transformed : FieldsTransformed = {};
 
-    for (const key in (data as Record<string, string[]>)) {
-        if (!data.hasOwnProperty(key) || typeof key !== 'string') {
+    for (const alias in (data as Record<string, string[] | string>)) {
+        if (!data.hasOwnProperty(alias) || typeof alias !== 'string') {
             continue;
         }
 
-        const value : unknown = (data as Record<string, string[]>)[key];
+        const fieldsArr : string[] = buildArrayFieldsRepresentation((data as Record<string, string[]>)[alias]);
+        if(fieldsArr.length === 0) continue;
 
-        const valuePrototype : string = Object.prototype.toString.call(value);
-        if (
-            valuePrototype !== '[object Array]' &&
-            valuePrototype !== '[object String]'
-        ) {
-            continue;
-        }
+        let fields : FieldTransformed[] = [];
 
-        let fields : string[] = [];
+        for(let i=0; i<fieldsArr.length; i++) {
+            let operator: FieldOperator | undefined;
 
-        /* istanbul ignore next */
-        if(valuePrototype === '[object String]') {
-            fields = (value as string).split(',');
-        }
-
-        /* istanbul ignore next */
-        if(valuePrototype === '[object Array]') {
-            fields = (value as unknown[])
-                .filter(val => typeof val === 'string') as string[];
-        }
-
-        let fieldsAppend : boolean | undefined;
-        for(let i=0; i<fields.length; i++) {
-            if(fields[i].substr(0, 1) === '+') {
-                fieldsAppend = true;
-
-                fields[i] = fields[i].substr(1);
+            switch (true) {
+                case fieldsArr[i].substr(0, 1) === FieldOperator.INCLUDE:
+                    operator = FieldOperator.INCLUDE;
+                    break;
+                case fieldsArr[i].substr(0, 1) === FieldOperator.EXCLUDE:
+                    operator = FieldOperator.EXCLUDE;
+                    break;
             }
-        }
 
-        if(fields.length === 0) continue;
+            if(operator) fieldsArr[i] = fieldsArr[i].substr(1);
+
+            fields.push({
+                key: fieldsArr[i],
+                ...(operator ? {operator} : {})
+            });
+        }
 
         const allowedDomains : string[] = typeof allowedDomainFields !== 'undefined' ? Object.keys(allowedDomainFields) : [];
-        const targetKey : string = allowedDomains.length === 1 ? allowedDomains[0] : key;
+        const targetKey : string = allowedDomains.length === 1 ? allowedDomains[0] : alias;
 
         // is not default domain && includes are defined?
         if(
-            key !== DEFAULT_ALIAS_ID &&
-            key !== options.queryAlias &&
+            alias !== DEFAULT_ALIAS_ID &&
+            alias !== options.queryAlias &&
             typeof options.includes !== 'undefined'
         ) {
-            const includesMatched = options.includes.filter(include => include.alias === key);
+            const includesMatched = options.includes.filter(include => include.alias === alias);
             if(includesMatched.length === 0) {
                 continue;
             }
         }
 
         fields = fields
-            .map(part => {
-                const fullKey : string = key + '.' + part;
+            .map(field => {
+                const fullKey : string = alias + '.' + field.key;
 
-                return options.aliasMapping.hasOwnProperty(fullKey) ? options.aliasMapping[fullKey].split('.').pop() : part;
+                return {
+                    ...field,
+                    key: options.aliasMapping.hasOwnProperty(fullKey) ? options.aliasMapping[fullKey].split('.').pop() : field.key
+                };
             })
-            .filter(part => {
+            .filter(field => {
                 if(typeof allowedDomainFields === 'undefined') {
                     return true;
                 }
 
                 return hasOwnProperty(allowedDomainFields, targetKey) &&
-                    allowedDomainFields[targetKey].indexOf(part) !== -1;
+                    allowedDomainFields[targetKey].indexOf(field.key) !== -1;
             });
 
         if(fields.length > 0) {
-            const item : AliasFields = {
-                fields: fields
-            };
-
-            if(targetKey !== DEFAULT_ALIAS_ID) {
-                item.alias = targetKey;
-            }
-
-            if(typeof fieldsAppend !== 'undefined') {
-                item.addFields = fieldsAppend;
-            }
-
-            transformed.push(item);
+            transformed[targetKey] = fields;
         }
     }
 
+    const keys : string[] = Object.keys(transformed);
+
+    if(keys.length === 1) {
+        if(keys[0] === DEFAULT_ALIAS_ID) {
+            return transformed[keys[0]];
+        }
+    }
+
+    if(keys.length === 0) return [];
+
     return transformed;
+}
+
+function buildArrayFieldsRepresentation(data: unknown) : string[] {
+    const valuePrototype : string = Object.prototype.toString.call(data);
+    if (
+        valuePrototype !== '[object Array]' &&
+        valuePrototype !== '[object String]'
+    ) {
+        return [];
+    }
+
+    let fieldsArr : string[] = [];
+
+    /* istanbul ignore next */
+    if(valuePrototype === '[object String]') {
+        fieldsArr = (data as string).split(',');
+    }
+
+    /* istanbul ignore next */
+    if(valuePrototype === '[object Array]') {
+        fieldsArr = (data as unknown[])
+            .filter(val => typeof val === 'string') as string[];
+    }
+
+    return fieldsArr;
 }

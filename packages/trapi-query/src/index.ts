@@ -10,5 +10,6 @@ export * from './fields';
 export * from './filters';
 export * from './includes';
 export * from './pagination';
+export * from './parse';
 export * from './sort';
 export * from './type';
