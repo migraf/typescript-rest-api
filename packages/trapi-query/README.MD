@@ -363,7 +363,7 @@ export async function getUsers(req: Request, res: Response) {
             data: entities,
             meta: {
                 total,
-                ...pagination
+                ...parsed[QueryKey.PAGE]
             }
         }
     });
