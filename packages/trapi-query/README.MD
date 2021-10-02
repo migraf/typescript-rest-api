@@ -669,22 +669,37 @@ export type QueryParseOutput = {
 #### FieldsTransformed
 
 ```typescript
-export type AliasFields = {
-    addFields?: boolean,
-    alias?: string,
-    fields: string[]
+export enum FieldOperator {
+    INCLUDE = '+',
+    EXCLUDE = '-'
+}
+
+export type FieldTransformed = {
+    key: string,
+    operator?: FieldOperator
 };
 
-export type FieldsTransformed = AliasFields[];
+export type FieldsTransformed = Record<string, FieldTransformed[]> | FieldTransformed[];
 ```
 
 #### FiltersTransformed
 
 ```typescript
+export enum FilterOperatorLabel {
+    NEGATION = 'negation',
+    LIKE = 'like',
+    IN = 'in'
+}
+
 export type FilterTransformed = {
-    statement: string,
-    binding: Record<string, any>
+    key: string,
+    alias?: string,
+    operator?: {
+        [K in FilterOperatorLabel]?: boolean
+    },
+    value: FilterValue<string | number | boolean | null>
 };
+
 export type FiltersTransformed = FilterTransformed[];
 ```
 

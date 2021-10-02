@@ -17,16 +17,6 @@ export type FieldsOptions = {
     queryAlias?: string
 };
 
-/*
-export type AliasFields = {
-    addFields?: boolean,
-    alias?: string,
-    fields: string[]
-};
-
-export type FieldsTransformed = AliasFields[];
- */
-
 export type FieldTransformed = {
     key: string,
     operator?: FieldOperator

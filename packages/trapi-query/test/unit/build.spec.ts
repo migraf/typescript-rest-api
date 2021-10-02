@@ -6,7 +6,7 @@
  */
 
 
-import {buildQuery, QueryKey} from "../../src";
+import {buildQuery, FilterOperator, QueryKey} from "../../src";
 import {buildURLQueryString} from "../../src/utils";
 
 describe('src/build.ts', () => {
@@ -22,50 +22,6 @@ describe('src/build.ts', () => {
         child: ChildEntity,
         siblings: Entity[]
     }
-
-    it('should build with different query keys', () => {
-        let record = buildQuery<Entity>({
-            fields: [
-                'id',
-                'name',
-            ],
-            filter: {
-                id: 1
-            },
-            include: {
-                child: true
-            },
-            page: {
-                limit: 20,
-                offset: 0
-            },
-            sort: '-id'
-        }, {
-            alias: {
-                filter: 'filters',
-                include: 'includes',
-                page: 'pagination',
-                fields: 'fields',
-                sort: 'sort'
-            }
-        });
-
-        expect(record).toEqual(buildURLQueryString({
-            fields: [
-                'id',
-                'name',
-            ],
-            filters: {
-                id: 1
-            },
-            includes: ['child'],
-            pagination: {
-                limit: 20,
-                offset: 0
-            },
-            sort: '-id'
-        }));
-    });
 
     it('should format filter record', () => {
         let record = buildQuery<Entity>({
@@ -107,7 +63,7 @@ describe('src/build.ts', () => {
         record = buildQuery<Entity>({
             filter: {
                 id: {
-                    operator: '~',
+                    operator: FilterOperator.LIKE,
                     value: 1
                 }
             }
@@ -118,7 +74,25 @@ describe('src/build.ts', () => {
         record = buildQuery<Entity>({
             filter: {
                 id: {
-                    operator: '!~',
+                    operator: [
+                        FilterOperator.NEGATION,
+                        FilterOperator.LIKE
+                    ],
+                    value: [1,2,3]
+                }
+            }
+        });
+
+        expect(record).toEqual(buildURLQueryString({filter: {id: '!~1,2,3'}}));
+
+        // with wrong operator order :)
+        record = buildQuery<Entity>({
+            filter: {
+                id: {
+                    operator: [
+                        FilterOperator.LIKE,
+                        FilterOperator.NEGATION
+                    ],
                     value: [1,2,3]
                 }
             }

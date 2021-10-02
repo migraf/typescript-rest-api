@@ -6,45 +6,41 @@
  */
 
 import {buildQueryFields} from "./fields";
+import {buildQueryFilters} from "./filters";
 import {buildQueryIncludes} from "./includes";
 import {buildQuerySort} from "./sort";
-import {QueryBuildOptions, QueryRecord, QueryKey} from "./type";
+import {QueryRecord, QueryKey} from "./type";
 import {
-    buildURLQueryString,
-    flattenNestedProperties
+    buildURLQueryString
 } from "./utils";
 
 export function buildQuery<T extends Record<string, any>>(
-    record?: QueryRecord<T>,
-    options?: QueryBuildOptions
+    record?: QueryRecord<T>
 ) : string {
     if (typeof record === 'undefined' || record === null) return '';
-
-    options ??= {};
-    options.alias ??= {};
 
     let query: {
         [key in QueryKey]?: any
     } = {};
 
     if (typeof record[QueryKey.FIELDS] !== 'undefined') {
-        query[options.alias[QueryKey.FIELDS] ?? QueryKey.FIELDS] = buildQueryFields(record[QueryKey.FIELDS]);
+        query[QueryKey.FIELDS] = buildQueryFields(record[QueryKey.FIELDS]);
     }
 
     if (typeof record[QueryKey.FILTER] !== 'undefined') {
-        query[options.alias[QueryKey.FILTER] ?? QueryKey.FILTER] = flattenNestedProperties(record[QueryKey.FILTER]);
+        query[QueryKey.FILTER] = buildQueryFilters(record[QueryKey.FILTER]);
     }
 
     if (typeof record[QueryKey.INCLUDE] !== 'undefined') {
-        query[options.alias[QueryKey.INCLUDE] ?? QueryKey.INCLUDE] = buildQueryIncludes(record[QueryKey.INCLUDE]);
+        query[QueryKey.INCLUDE] = buildQueryIncludes(record[QueryKey.INCLUDE]);
     }
 
     if (typeof record[QueryKey.PAGE] !== 'undefined') {
-        query[options.alias[QueryKey.PAGE] ?? QueryKey.PAGE] = record[QueryKey.PAGE];
+        query[QueryKey.PAGE] = record[QueryKey.PAGE];
     }
 
     if (typeof record[QueryKey.SORT] !== 'undefined') {
-        query[options.alias[QueryKey.SORT] ?? QueryKey.SORT] = buildQuerySort(record[QueryKey.SORT]);
+        query[QueryKey.SORT] = buildQuerySort(record[QueryKey.SORT]);
     }
 
     return buildURLQueryString(query);

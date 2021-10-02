@@ -12,7 +12,7 @@ import {
     getFieldDetails,
     isFieldAllowedByIncludes
 } from "../utils";
-import {FiltersOptions, FiltersTransformed} from "./type";
+import {FilterOperator, FilterOperatorLabel, FiltersOptions, FiltersTransformed, FilterTransformed} from "./type";
 
 // --------------------------------------------------
 
@@ -60,7 +60,11 @@ export function parseFilters(
 
     options = buildOptions(options);
 
-    const temp : Record<string, string | boolean | number> = {};
+    const temp : Record<string, {
+        key: string,
+        alias?: string,
+        value: string | boolean | number
+    }> = {};
 
     // transform to appreciate data format & validate input
     for (let key in (data as Record<string, any>)) {
@@ -94,11 +98,11 @@ export function parseFilters(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {queryAlias: options.queryAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {queryAlias: options.defaultAlias})) {
             continue;
         }
 
-        const keyWithQueryAlias : string = buildFieldWithQueryAlias(fieldDetails, options.queryAlias);
+        const keyWithQueryAlias : string = buildFieldWithQueryAlias(fieldDetails, options.defaultAlias);
 
         if(
             typeof options.allowed !== 'undefined' &&
@@ -108,7 +112,22 @@ export function parseFilters(
             continue;
         }
 
-        temp[keyWithQueryAlias] = value as string | boolean | number;
+        const alias : string | undefined =  typeof fieldDetails.path === 'undefined' &&
+            typeof fieldDetails.alias === 'undefined' ?
+                (
+                    options.defaultAlias ?
+                    options.defaultAlias :
+                    undefined
+                )
+                :
+                fieldDetails.alias
+            ;
+
+        temp[keyWithQueryAlias] = {
+            key: fieldDetails.name,
+            ...(alias ? {alias} : {}),
+            value: value as string | boolean | number
+        };
     }
 
     const items : FiltersTransformed = [];
@@ -120,66 +139,39 @@ export function parseFilters(
             continue;
         }
 
-        let value : string | boolean | number = temp[key];
-
-        /* istanbul ignore next */
-        const paramKey : string =
-            typeof options.queryBindingKeyFn === 'function' ?
-                options.queryBindingKeyFn(key) :
-                'filter_' + key.replace(/\W/g, '_');
-
-        const queryString : string[] = [
-            key
-        ];
-
-        let isInOperator : boolean = false;
-
-        if(typeof value === 'string') {
-            const isNegationPrefix = value.charAt(0) === '!';
-            if (isNegationPrefix) value = value.slice(1);
-
-            const isLikeOperator = value.charAt(0) === '~';
-            if (isLikeOperator) value = value.slice(1);
-
-            isInOperator = value.includes(',');
-
-            if(isInOperator || isLikeOperator) {
-                if (isNegationPrefix) {
-                    queryString.push('NOT');
-                }
-
-                if (isLikeOperator) {
-                    queryString.push('LIKE');
-                } else {
-                    queryString.push('IN');
-                }
-            } else {
-                if (isNegationPrefix) {
-                    queryString.push("!=");
-                } else {
-                    queryString.push("=");
-                }
-            }
-
-            if (isLikeOperator) {
-                value += '%';
-            }
-
-            if (isInOperator) {
-                queryString.push('(:...' + paramKey + ')');
-            } else {
-                queryString.push(':' + paramKey);
-            }
-        } else {
-            isInOperator = false;
-            queryString.push("=");
-            queryString.push(':' + paramKey);
+        const filter : FilterTransformed = {
+            ...(temp[key].alias ? {alias:  temp[key].alias} : {}),
+            key: temp[key].key,
+            value:  temp[key].value
         }
 
-        items.push({
-            statement: queryString.join(" "),
-            binding: {[paramKey]: isInOperator ? (value as string).split(',') : value}
-        });
+        if(typeof filter.value === 'string') {
+            const negationOperator : boolean = filter.value.charAt(0) === FilterOperator.NEGATION;
+            if(negationOperator) {
+                filter.operator ??= {};
+                filter.operator[FilterOperatorLabel.NEGATION] = negationOperator;
+                filter.value = filter.value.slice(1);
+            }
+
+            const likeOperator : boolean = filter.value.charAt(0) === FilterOperator.LIKE;
+            if (likeOperator) {
+                filter.operator ??= {};
+                filter.operator[FilterOperatorLabel.LIKE] = likeOperator;
+                filter.value = filter.value.slice(1);
+            }
+
+            const inOperator : boolean = filter.value.includes(FilterOperator.IN);
+            if(inOperator) {
+                filter.operator ??= {};
+                filter.operator[FilterOperatorLabel.IN] = true;
+            }
+
+            if(typeof filter.operator !== 'undefined') {
+                filter.value = filter.operator[FilterOperatorLabel.IN] ? filter.value.split(',') : filter.value;
+            }
+        }
+
+        items.push(filter);
     }
 
     return items;

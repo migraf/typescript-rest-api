@@ -15,10 +15,6 @@ export type QueryKeyAlias = {
     [K in QueryKey]?: string;
 }
 
-export type QueryBuildOptions = {
-    alias?: QueryKeyAlias
-};
-
 // -----------------------------------------------------------
 
 export enum QueryKey {
