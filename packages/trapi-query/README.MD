@@ -324,9 +324,9 @@ import {
  * @param res
  */
 export async function getUsers(req: Request, res: Response) {
-    const {fields, filter, include, page, sort} = req.query;
+    // const {fields, filter, include, page, sort} = req.query;
 
-    const output: QueryParseOutput = parseQuery({
+    const output: QueryParseOutput = parseQuery(req.query, {
         [QueryKey.FIELDS]: {
             defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id', 'profile.avatar']
