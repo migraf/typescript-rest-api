@@ -5,13 +5,13 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/Tada5hi/typescript-rest-api/badge.svg)](https://snyk.io/test/github/Tada5hi/typescript-rest-api)
 [![npm version](https://badge.fury.io/js/@trapi%2Fquery.svg)](https://badge.fury.io/js/@trapi%2Fquery)
 
-This is a library for building `JSON:API` like REST-APIs.
+This is a library to build efficient and optimized `JSON:API` like REST-APIs.
 
-It extends the specification format between request- & response-handling for querying and fetching data according the following query parameters:
+It extends the specification format between request- & response-handling based on the following query parameters:
 - `fields` Return only specific fields or extend the default selection.
 - `filter`: Filter the data set, according specific criteria.
-- `include` Include related resources (aka relations) of the primary data.
-- `page` Limit the number of resources returned of the whole set (pagination).
+- `include` Include related resources (aka `relations`) of the primary data.
+- `page` Limit the number of resources returned of the whole set (`pagination`).
 - `sort` Sort the resources according one or more keys in asc/desc direction.
 
 ---
@@ -63,7 +63,7 @@ npm install @trapi/query --save
 ### Build 🏗
 
 The general idea is to construct a `QueryRecord` at the frontend side, which will be formatted to a string and passed to the backend application as URL query string.
-The backend application is than always fully capable of processing the request, as far the provided query was not malformed.
+The backend application is than always fully capable of processing the request.
 
 Therefore, two components of this module are required in the frontend application:
 - generic type: `QueryRecord<T>`
@@ -71,8 +71,8 @@ Therefore, two components of this module are required in the frontend applicatio
 
 The method will generate the query string, which was addressed in the previous section.
 
-In the following example a Class which will represent the structure of a `User`.
-The `getAPIUsers` will handle the resource request to the resource API.
+In the following example a Class which will represent the structure of a `User` and a function called
+`getAPIUsers`, which will handle the resource request to the resource API, will be defined.
 
 ```typescript
 import axios from "axios";
@@ -100,7 +100,9 @@ type ResponsePayload = {
     }
 }
 
-export async function getAPIUsers(record: QueryRecord<User>): Promise<ResponsePayload> {
+export async function getAPIUsers(
+    record: QueryRecord<User>
+): Promise<ResponsePayload> {
     const response = await axios.get('users' + buildQuery(record));
 
     return response.data;
@@ -184,10 +186,7 @@ export class Profile {
 }
 ```
 In this example [typeorm](https://www.npmjs.com/package/typeorm) is used as the object-relational mapping (ORM) and [typeorm-extension](https://www.npmjs.com/package/typeorm-extension) is used
-to apply the parsed request query parameters on the db query.
-
-When you use [express](https://www.npmjs.com/package/express) or another library, you can use the API utils accordingly to the
-following code snippet:
+to apply the parsed request query parameters on the db query and [express](https://www.npmjs.com/package/express) to handle requests.
 
 #### Parse - In Detail
 

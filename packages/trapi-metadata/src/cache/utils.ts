@@ -25,19 +25,14 @@ export function buildCacheConfig(config?: string | boolean | Partial<Cache.Confi
 
     config ??= {};
 
-    let data : Cache.Config = {
-        directoryPath: "",
-        enabled: false,
+    return {
+        fileName: config.fileName,
+        directoryPath: typeof config.directoryPath === 'string' ?
+            path.isAbsolute(config.directoryPath) ? config.directoryPath : path.join(process.cwd(), config.directoryPath) :
+            process.cwd(),
+        enabled: config.enabled ?? false,
         clearAtRandom: config.clearAtRandom ?? true
     };
-
-    data.enabled = config.enabled ?? false;
-    data.fileName = config.fileName;
-    data.directoryPath = typeof config.directoryPath === 'string' ?
-        path.isAbsolute(config.directoryPath) ? config.directoryPath : path.join(process.cwd(), config.directoryPath) :
-        process.cwd();
-
-    return data;
 }
 
 export function buildFileHash(sourceFilesSize?: number): string {
