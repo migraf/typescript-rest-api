@@ -91,11 +91,11 @@ describe('src/fields/index.ts', () => {
         const includes = parseRelations(['profile', 'roles'], {allowed: ['user', 'profile']});
 
         // simple domain match
-        let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, include: includes});
+        let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, relations: includes});
         expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
 
         // only single domain match
-        data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, include: includes});
+        data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, relations: includes});
         expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
     });
 

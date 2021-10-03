@@ -27,7 +27,7 @@ function buildOptions(options?: FiltersParseOptions) : FiltersParseOptions {
         options.aliasMapping = {};
     }
 
-    options.include ??= [];
+    options.relations ??= [];
 
     return options;
 }
@@ -98,7 +98,7 @@ export function parseFilters(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.include, {defaultAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.relations, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 

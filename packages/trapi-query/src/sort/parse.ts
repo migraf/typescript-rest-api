@@ -105,7 +105,7 @@ export function parseSort(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.include, {defaultAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.relations, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 

@@ -31,7 +31,7 @@ export function buildDomainFields(
 
 export function parseFields(
     data: unknown,
-    options: FieldsParseOptions
+    options?: FieldsParseOptions
 ): FieldsParsed {
     options ??= {};
 
@@ -44,7 +44,7 @@ export function parseFields(
     }
 
     options.aliasMapping ??= {};
-    options.include ??= [];
+    options.relations ??= [];
     options.defaultAlias ??= DEFAULT_ALIAS_ID;
 
     let allowedDomainFields : Record<string, string[]> | undefined;
@@ -108,9 +108,9 @@ export function parseFields(
         if(
             alias !== DEFAULT_ALIAS_ID &&
             alias !== options.defaultAlias &&
-            typeof options.include !== 'undefined'
+            typeof options.relations !== 'undefined'
         ) {
-            const includesMatched = options.include.filter(include => include.value === alias);
+            const includesMatched = options.relations.filter(include => include.value === alias);
             if(includesMatched.length === 0) {
                 continue;
             }

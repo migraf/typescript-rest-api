@@ -96,7 +96,7 @@ describe('src/sort/index.ts', () => {
 
         const options : SortParseOptions = {
             allowed: ['id', 'profile.id', 'user_roles.role.id'],
-            include: includes,
+            relations: includes,
         };
 
         // simple

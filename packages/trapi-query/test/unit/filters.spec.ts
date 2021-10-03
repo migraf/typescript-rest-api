@@ -137,7 +137,7 @@ describe('src/filter/index.ts', () => {
 
         const options : FiltersParseOptions = {
             allowed: ['id', 'profile.id', 'role.id'],
-            include: include,
+            relations: include,
         };
 
         // simple

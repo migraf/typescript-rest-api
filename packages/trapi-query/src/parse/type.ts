@@ -22,7 +22,7 @@ export type ParseOptionsBase<
 } & ParseOptionInclude<K>;
 
 type ParseOptionInclude<K extends QueryKey> = K extends QueryKey.INCLUDE | QueryKey.PAGE ? {} : {
-   include?: RelationsParsed
+   relations?: RelationsParsed
 } ;
 
 //------------------------------------------------
