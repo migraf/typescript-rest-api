@@ -185,7 +185,7 @@ export class Profile {
     user: User;
 }
 ```
-In this example [typeorm](https://www.npmjs.com/package/typeorm) is used as the object-relational mapping (ORM) and [typeorm-extension](https://www.npmjs.com/package/typeorm-extension) is used
+In this example [typeorm](https://www.npmjs.com/package/typeorm) is used for object-relational mapping (ORM) and [typeorm-extension](https://www.npmjs.com/package/typeorm-extension) is used
 to apply the parsed request query parameters on the db query and [express](https://www.npmjs.com/package/express) to handle requests.
 
 #### Parse - In Detail
@@ -422,14 +422,14 @@ export async function getUsers(req: Request, res: Response) {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        relations: includes
+        relations: relations
     });
 
     applyFields(query, fields, {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // porfile fields can only be included, if the relation 'profile' is included.
-        relations: includes
+        relations: relations
     })
 
     // only allow filtering users by id & name
@@ -437,7 +437,7 @@ export async function getUsers(req: Request, res: Response) {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'],
         // porfile.id can only be used as a filter, if the relation 'profile' is included.
-        relations: includes
+        relations: relations
     });
 
     // only allow to select 20 items at maximum.
