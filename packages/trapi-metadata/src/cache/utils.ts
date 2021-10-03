@@ -25,13 +25,16 @@ export function buildCacheConfig(config?: string | boolean | Partial<Cache.Confi
 
     config ??= {};
 
+    /* istanbul ignore next */
+    const isTestEnvironment : boolean = !!process.env.NODE_ENV && process.env.NODE_ENV === 'test';
+
     return {
         fileName: config.fileName,
         directoryPath: typeof config.directoryPath === 'string' ?
             path.isAbsolute(config.directoryPath) ? config.directoryPath : path.join(process.cwd(), config.directoryPath) :
             process.cwd(),
         enabled: config.enabled ?? false,
-        clearAtRandom: config.clearAtRandom ?? true
+        clearAtRandom: config.clearAtRandom ?? !isTestEnvironment
     };
 }
 
