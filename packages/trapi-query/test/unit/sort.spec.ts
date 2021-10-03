@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {parseIncludes, parseSort, SortDirection, SortOptions, SortParsed} from "../../src";
+import {parseRelations, parseSort, SortDirection, SortParseOptions, SortParsed} from "../../src";
 
 describe('src/sort/index.ts', () => {
     it('should transform sort data', () => {
@@ -47,7 +47,7 @@ describe('src/sort/index.ts', () => {
 
         // with alias mapping
         transformed = parseSort('-pit',  {aliasMapping: {pit: 'id'}, allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParsed);
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}] as SortParsed);
 
         // with alias mapping & query alias
         transformed = parseSort('-pit', {aliasMapping: {pit: 'id'}, allowed: ['id'], defaultAlias: 'user'});
@@ -55,7 +55,7 @@ describe('src/sort/index.ts', () => {
     });
 
     it('should transform sort with sort indexes', () => {
-        const options : SortOptions = {
+        const options : SortParseOptions = {
             allowed: [
                 ['name', 'email'],
                 ['id']
@@ -92,11 +92,11 @@ describe('src/sort/index.ts', () => {
     });
 
     it('should transform sort data with includes', () => {
-        const includes = parseIncludes(['profile', 'user_roles.role']);
+        const includes = parseRelations(['profile', 'user_roles.role']);
 
-        const options : SortOptions = {
+        const options : SortParseOptions = {
             allowed: ['id', 'profile.id', 'user_roles.role.id'],
-            includes: includes,
+            include: includes,
         };
 
         // simple

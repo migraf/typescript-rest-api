@@ -1,7 +1,7 @@
 import {flattenNestedProperties} from "../utils";
-import {SortRecord} from "./type";
+import {SortQueryRecord} from "./type";
 
-export function buildQuerySort<T>(data: SortRecord<T>) {
+export function buildQuerySort<T>(data: SortQueryRecord<T>) {
     switch (true) {
         case typeof data === 'string':
             return data;

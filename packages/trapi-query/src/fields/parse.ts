@@ -6,7 +6,7 @@
  */
 
 import {hasOwnProperty} from "../utils";
-import {DEFAULT_ALIAS_ID, FieldOperator, FieldsOptions, FieldsParsed, FieldParsed} from "./type";
+import {DEFAULT_ALIAS_ID, FieldOperator, FieldsParseOptions, FieldsParsed, FieldsParsedElement} from "./type";
 
 // --------------------------------------------------
 
@@ -14,7 +14,7 @@ import {DEFAULT_ALIAS_ID, FieldOperator, FieldsOptions, FieldsParsed, FieldParse
 
 export function buildDomainFields(
     data: Record<string, string[]> | string[],
-    options?: FieldsOptions
+    options?: FieldsParseOptions
 ) {
     options = options ?? {defaultAlias: DEFAULT_ALIAS_ID};
 
@@ -31,7 +31,7 @@ export function buildDomainFields(
 
 export function parseFields(
     data: unknown,
-    options: FieldsOptions
+    options: FieldsParseOptions
 ): FieldsParsed {
     options ??= {};
 
@@ -44,7 +44,7 @@ export function parseFields(
     }
 
     options.aliasMapping ??= {};
-    options.includes ??= [];
+    options.include ??= [];
     options.defaultAlias ??= DEFAULT_ALIAS_ID;
 
     let allowedDomainFields : Record<string, string[]> | undefined;
@@ -79,7 +79,7 @@ export function parseFields(
         const fieldsArr : string[] = buildArrayFieldsRepresentation((data as Record<string, string[]>)[alias]);
         if(fieldsArr.length === 0) continue;
 
-        let fields : FieldParsed[] = [];
+        let fields : FieldsParsedElement[] = [];
 
         for(let i=0; i<fieldsArr.length; i++) {
             let operator: FieldOperator | undefined;
@@ -97,7 +97,7 @@ export function parseFields(
 
             fields.push({
                 key: fieldsArr[i],
-                ...(operator ? {operator} : {})
+                ...(operator ? {value: operator} : {})
             });
         }
 
@@ -108,9 +108,9 @@ export function parseFields(
         if(
             alias !== DEFAULT_ALIAS_ID &&
             alias !== options.defaultAlias &&
-            typeof options.includes !== 'undefined'
+            typeof options.include !== 'undefined'
         ) {
-            const includesMatched = options.includes.filter(include => include.alias === alias);
+            const includesMatched = options.include.filter(include => include.value === alias);
             if(includesMatched.length === 0) {
                 continue;
             }

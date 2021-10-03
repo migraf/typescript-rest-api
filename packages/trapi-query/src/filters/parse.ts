@@ -12,13 +12,13 @@ import {
     getFieldDetails,
     isFieldAllowedByIncludes
 } from "../utils";
-import {FilterOperator, FilterOperatorLabel, FiltersOptions, FiltersParsed, FilterParsed} from "./type";
+import {FilterOperator, FilterOperatorLabel, FiltersParseOptions, FiltersParsed, FiltersParsedElement} from "./type";
 
 // --------------------------------------------------
 
 // --------------------------------------------------
 
-function buildOptions(options?: FiltersOptions) : FiltersOptions {
+function buildOptions(options?: FiltersParseOptions) : FiltersParseOptions {
     options ??= {};
 
     if(options.aliasMapping) {
@@ -27,14 +27,14 @@ function buildOptions(options?: FiltersOptions) : FiltersOptions {
         options.aliasMapping = {};
     }
 
-    options.includes ??= [];
+    options.include ??= [];
 
     return options;
 }
 
 export function parseFilters(
     data: unknown,
-    options?: FiltersOptions
+    options?: FiltersParseOptions
 ) : FiltersParsed {
     options = options ?? {};
 
@@ -98,7 +98,7 @@ export function parseFilters(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {defaultAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.include, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 
@@ -139,7 +139,7 @@ export function parseFilters(
             continue;
         }
 
-        const filter : FilterParsed = {
+        const filter : FiltersParsedElement = {
             ...(temp[key].alias ? {alias:  temp[key].alias} : {}),
             key: temp[key].key,
             value:  temp[key].value

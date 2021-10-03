@@ -6,30 +6,15 @@
  */
 
 
-import {IncludesParsed} from "../includes";
+import {ParsedElementBase, ParseOptionsBase} from "../parse";
+import {QueryKey} from "../type";
 import {Flatten, OnlyObject, OnlyScalar} from "../utils";
 
-export type FiltersOptions = {
-    aliasMapping?: Record<string, string>,
-    allowed?: string[],
-    includes?: IncludesParsed,
-    defaultAlias?: string,
-    queryBindingKeyFn?: (key: string) => string
-};
-export type FilterParsed = {
-    key: string,
-    alias?: string,
-    operator?: {
-        [K in FilterOperatorLabel]?: boolean
-    },
-    value: FilterValue<string | number | boolean | null>
-};
-
-export type FiltersParsed = FilterParsed[];
-
+// -----------------------------------------------------------
+// Build
 // -----------------------------------------------------------
 
-export type OperatorConfig<V, O> = {
+export type FilterOperatorConfig<V, O> = {
     operator: O | O[],
     value: V | V[]
 }
@@ -51,8 +36,21 @@ type FilterValueWithOperator<V> = V extends string | number | boolean ? (FilterV
 
 type FilterValueOperator<V extends string | number | boolean> = `!${V}` | `!~${V}` | `~${V}`;
 
-export type FilterRecord<T> = {
+export type FiltersQueryRecord<T> = {
     [K in keyof T]?: T[K] extends OnlyScalar<T[K]> ?
-        T[K] | FilterValueWithOperator<T[K]> | OperatorConfig<T[K], FilterOperator> :
-        T[K] extends OnlyObject<T[K]> ? FilterRecord<Flatten<T[K]>> : never
+        T[K] | FilterValueWithOperator<T[K]> | FilterOperatorConfig<T[K], FilterOperator> :
+        T[K] extends OnlyObject<T[K]> ? FiltersQueryRecord<Flatten<T[K]>> : never
 }
+
+// -----------------------------------------------------------
+// Parse
+// -----------------------------------------------------------
+
+export type FiltersParseOptions = ParseOptionsBase<QueryKey.FILTER>;
+
+export type FiltersParsedElement = ParsedElementBase<QueryKey.FILTER, FilterValue<string | number | boolean | null>> & {
+    operator?: {
+        [K in FilterOperatorLabel]?: boolean
+    }
+};
+export type FiltersParsed = FiltersParsedElement[];

@@ -10,8 +10,8 @@ This is a library for building `JSON:API` like REST-APIs.
 It extends the specification format between request- & response-handling for querying and fetching data according the following query parameters:
 - `fields` Return only specific fields or extend the default selection.
 - `filter`: Filter the data set, according specific criteria.
-- `include` Include related resources of the primary data.
-- `page` Limit the number of resources returned of the whole set.
+- `include` Include related resources (aka relations) of the primary data.
+- `page` Limit the number of resources returned of the whole set (pagination).
 - `sort` Sort the resources according one or more keys in asc/desc direction.
 
 ---
@@ -33,24 +33,24 @@ The examples in the [Parsing](#parsing-) section, are not available with current
 - [Types](#types)
   - [Key](#key)
       - [QueryKey](#querykey)
-      - [QueryKeyOption](#querykeyoption)
+      - [QueryKeyParseOptions](#querykeyparseoptions)
   - [Record](#record)
     - [QueryRecord](#queryrecord)
-  - [Parse](#parse)
-    - [QueryParseOption](#queryparseoptions)
-    - [QueryParseOutput](#queryparseoutput)
-  - [Parsed](#parsed)
-      - [FieldsParsed](#fieldsparsed)
-      - [FiltersParsed](#filtersparsed)
-      - [IncludeParsed](#includesparsed)
-      - [PaginationParsed](#paginationparsed)
-      - [SortParsed](#sortparsed)
-  - [Options](#options)
-      - [FieldsOptions](#fieldsoptions)
-      - [FiltersOptions](#filtersoptions)
-      - [IncludeOptions](#includesoptions)
-      - [PaginationOptions](#paginationoptions)
-      - [SortOptions](#sortoptions)
+  - [Parse](#parse-types)
+      - [Input](#queryparseinput)
+      - [Output](#queryparseoutput)
+      - [Fields](#fieldsparsed)
+      - [Filter[s]](#filtersparsed)
+      - [Relations/Include](#relationsparsed)
+      - [Pagination/Page](#paginationparsed)
+      - [Sort](#sortparsed)
+  - [Parse Options](#parseoptions-types)
+      - [General](#queryparseoptions)
+      - [Fields](#fieldsparseoptions)
+      - [Filter[s]](#filtersparseoptions)
+      - [Relations/Include](#relationsparseoptions)
+      - [Pagination/Page](#paginationparseoptions)
+      - [Sort](#sortparseoptions)
 
 ## Installation
 
@@ -198,7 +198,7 @@ import {Request, Response} from 'express';
 import {
     parseFields,
     parseFilters,
-    parseIncludes,
+    parseRelations,
     parsePagination,
     parseSort,
     QueryKey
@@ -236,7 +236,7 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const includesParsed = parseIncludes(include, {
+    const relationsParsed = parseRelations(include, {
         allowed: 'profile'
     });
 
@@ -244,13 +244,13 @@ export async function getUsers(req: Request, res: Response) {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includesParsed
+        relations: relationsParsed
     });
 
     const filterParsed = parseFilters(filter, {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includesParsed
+        relations: relationsParsed
     });
 
     const pageParsed = parsePagination(page, {
@@ -260,14 +260,14 @@ export async function getUsers(req: Request, res: Response) {
     const sortParsed = parseSort(sort, {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includesParsed
+        relations: relationsParsed
     });
 
     const parsed = applyParsed(query, {
         [QueryKey.FIELDS]: fieldsParsed,
         // only allow filtering users by id & name
         [QueryKey.FILTER]: filterParsed,
-        [QueryKey.INCLUDE]: includesParsed,
+        [QueryKey.INCLUDE]: relationsParsed,
         // only allow to select 20 items at maximum.
         [QueryKey.PAGE]: pageParsed,
         [QueryKey.SORT]: sortParsed
@@ -381,7 +381,7 @@ import {Request, Response} from 'express';
 import {
     applyFields,
     applyFilters,
-    applyIncludes,
+    applyRelations,
     applyPagination,
     applySort
 } from "typeorm-extension";
@@ -414,7 +414,7 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const includes = applyIncludes(query, include, {
+    const relations = applyRelations(query, include, {
         defaultAlias: 'user',
         allowed: ['profile']
     });
@@ -423,14 +423,14 @@ export async function getUsers(req: Request, res: Response) {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        includes: includes
+        relations: includes
     });
 
     applyFields(query, fields, {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // porfile fields can only be included, if the relation 'profile' is included.
-        includes: includes
+        relations: includes
     })
 
     // only allow filtering users by id & name
@@ -438,7 +438,7 @@ export async function getUsers(req: Request, res: Response) {
         defaultAlias: 'user',
         allowed: ['id', 'name', 'profile.id'],
         // porfile.id can only be used as a filter, if the relation 'profile' is included.
-        includes: includes
+        relations: includes
     });
 
     // only allow to select 20 items at maximum.
@@ -504,7 +504,7 @@ console.log(query);
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `record` | `QueryRecord`<`T`> | Query specification [more](#record). |
-| `options` | `QueryBuildOptions` | Options for building fields, filter, include, ... query [more](#fieldsoptions)
+| `options` | `QueryBuildOptions` | Options for building fields, filter, include, ...
 
 #### Returns
 
@@ -569,7 +569,7 @@ console.log(output);
 
 [QueryParseOutput](#queryparseoutput)
 
-The function return an object.
+The function returns an object.
 ## Types
 
 ### Key
@@ -584,9 +584,9 @@ export enum QueryKey {
 }
 ```
 
-#### QueryKeyOption
+#### QueryKeyParseOptions
 ```typescript
-export type QueryKeyOption<T extends QueryKey> = T extends QueryKey.FIELDS ?
+export type QueryKeyParseOptions<T extends QueryKey> = T extends QueryKey.FIELDS ?
         FieldsOptions :
     T extends QueryKey.FILTER ?
             FiltersOptions :
@@ -630,7 +630,7 @@ export type QueryRecordParsed<T extends QueryKey> =
     T extends QueryKey.FILTER ?
         FiltersParsed :
         T extends QueryKey.INCLUDE ?
-            IncludesParsed :
+            RelationsParsed :
             T extends QueryKey.PAGE ?
                 PaginationParsed :
                 T extends QueryKey.SORT ?
@@ -638,16 +638,7 @@ export type QueryRecordParsed<T extends QueryKey> =
                     never;
 ```
 
-### Parse
-#### QueryParseOptions
-```typescript
-export type QueryParseOptions = {
-    /**
-     * On default all query keys are enabled.
-     */
-    [K in QueryKey]?: QueryKeyOption<K> | boolean
-}
-```
+### Parse Types
 
 #### QueryParseInput
 ```typescript
@@ -663,8 +654,6 @@ export type QueryParseOutput = {
 }
 ```
 
-### Parsed
-
 #### FieldsParsed
 
 ```typescript
@@ -673,13 +662,21 @@ export enum FieldOperator {
     EXCLUDE = '-'
 }
 
-export type FieldParsed = {
-    key: string,
+export type FieldsParsedElement = ParsedElementBase<QueryKey.FIELDS, FieldOperator>;
+export type FieldsParsed = FieldsParsedElement[];
+```
+The type looks like this from the structure:
+```text
+{
+    // relation/resource alias
     alias?: string,
-    operator?: FieldOperator
-};
 
-export type FieldsParsed = FieldParsed[];
+    // field name
+    key: string,
+
+    // '+' | '-'
+    value?: FieldOperator
+}
 ```
 
 #### FiltersParsed
@@ -691,26 +688,45 @@ export enum FilterOperatorLabel {
     IN = 'in'
 }
 
-export type FilterParsed = {
-    key: string,
+export type FiltersParsedElement = ParsedElementBase<QueryKey.FILTER, FilterValue<string | number | boolean | null>> & {
+    operator?: {
+        [K in FilterOperatorLabel]?: boolean
+    }
+};
+export type FiltersParsed = FiltersParsedElement[];
+```
+```text
+{
+    // relation/resource alias
     alias?: string,
+
+    // filter name
+    key: string,
+
+    // {in: ..., ...}
     operator?: {
         [K in FilterOperatorLabel]?: boolean
     },
-    value: FilterValue<string | number | boolean | null>
-};
 
-export type FiltersParsed = FilterParsed[];
+    value: FilterValue<string | number | boolean | null>
+}
 ```
 
-#### IncludesParsed
+#### RelationsParsed
 
 ```typescript
-export type IncludeParsed = {
-    property: string,
-    alias: string
-};
-export type IncludesParsed = IncludeParsed[];
+export type RelationParsedElement = ParsedElementBase<QueryKey.INCLUDE, string>;
+export type RelationsParsed = RelationParsedElement[];
+```
+The type looks like this from the structure:
+```text
+{
+    // relation relative depth path
+    key: string,
+
+    // relation alias
+    value: string
+}
 ```
 
 #### PaginationParsed
@@ -730,60 +746,100 @@ export enum SortDirection {
     DESC = 'DESC'
 }
 
-export type SortElementParsed = {
+export type SortParsedElement = ParsedElementBase<QueryKey.SORT, SortDirection>;
+export type SortParsed = SortParsedElement[];
+```
+The type looks like this from the structure:
+```text
+{
+    // resource/relation alias
     alias?: string,
+
+    // field name
     key: string,
+
+    // 'ASC' | 'DESC'
     value: SortDirection
 }
-export type SortParsed = SortElementParsed[];
 ```
 
-### Options
+### ParseOptions Types
 
-#### FieldsOptions
+#### QueryParseOptions
 ```typescript
-export type FieldsOptions = {
+export type QueryParseOptions = {
+    /**
+     * On default all query keys are enabled.
+     */
+    [K in QueryKey]?: QueryKeyParseOptions<K> | boolean
+}
+```
+
+#### FieldsParseOptions
+```typescript
+export type FieldsParseOptions = ParseOptionsBase<QueryKey.FIELDS, Record<string, string[]> | string[]>;
+```
+The type looks like this from the structure:
+```text
+{
     aliasMapping?: Record<string, string>,
     allowed?: Record<string, string[]> | string[],
-    includes?: IncludesParsed,
+    relations?: RelationsParsed,
     defaultAlias?: string
-};
+}
 ```
 
-#### FiltersOptions
+#### FiltersParseOptions
 ```typescript
-export type FiltersOptions = {
+export type FiltersParseOptions = ParseOptionsBase<QueryKey.FILTER>
+```
+The type looks like this from the structure:
+```text
+{
     aliasMapping?: Record<string, string>,
     allowed?: string[],
-    includes?: IncludesParsed,
-    defaultAlias?: string,
-    queryBindingKeyFn?: (key: string) => string
-};
+    relations?: RelationsParsed,
+    defaultAlias?: string
+}
 ```
-
-#### IncludesOptions
+#### PaginationParseOptions
 ```typescript
-export type IncludesOptions = {
-    aliasMapping?: Record<string, string>,
-    allowed?: string[],
-    includeParents?: boolean | string[] | string
-    defaultAlias?: string,
-};
-```
-
-#### PaginationOptions
-```typescript
-export type PaginationOptions = {
+export type PaginationParseOptions = ParseOptionsBase<QueryKey.PAGE> & {
     maxLimit?: number
 };
 ```
+The type looks like this from the structure:
+```text
+{
+    maxLimit?: number
+}
+```
 
-#### SortOptions
+#### RelationsParseOptions
 ```typescript
-export type SortOptions = {
+export type RelationsParseOptions = ParseOptionsBase<QueryKey.SORT, string[] | string[][]>;
+```
+The type looks like this from the structure:
+```text
+{
+    aliasMapping?: Record<string, string>,
+    allowed?: string[],
+    defaultAlias?: string,
+    includeParents?: boolean | string[] | string
+}
+```
+
+#### SortParseOptions
+```typescript
+export type SortOptions = ParseOptionsBase<QueryKey.SORT, string[] | string[][]>;
+```
+
+The type looks like this from the structure:
+```text
+{
     aliasMapping?: Record<string, string>,
     allowed?: string[] | string[][],
-    includes?: IncludesParsed,
     defaultAlias?: string
-};
+    relations?: RelationsParsed
+}
 ```

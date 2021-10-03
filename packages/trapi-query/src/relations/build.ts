@@ -1,7 +1,7 @@
 import {flattenNestedProperties} from "../utils";
-import {IncludeRecord} from "./type";
+import {RelationsQueryRecord} from "./type";
 
-export function buildQueryIncludes<T>(data: IncludeRecord<T>): string[] {
+export function buildQueryIncludes<T>(data: RelationsQueryRecord<T>): string[] {
     const properties: Record<string, boolean> = flattenNestedProperties(data);
     const keys: string[] = Object.keys(properties);
 

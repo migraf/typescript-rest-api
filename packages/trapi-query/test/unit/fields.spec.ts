@@ -9,10 +9,10 @@ import {
     buildDomainFields,
     DEFAULT_ALIAS_ID,
     FieldOperator,
-    FieldsOptions,
+    FieldsParseOptions,
     FieldsParsed,
     parseFields,
-    parseIncludes
+    parseRelations
 } from "../../src";
 import {buildObjectFromStringArray} from "../../src/utils";
 
@@ -31,7 +31,7 @@ describe('src/fields/index.ts', () => {
     });
 
     it('should transform fields', () => {
-        const options : FieldsOptions = {
+        const options : FieldsParseOptions = {
             allowed: ['id', 'name']
         };
 
@@ -53,14 +53,14 @@ describe('src/fields/index.ts', () => {
 
         // field as string and append fields
         data = parseFields('+id', options);
-        expect(data).toEqual([{key: 'id', operator: FieldOperator.INCLUDE}] as FieldsParsed);
+        expect(data).toEqual([{key: 'id', value: FieldOperator.INCLUDE}] as FieldsParsed);
 
         data = parseFields('-id', options);
-        expect(data).toEqual([{key: 'id', operator: FieldOperator.EXCLUDE}] as FieldsParsed);
+        expect(data).toEqual([{key: 'id', value: FieldOperator.EXCLUDE}] as FieldsParsed);
 
         // fields as string and append fields
         data = parseFields('id,+name', options);
-        expect(data).toEqual([{key: 'id'}, {key: 'name', operator: FieldOperator.INCLUDE}] as FieldsParsed);
+        expect(data).toEqual([{key: 'id'}, {key: 'name', value: FieldOperator.INCLUDE}] as FieldsParsed);
 
         // empty allowed -> allows nothing
         data = parseFields('id', {...options, allowed: []});
@@ -88,14 +88,14 @@ describe('src/fields/index.ts', () => {
     });
 
     it('should transform fields with includes', () => {
-        const includes = parseIncludes(['profile', 'roles'], {allowed: ['user', 'profile']});
+        const includes = parseRelations(['profile', 'roles'], {allowed: ['user', 'profile']});
 
         // simple domain match
-        let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, includes: includes});
+        let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, include: includes});
         expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
 
         // only single domain match
-        data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, includes: includes});
+        data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, include: includes});
         expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
     });
 

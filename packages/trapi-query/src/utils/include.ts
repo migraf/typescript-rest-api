@@ -5,12 +5,12 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {IncludesParsed} from "../includes";
+import {RelationsParsed} from "../relations";
 import {FieldDetails, getFieldDetails} from "./field";
 
 export function isFieldAllowedByIncludes(
     field: string | FieldDetails,
-    includes?: IncludesParsed,
+    includes?: RelationsParsed,
     options?: {defaultAlias?: string}
 ) : boolean {
     if(typeof includes === 'undefined') {
@@ -37,7 +37,7 @@ export function isFieldAllowedByIncludes(
         return true;
     }
 
-    return includes.filter(include => include.alias === details.path || include.alias === details.alias).length > 0;
+    return includes.filter(include => include.value === details.path || include.value === details.alias).length > 0;
 }
 
 export function buildFieldWithAlias(

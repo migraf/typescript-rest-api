@@ -1,16 +1,17 @@
 /*
- * Copyright (c) 2021.
+ * Copyright (c) 2021-2021.
  * Author Peter Placzek (tada5hi)
  * For the full copyright and license information,
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {parseFields} from "./fields";
-import {parseFilters} from "./filters";
-import {IncludesParsed, parseIncludes} from "./includes";
-import {parsePagination} from "./pagination";
-import {parseSort} from "./sort";
-import {QueryKey, QueryKeyOption, QueryParseInput, QueryParseOptions, QueryParseOutput} from "./type";
+import {parseFields} from "../fields";
+import {parseFilters} from "../filters";
+import {RelationsParsed, parseRelations} from "../relations";
+import {parsePagination} from "../pagination";
+import {parseSort} from "../sort";
+import {QueryKey} from "../type";
+import {QueryKeyParseOptions, QueryParseInput, QueryParseOptions, QueryParseOutput} from "./type";
 
 export function parseQuery(
     input: QueryParseInput,
@@ -22,9 +23,9 @@ export function parseQuery(
 
     const nonEnabled : boolean = Object.keys(options).length === 0;
 
-    let includes : IncludesParsed | undefined;
+    let includes : RelationsParsed | undefined;
     if(!!options[QueryKey.INCLUDE] || nonEnabled) {
-        includes = parseIncludes(input[QueryKey.INCLUDE], getOptionsForQueryKey(options, QueryKey.INCLUDE));
+        includes = parseRelations(input[QueryKey.INCLUDE], getOptionsForQueryKey(options, QueryKey.INCLUDE));
         output[QueryKey.INCLUDE] = includes;
     }
 
@@ -65,13 +66,13 @@ export function parseQuery(
 function getOptionsForQueryKey<K extends QueryKey>(
     options: QueryParseOptions,
     key: K,
-    includeParsed?: K extends Extract<QueryKey,QueryKey.INCLUDE> ? never : IncludesParsed
-) : QueryKeyOption<K> {
+    includeParsed?: K extends Extract<QueryKey,QueryKey.INCLUDE> ? never : RelationsParsed
+) : QueryKeyParseOptions<K> {
     return typeof options[key] === 'boolean' ||
     typeof options[key] === 'undefined' ?
-        {} as QueryKeyOption<K> :
+        {} as QueryKeyParseOptions<K> :
         {
-            ...(options[key] as QueryKeyOption<K>),
+            ...(options[key] as QueryKeyParseOptions<K>),
             ...(key === QueryKey.INCLUDE ? {} : {includes: includeParsed})
         };
 }

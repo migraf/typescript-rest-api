@@ -6,9 +6,9 @@
  */
 
 import {flattenNestedProperties} from "../utils";
-import {FieldRecord} from "./type";
+import {FieldsQueryRecord} from "./type";
 
-export function buildQueryFields<T>(data: FieldRecord<T>): Record<string, any> | string | string[] {
+export function buildQueryFields<T>(data: FieldsQueryRecord<T>): Record<string, any> | string | string[] {
     switch (true) {
         case typeof data === 'string':
             return data;

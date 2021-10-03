@@ -7,9 +7,9 @@
 
 
 import {flattenNestedProperties} from "../utils";
-import {FilterOperator, FilterRecord, OperatorConfig} from "./type";
+import {FilterOperator, FiltersQueryRecord, FilterOperatorConfig} from "./type";
 
-export function buildQueryFilters<T> (data: FilterRecord<T>) : Record<string, string> {
+export function buildQueryFilters<T> (data: FiltersQueryRecord<T>) : Record<string, string> {
     return flattenNestedProperties(transformOperatorConfigToValue(data));
 }
 
@@ -19,16 +19,16 @@ const OperatorWeight = {
     [FilterOperator.IN]: 150
 }
 
-function transformOperatorConfigToValue<T>(data: FilterRecord<T>) : FilterRecord<T> {
+function transformOperatorConfigToValue<T>(data: FiltersQueryRecord<T>) : FiltersQueryRecord<T> {
     if(Object.prototype.toString.call(data) !== '[object Object]') {
-        return data as FilterRecord<T>;
+        return data as FiltersQueryRecord<T>;
     }
     for(let key in (data as Record<string, any>)) {
         if(
             data.hasOwnProperty('operator') &&
             data.hasOwnProperty('value')
         ) {
-            const config = data as OperatorConfig<unknown, FilterOperator>;
+            const config = data as FilterOperatorConfig<unknown, FilterOperator>;
 
             if(Array.isArray(config.operator)) {
                 (data as any).operator = config.operator

@@ -12,7 +12,7 @@ import {
     getFieldDetails,
     isFieldAllowedByIncludes
 } from "../utils";
-import {SortDirection, SortOptions, SortParsed} from "./type";
+import {SortDirection, SortParseOptions, SortParsed} from "./type";
 
 // --------------------------------------------------
 
@@ -33,7 +33,7 @@ function isMultiDimensionalArray(arr: unknown) : arr is unknown[][] {
  */
 export function parseSort(
     data: unknown,
-    options?: SortOptions
+    options?: SortParseOptions
 ) : SortParsed {
     options = options ?? {};
 
@@ -105,7 +105,7 @@ export function parseSort(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.includes, {defaultAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByIncludes(fieldDetails, options.include, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 

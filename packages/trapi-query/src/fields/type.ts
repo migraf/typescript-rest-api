@@ -5,26 +5,14 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {IncludesParsed} from "../includes";
+import {ParsedElementBase, ParseOptionsBase} from "../parse";
+import {QueryKey} from "../type";
 import {Flatten, KeyWithOptionalPrefix, OnlyObject, ToOneAndMany} from "../utils";
 
 export const DEFAULT_ALIAS_ID: string = '__DEFAULT__';
 
-export type FieldsOptions = {
-    aliasMapping?: Record<string, string>,
-    allowed?: Record<string, string[]> | string[],
-    includes?: IncludesParsed,
-    defaultAlias?: string
-};
-
-export type FieldParsed = {
-    key: string,
-    alias?: string,
-    operator?: FieldOperator
-};
-
-export type FieldsParsed = FieldParsed[];
-
+// -----------------------------------------------------------
+// Build
 // -----------------------------------------------------------
 
 export enum FieldOperator {
@@ -36,12 +24,21 @@ type FieldWithOperator<T extends Record<string, any>> =
     KeyWithOptionalPrefix<keyof T, FieldOperator> |
     KeyWithOptionalPrefix<keyof T, FieldOperator>[];
 
-export type FieldRecord<T> =
+export type FieldsQueryRecord<T> =
     {
         [K in keyof T]?: T[K] extends OnlyObject<T[K]> ?
-        (FieldRecord<Flatten<T[K]>> | FieldWithOperator<Flatten<T[K]>>) : never
+        (FieldsQueryRecord<Flatten<T[K]>> | FieldWithOperator<Flatten<T[K]>>) : never
     } |
     {
         [key: string]: ToOneAndMany<KeyWithOptionalPrefix<keyof T, FieldOperator>[]>,
     } |
     FieldWithOperator<T>;
+
+// -----------------------------------------------------------
+// Parse
+// -----------------------------------------------------------
+
+export type FieldsParseOptions = ParseOptionsBase<QueryKey.FIELDS, Record<string, string[]> | string[]>;
+
+export type FieldsParsedElement = ParsedElementBase<QueryKey.FIELDS, FieldOperator>;
+export type FieldsParsed = FieldsParsedElement[];

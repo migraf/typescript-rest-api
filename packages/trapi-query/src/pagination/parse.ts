@@ -1,8 +1,8 @@
-import {PaginationOptions, PaginationParsed} from "./type";
+import {PaginationParseOptions, PaginationParsed} from "./type";
 
 // --------------------------------------------------
 
-function finalizePagination(data: PaginationParsed, options: PaginationOptions) : PaginationParsed {
+function finalizePagination(data: PaginationParsed, options: PaginationParseOptions) : PaginationParsed {
     if (typeof options.maxLimit !== 'undefined') {
         if (
             typeof data.limit === 'undefined' ||
@@ -30,7 +30,7 @@ function finalizePagination(data: PaginationParsed, options: PaginationOptions) 
  */
 export function parsePagination(
     data: unknown,
-    options?: PaginationOptions
+    options?: PaginationParseOptions
 ) : PaginationParsed {
     options ??= {};
 

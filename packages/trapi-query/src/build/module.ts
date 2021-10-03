@@ -1,21 +1,23 @@
 /*
- * Copyright (c) 2021.
+ * Copyright (c) 2021-2021.
  * Author Peter Placzek (tada5hi)
  * For the full copyright and license information,
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {buildQueryFields} from "./fields";
-import {buildQueryFilters} from "./filters";
-import {buildQueryIncludes} from "./includes";
-import {buildQuerySort} from "./sort";
-import {QueryRecord, QueryKey} from "./type";
+import {QueryBuildOptions, QueryRecord} from "./type";
+import {buildQueryFields} from "../fields";
+import {buildQueryFilters} from "../filters";
+import {buildQueryIncludes} from "../relations";
+import {buildQuerySort} from "../sort";
+import {QueryKey} from "../type";
 import {
     buildURLQueryString
-} from "./utils";
+} from "../utils";
 
 export function buildQuery<T extends Record<string, any>>(
-    record?: QueryRecord<T>
+    record?: QueryRecord<T>,
+    options?: QueryBuildOptions
 ) : string {
     if (typeof record === 'undefined' || record === null) return '';
 

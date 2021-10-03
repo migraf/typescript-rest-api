@@ -5,58 +5,58 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {FilterOperatorLabel, FiltersOptions, FiltersParsed, parseFilters, parseIncludes} from "../../src";
+import {FilterOperatorLabel, FiltersParseOptions, FiltersParsed, parseFilters, parseRelations} from "../../src";
 
-describe('src/filters/index.ts', () => {
+describe('src/filter/index.ts', () => {
     it('should transform request filters', () => {
         // filter id
-        let allowedFilters = parseFilters({id: 1});
-        expect(allowedFilters).toEqual([{
+        let allowedFilter = parseFilters({id: 1});
+        expect(allowedFilter).toEqual([{
             key: 'id',
             value: 1
         }]  as FiltersParsed);
 
         // filter none
-        allowedFilters = parseFilters({id: 1}, {allowed: []});
-        expect(allowedFilters).toEqual([]  as FiltersParsed);
+        allowedFilter = parseFilters({id: 1}, {allowed: []});
+        expect(allowedFilter).toEqual([]  as FiltersParsed);
 
         // filter with alias
-        allowedFilters = parseFilters({aliasId: 1}, {aliasMapping: {aliasId: 'id'}, allowed: ['id']});
-        expect(allowedFilters).toEqual([{
+        allowedFilter = parseFilters({aliasId: 1}, {aliasMapping: {aliasId: 'id'}, allowed: ['id']});
+        expect(allowedFilter).toEqual([{
             key: 'id',
             value: 1
         }] as FiltersParsed);
 
         // filter with query alias
-        allowedFilters = parseFilters({id: 1}, {defaultAlias: 'user', allowed: ['id']});
-        expect(allowedFilters).toEqual([{
+        allowedFilter = parseFilters({id: 1}, {defaultAlias: 'user', allowed: ['id']});
+        expect(allowedFilter).toEqual([{
             alias: 'user',
             key: 'id',
             value: 1
         }] as FiltersParsed);
 
         // filter allowed
-        allowedFilters = parseFilters({name: 'tada5hi'}, {allowed: ['name']});
-        expect(allowedFilters).toEqual( [{
+        allowedFilter = parseFilters({name: 'tada5hi'}, {allowed: ['name']});
+        expect(allowedFilter).toEqual( [{
             key: 'name',
             value: 'tada5hi'
         }] as FiltersParsed);
 
         // filter data with el empty value
-        allowedFilters = parseFilters({name: ''}, {allowed: ['name']});
-        expect(allowedFilters).toEqual([] as FiltersParsed);
+        allowedFilter = parseFilters({name: ''}, {allowed: ['name']});
+        expect(allowedFilter).toEqual([] as FiltersParsed);
 
         // filter data with el null value
-        allowedFilters = parseFilters({name: null}, {allowed: ['name']});
-        expect(allowedFilters).toEqual([] as FiltersParsed);
+        allowedFilter = parseFilters({name: null}, {allowed: ['name']});
+        expect(allowedFilter).toEqual([] as FiltersParsed);
 
         // filter wrong allowed
-        allowedFilters = parseFilters({id: 1}, {allowed: ['name']});
-        expect(allowedFilters).toEqual([] as FiltersParsed);
+        allowedFilter = parseFilters({id: 1}, {allowed: ['name']});
+        expect(allowedFilter).toEqual([] as FiltersParsed);
 
         // filter empty data
-        allowedFilters = parseFilters({}, {allowed: ['name']});
-        expect(allowedFilters).toEqual([] as FiltersParsed);
+        allowedFilter = parseFilters({}, {allowed: ['name']});
+        expect(allowedFilter).toEqual([] as FiltersParsed);
     });
 
     it('should transform filters with different operators', () => {
@@ -133,11 +133,11 @@ describe('src/filters/index.ts', () => {
     });
 
     it('should transform filters with includes', () => {
-        const includes = parseIncludes(['profile', 'user_roles.role']);
+        const include = parseRelations(['profile', 'user_roles.role']);
 
-        const options : FiltersOptions = {
+        const options : FiltersParseOptions = {
             allowed: ['id', 'profile.id', 'role.id'],
-            includes: includes,
+            include: include,
         };
 
         // simple

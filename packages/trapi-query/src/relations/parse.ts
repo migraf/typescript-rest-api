@@ -8,7 +8,7 @@
 import minimatch from 'minimatch';
 import {buildObjectFromStringArray} from "../utils";
 
-import {IncludesOptions, IncludesParsed} from "./type";
+import {RelationsParseOptions, RelationsParsed} from "./type";
 
 // --------------------------------------------------
 
@@ -16,7 +16,7 @@ import {IncludesOptions, IncludesParsed} from "./type";
 
 function includeParents(
     data: string[],
-    options: IncludesOptions
+    options: RelationsParseOptions
 ) : string[] {
     const ret : string[] = [];
 
@@ -57,10 +57,10 @@ function includeParents(
     return ret;
 }
 
-export function parseIncludes(
+export function parseRelations(
     data: unknown,
-    options?: IncludesOptions
-): IncludesParsed {
+    options?: RelationsParseOptions
+): RelationsParsed {
     options ??= {};
 
     // If it is an empty array nothing is allowed
@@ -137,8 +137,8 @@ export function parseIncludes(
     return items
         .map(relation => {
             return {
-                property: relation.includes('.') ? relation.split('.').slice(-2).join('.') : (options.defaultAlias ? options.defaultAlias + '.' + relation : relation),
-                alias: relation.split('.').pop()
+                key: relation.includes('.') ? relation.split('.').slice(-2).join('.') : (options.defaultAlias ? options.defaultAlias + '.' + relation : relation),
+                value: relation.split('.').pop()
             };
         });
 }

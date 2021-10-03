@@ -5,17 +5,27 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-export type PaginationOptions = {
-    maxLimit?: number
-};
-export type PaginationParsed = {
-    limit?: number,
-    offset?: number
-};
+import {ParseOptionsBase} from "../parse";
+import {QueryKey} from "../type";
 
 // -----------------------------------------------------------
+// Build
+// -----------------------------------------------------------
 
-export type PaginationRecord<T> = {
+export type PaginationQueryRecord<T> = {
     limit?: number,
     offset?: number
 }
+
+// -----------------------------------------------------------
+// Parse
+// -----------------------------------------------------------
+
+export type PaginationParseOptions = ParseOptionsBase<QueryKey.PAGE> & {
+    maxLimit?: number
+};
+
+export type PaginationParsed = ParseOptionsBase<QueryKey.PAGE> & {
+    limit?: number,
+    offset?: number
+};
