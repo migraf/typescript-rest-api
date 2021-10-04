@@ -68,7 +68,7 @@ npm install @trapi/query --save
 
 The general idea is to construct a [BuildInput](#buildinput) at the frontend side,
 which will be formatted to a `string` and passed to the backend application as a URL query string.
-The backend application is than always able to process the request.
+The backend application is then always able to process the request.
 
 Therefore, two components of this module are required in the frontend application:
 - generic type: `BuildInput<T>`
@@ -76,7 +76,7 @@ Therefore, two components of this module are required in the frontend applicatio
 
 The method will generate the query string.
 
-In the following example a Class which will represent the structure of a `User` and a function called
+In the following example a Class representing the `User` data structure and a function called
 `getAPIUsers`, which will handle the resource request to the resource API, will be defined.
 
 ```typescript
@@ -149,8 +149,8 @@ export async function getAPIUsers(
 The next examples will be about how to parse and validate the transformed `BuildInput<T>` on the backend side.
 
 ### Parsing 🔎
-For explanation proposes how to use the query utils,
-two simple entities with a simple relation between them are declared to demonstrate their usage:
+For an example on how to use the query utils,
+two entities with a simple relation between them are declared to demonstrate their usage:
 
 ```typescript
 import {
@@ -194,11 +194,11 @@ export class Profile {
 }
 ```
 In this example [typeorm](https://www.npmjs.com/package/typeorm) is used for object-relational mapping (ORM) and [typeorm-extension](https://www.npmjs.com/package/typeorm-extension) is used
-to apply the parsed request query parameters on the db query and [express](https://www.npmjs.com/package/express) to handle requests.
+to apply the query parameters parsed from the request to the database query. [Express](https://www.npmjs.com/package/express) to handle requests.
 
 #### Parse - Extended
 
-In the following example, all query parameter parse functions (`parseQueryFields`, `parseQueryFilters`, ...)
+For the following example, all query parameter parse functions (`parseQueryFields`, `parseQueryFilters`, ...)
 will be imported separately.
 
 ```typescript
