@@ -12,16 +12,16 @@ It extends the specification format between request- & response-handling based o
   - Description: Return only specific fields or extend the default selection.
   - URL-Parameter: **fields**
 - `filters`
-  - Description: Filter the data set, according specific criteria.
+  - Description: Filter the data set, according to specific criteria.
   - URL-Parameter: **filter**
 - `relations`
   - Description: Include related resources of the primary data.
   - URL-Parameter: **include**
 - `pagination`
-  - Description: Limit the number of resources returned from the whole collection.
+  - Description: Limit the number of resources returned from the entire collection.
   - URL-Parameter: **page**
 - `sort`
-  - Description: Sort the resources according one or more keys in asc/desc direction.
+  - Description: Sort the resources according to one or more keys in asc/desc direction.
   - URL-Parameter: **sort**
 
 ---
@@ -756,7 +756,7 @@ export type URLParameterType = `${Parameter}`;
 ```typescript
 export type FieldsParseOptions = ParseOptionsBase<Parameter.FIELDS, Record<string, string[]> | string[]>;
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     aliasMapping?: Record<string, string>,
@@ -778,7 +778,7 @@ export type FieldsParseOutputElement =
 export type FieldsParseOutput =
     FieldsParseOutputElement[];
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     // relation/resource alias
@@ -799,7 +799,7 @@ The type looks like this from the structure:
 export type FiltersParseOptions =
     ParseOptionsBase<Parameter.FILTERS>
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     aliasMapping?: Record<string, string>,
@@ -853,7 +853,7 @@ export type PaginationParseOptions =
         maxLimit?: number
     };
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     maxLimit?: number
@@ -875,7 +875,7 @@ export type PaginationParseOutput = {
 export type ParseOptionsBase =
     ParseOutputElementBase<Parameter.SORT, string[] | string[][]>;
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     aliasMapping?: Record<string, string>,
@@ -891,7 +891,7 @@ export type RelationsParseOutputElement =
     ParseOutputElementBase<Parameter.RELATIONS, string>;
 export type RelationsParseOutput = RelationsParseOutputElement[];
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     // relation relative depth path
@@ -908,7 +908,7 @@ The type looks like this from the structure:
 export type SortOptions = ParseOptionsBase<Parameter.SORT, string[] | string[][]>;
 ```
 
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     aliasMapping?: Record<string, string>,
@@ -929,7 +929,7 @@ export type SortParseOutputElement =
     ParseOutputElementBase<Parameter.SORT, SortDirection>;
 export type SortParseOutput = SortParseOutputElement[];
 ```
-The type looks like this from the structure:
+The type structure looks like this:
 ```text
 {
     // resource/relation alias

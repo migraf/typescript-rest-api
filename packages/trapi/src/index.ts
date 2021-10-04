@@ -8,5 +8,5 @@
 export * from './utils';
 
 export {createMetadataGenerator, MetadataGenerator, generateMetadata} from '@trapi/metadata';
-export {QueryRecord, buildQuery} from "@trapi/query";
+export {BuildInput, buildQuery} from "@trapi/query";
 export {createSpecGenerator, Version3SpecGenerator, Version2SpecGenerator, Specification} from "@trapi/swagger";
