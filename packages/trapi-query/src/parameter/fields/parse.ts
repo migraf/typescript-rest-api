@@ -5,8 +5,8 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {hasOwnProperty} from "../utils";
-import {DEFAULT_ALIAS_ID, FieldOperator, FieldsParseOptions, FieldsParsed, FieldsParsedElement} from "./type";
+import {hasOwnProperty} from "../../utils";
+import {DEFAULT_ALIAS_ID, FieldOperator, FieldsParseOptions, FieldsParseOutput, FieldsParseOutputElement} from "./type";
 
 // --------------------------------------------------
 
@@ -29,10 +29,10 @@ export function buildDomainFields(
     return domainFields;
 }
 
-export function parseFields(
+export function parseQueryFields(
     data: unknown,
     options?: FieldsParseOptions
-): FieldsParsed {
+) : FieldsParseOutput {
     options ??= {};
 
     // If it is an empty array nothing is allowed
@@ -69,7 +69,7 @@ export function parseFields(
         data = {[options.defaultAlias]: data};
     }
 
-    let transformed : FieldsParsed = [];
+    let transformed : FieldsParseOutput = [];
 
     for (const alias in (data as Record<string, string[] | string>)) {
         if (!data.hasOwnProperty(alias) || typeof alias !== 'string') {
@@ -79,7 +79,7 @@ export function parseFields(
         const fieldsArr : string[] = buildArrayFieldsRepresentation((data as Record<string, string[]>)[alias]);
         if(fieldsArr.length === 0) continue;
 
-        let fields : FieldsParsedElement[] = [];
+        let fields : FieldsParseOutputElement[] = [];
 
         for(let i=0; i<fieldsArr.length; i++) {
             let operator: FieldOperator | undefined;

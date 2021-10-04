@@ -5,10 +5,10 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {flattenNestedProperties} from "../utils";
-import {FieldsQueryRecord} from "./type";
+import {flattenNestedProperties} from "../../utils";
+import {FieldsBuildInput} from "./type";
 
-export function buildQueryFields<T>(data: FieldsQueryRecord<T>): Record<string, any> | string | string[] {
+export function buildQueryFields<T>(data: FieldsBuildInput<T>): Record<string, any> | string | string[] {
     switch (true) {
         case typeof data === 'string':
             return data;

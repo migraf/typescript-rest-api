@@ -10,9 +10,9 @@ import {
     DEFAULT_ALIAS_ID,
     FieldOperator,
     FieldsParseOptions,
-    FieldsParsed,
-    parseFields,
-    parseRelations
+    FieldsParseOutput,
+    parseQueryFields,
+    parseQueryRelations
 } from "../../src";
 import {buildObjectFromStringArray} from "../../src/utils";
 
@@ -36,67 +36,67 @@ describe('src/fields/index.ts', () => {
         };
 
         // fields undefined
-        let data = parseFields(undefined, options);
+        let data = parseQueryFields(undefined, options);
         expect(data).toEqual([]);
 
         // fields as array
-        data = parseFields(['id'], options);
-        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
+        data = parseQueryFields(['id'], options);
+        expect(data).toEqual([{key: 'id'}] as FieldsParseOutput);
 
         // fields as string
-        data = parseFields('id', options);
-        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
+        data = parseQueryFields('id', options);
+        expect(data).toEqual([{key: 'id'}] as FieldsParseOutput);
 
         // multiple fields but only one valid field
-        data = parseFields(['id', 'avatar'], options);
-        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
+        data = parseQueryFields(['id', 'avatar'], options);
+        expect(data).toEqual([{key: 'id'}] as FieldsParseOutput);
 
         // field as string and append fields
-        data = parseFields('+id', options);
-        expect(data).toEqual([{key: 'id', value: FieldOperator.INCLUDE}] as FieldsParsed);
+        data = parseQueryFields('+id', options);
+        expect(data).toEqual([{key: 'id', value: FieldOperator.INCLUDE}] as FieldsParseOutput);
 
-        data = parseFields('-id', options);
-        expect(data).toEqual([{key: 'id', value: FieldOperator.EXCLUDE}] as FieldsParsed);
+        data = parseQueryFields('-id', options);
+        expect(data).toEqual([{key: 'id', value: FieldOperator.EXCLUDE}] as FieldsParseOutput);
 
         // fields as string and append fields
-        data = parseFields('id,+name', options);
-        expect(data).toEqual([{key: 'id'}, {key: 'name', value: FieldOperator.INCLUDE}] as FieldsParsed);
+        data = parseQueryFields('id,+name', options);
+        expect(data).toEqual([{key: 'id'}, {key: 'name', value: FieldOperator.INCLUDE}] as FieldsParseOutput);
 
         // empty allowed -> allows nothing
-        data = parseFields('id', {...options, allowed: []});
-        expect(data).toEqual([] as FieldsParsed);
+        data = parseQueryFields('id', {...options, allowed: []});
+        expect(data).toEqual([] as FieldsParseOutput);
 
         // undefined allowed -> allows everything
-        data = parseFields('id', {...options, allowed: undefined});
-        expect(data).toEqual([{key: 'id'}] as FieldsParsed);
+        data = parseQueryFields('id', {...options, allowed: undefined});
+        expect(data).toEqual([{key: 'id'}] as FieldsParseOutput);
 
         // field not allowed
-        data = parseFields('avatar', options);
-        expect(data).toEqual([] as FieldsParsed);
+        data = parseQueryFields('avatar', options);
+        expect(data).toEqual([] as FieldsParseOutput);
 
         // field with invalid value
-        data = parseFields({id: null}, options);
-        expect(data).toEqual([] as FieldsParsed);
+        data = parseQueryFields({id: null}, options);
+        expect(data).toEqual([] as FieldsParseOutput);
 
         // if only one domain is given, try to parse request field to single domain.
-        data = parseFields( ['id'], {allowed: {domain: ['id']}});
-        expect(data).toEqual([{alias: 'domain', key: 'id'}] as FieldsParsed);
+        data = parseQueryFields( ['id'], {allowed: {domain: ['id']}});
+        expect(data).toEqual([{alias: 'domain', key: 'id'}] as FieldsParseOutput);
 
         // if multiple possibilities are available for request field, than parse to none
-        data = parseFields( ['id'], {allowed: {domain: ['id'], domain2: ['id']}});
-        expect(data).toEqual([] as FieldsParsed);
+        data = parseQueryFields( ['id'], {allowed: {domain: ['id'], domain2: ['id']}});
+        expect(data).toEqual([] as FieldsParseOutput);
     });
 
     it('should transform fields with includes', () => {
-        const includes = parseRelations(['profile', 'roles'], {allowed: ['user', 'profile']});
+        const includes = parseQueryRelations(['profile', 'roles'], {allowed: ['user', 'profile']});
 
         // simple domain match
-        let data = parseFields( {profile: ['id']}, {allowed: {profile: ['id']}, relations: includes});
-        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
+        let data = parseQueryFields( {profile: ['id']}, {allowed: {profile: ['id']}, relations: includes});
+        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParseOutput);
 
         // only single domain match
-        data = parseFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, relations: includes});
-        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParsed);
+        data = parseQueryFields( {profile: ['id'], permissions: ['id']}, {allowed: {profile: ['id'], permissions: ['id']}, relations: includes});
+        expect(data).toEqual([{alias: 'profile', key: 'id'}] as FieldsParseOutput);
     });
 
     it('should transform allowed fields', () => {

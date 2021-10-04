@@ -7,12 +7,22 @@
 
 This is a library to build efficient and optimized `JSON:API` like REST-APIs.
 
-It extends the specification format between request- & response-handling based on the following query parameters:
-- `fields` Return only specific fields or extend the default selection.
-- `filter`: Filter the data set, according specific criteria.
-- `include` Include related resources (aka `relations`) of the primary data.
-- `page` Limit the number of resources returned of the whole set (`pagination`).
-- `sort` Sort the resources according one or more keys in asc/desc direction.
+It extends the specification format between request- & response-handling based on the following parameters:
+- `fields`
+  - Description: Return only specific fields or extend the default selection.
+  - URL-Parameter: **fields**
+- `filters`
+  - Description: Filter the data set, according specific criteria.
+  - URL-Parameter: **filter**
+- `relations`
+  - Description: Include related resources of the primary data.
+  - URL-Parameter: **include**
+- `pagination`
+  - Description: Limit the number of resources returned from the whole collection.
+  - URL-Parameter: **page**
+- `sort`
+  - Description: Sort the resources according one or more keys in asc/desc direction.
+  - URL-Parameter: **sort**
 
 ---
 **Important NOTE**
@@ -30,27 +40,21 @@ The examples in the [Parsing](#parsing-) section, are not available with current
 - [Functions](#functions)
   - [buildQuery](#buildquery)
   - [parseQuery](#parsequery)
+  - [parseQueryParameter]()
 - [Types](#types)
-  - [Key](#key)
-      - [QueryKey](#querykey)
-      - [QueryKeyParseOptions](#querykeyparseoptions)
-  - [Record](#record)
-    - [QueryRecord](#queryrecord)
-  - [Parse](#parse-types)
-      - [Input](#queryparseinput)
-      - [Output](#queryparseoutput)
-      - [Fields](#fieldsparsed)
-      - [Filter[s]](#filtersparsed)
-      - [Relations/Include](#relationsparsed)
-      - [Pagination/Page](#paginationparsed)
-      - [Sort](#sortparsed)
-  - [Parse Options](#parseoptions-types)
-      - [General](#queryparseoptions)
-      - [Fields](#fieldsparseoptions)
-      - [Filter[s]](#filtersparseoptions)
-      - [Relations/Include](#relationsparseoptions)
-      - [Pagination/Page](#paginationparseoptions)
-      - [Sort](#sortparseoptions)
+  - [Build](#build)
+    - [Options](#buildoptions)
+    - [Input](#buildinput)
+  - [Parse](#parse)
+    - [Options](#parseoptions)
+    - [Input](#parseinput)
+    - [Output](#parseoutput)
+  - [Parameter](#parameter)
+    - [Fields](#fields)
+    - [Filter[s]](#filters)
+    - [Pagination/Page](#pagination)
+    - [Relations/Include](#relations)
+    - [Sort](#sort)
 
 ## Installation
 
@@ -62,21 +66,25 @@ npm install @trapi/query --save
 
 ### Build 🏗
 
-The general idea is to construct a `QueryRecord` at the frontend side, which will be formatted to a string and passed to the backend application as URL query string.
-The backend application is than always fully capable of processing the request.
+The general idea is to construct a [BuildInput](#buildinput) at the frontend side,
+which will be formatted to a `string` and passed to the backend application as a URL query string.
+The backend application is than always able to process the request.
 
 Therefore, two components of this module are required in the frontend application:
-- generic type: `QueryRecord<T>`
+- generic type: `BuildInput<T>`
 - function: `buildQuery`.
 
-The method will generate the query string, which was addressed in the previous section.
+The method will generate the query string.
 
 In the following example a Class which will represent the structure of a `User` and a function called
 `getAPIUsers`, which will handle the resource request to the resource API, will be defined.
 
 ```typescript
 import axios from "axios";
-import {QueryRecord, buildQuery} from "@trapi/query";
+import {
+    buildQuery,
+    BuildInput
+} from "@trapi/query";
 
 class Profile {
     id: number;
@@ -101,7 +109,7 @@ type ResponsePayload = {
 }
 
 export async function getAPIUsers(
-    record: QueryRecord<User>
+    record: BuildInput<User>
 ): Promise<ResponsePayload> {
     const response = await axios.get('users' + buildQuery(record));
 
@@ -109,12 +117,12 @@ export async function getAPIUsers(
 }
 
 (async () => {
-    const record: QueryRecord<User> = {
-        page: {
+    const record: BuildInput<User> = {
+        pagination: {
             limit: 20,
             offset: 10
         },
-        filter: {
+        filters: {
             id: 1 // some possible values:
             // 1 | [1,2,3] | '!1' | '~1' | ['!1',2,3] | {profile: {avatar: 'xxx.jpg'}}
         },
@@ -122,7 +130,7 @@ export async function getAPIUsers(
         // 'id' | ['id', 'name'] | '+id' | {user: ['id', 'name'], profile: ['avatar']}
         sort: '-id', // some possible values:
         // 'id' | ['id', 'name'] | '-id' | {id: 'DESC', profile: {avatar: 'ASC'}}
-        include: {
+        relations: {
             profile: true
         }
     };
@@ -134,11 +142,11 @@ export async function getAPIUsers(
 
     let response = await getAPIUsers(record);
 
-    // do somethin with the response :)
+    // do something with the response :)
 })();
 ```
 
-The next examples will be about how to parse and validate the transformed `QueryRecord<T>` on the backend side.
+The next examples will be about how to parse and validate the transformed `BuildInput<T>` on the backend side.
 
 ### Parsing 🔎
 For explanation proposes how to use the query utils,
@@ -188,23 +196,26 @@ export class Profile {
 In this example [typeorm](https://www.npmjs.com/package/typeorm) is used for object-relational mapping (ORM) and [typeorm-extension](https://www.npmjs.com/package/typeorm-extension) is used
 to apply the parsed request query parameters on the db query and [express](https://www.npmjs.com/package/express) to handle requests.
 
-#### Parse - In Detail
+#### Parse - Extended
+
+In the following example, all query parameter parse functions (`parseQueryFields`, `parseQueryFilters`, ...)
+will be imported separately.
 
 ```typescript
 import {getRepository} from "typeorm";
 import {Request, Response} from 'express';
 
 import {
-    parseFields,
-    parseFilters,
-    parseRelations,
-    parsePagination,
-    parseSort,
-    QueryKey
+    parseQueryFields,
+    parseQueryFilters,
+    parseQueryRelations,
+    parseQueryPagination,
+    parseQuerySort,
+    Parameter
 } from "@trapi/query";
 
 import {
-    applyParsed
+    applyParsedQuery
 } from "typeorm-extension";
 
 /**
@@ -235,41 +246,47 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const relationsParsed = parseRelations(include, {
+    const relationsParsed = parseQueryRelations(include, {
         allowed: 'profile'
     });
 
-    const fieldsParsed = parseFields(fields, {
+    const fieldsParsed = parseQueryFields(fields, {
         defaultAlias: 'user',
-        allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
         relations: relationsParsed
     });
 
-    const filterParsed = parseFilters(filter, {
+    const filterParsed = parseQueryFilters(filter, {
         defaultAlias: 'user',
-        allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        allowed: ['id', 'name', 'profile.id'],
         relations: relationsParsed
     });
 
-    const pageParsed = parsePagination(page, {
+    const pageParsed = parseQueryPagination(page, {
         maxLimit: 20
     });
 
-    const sortParsed = parseSort(sort, {
+    const sortParsed = parseQuerySort(sort, {
         defaultAlias: 'user',
-        allowed: ['id', 'name', 'profile.id'], // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        // profile.id can only be used as sorting key, if the relation 'profile' is included.
+        allowed: ['id', 'name', 'profile.id'],
         relations: relationsParsed
     });
 
-    const parsed = applyParsed(query, {
-        [QueryKey.FIELDS]: fieldsParsed,
+    // -----------------------------------------------------
+
+    // group back parsed parameter back,
+    // so they can applied on the db query.
+    const parsed = applyParsedQuery(query, {
+        fields: fieldsParsed,
         // only allow filtering users by id & name
-        [QueryKey.FILTER]: filterParsed,
-        [QueryKey.INCLUDE]: relationsParsed,
+        filters: filterParsed,
+        relations: relationsParsed,
         // only allow to select 20 items at maximum.
-        [QueryKey.PAGE]: pageParsed,
-        [QueryKey.SORT]: sortParsed
+        pagination: pageParsed,
+        sort: sortParsed
     });
 
     // -----------------------------------------------------
@@ -281,12 +298,21 @@ export async function getUsers(req: Request, res: Response) {
             data: entities,
             meta: {
                 total,
-                ...parsed[QueryKey.PAGE]
+                ...parsed.pagination
             }
         }
     });
 }
 ```
+
+#### Parse - Short
+Another way is to directly import the `parseQuery` function, which will handle a group of query parameter values & options.
+
+The [ParseInput](#parseinput) data of the `parseQuery` function can have the following (alias-) property keys, which will be formatted to [Parameter](#parameter)
+keys after the parse process:
+- `fields` | `Parameter.FIELDS`
+- `include` | `relations` | `Parameter.RELATIONS`
+- ... [more](#parseinput)
 
 ```typescript
 import {getRepository} from "typeorm";
@@ -294,53 +320,41 @@ import {Request, Response} from 'express';
 
 import {
     parseQuery,
-    QueryKey,
-    QueryParseOutput
+    Parameter,
+    ParseOutput
 } from "@trapi/query";
 
 import {
-    applyParsed
+    applyParsedQuery
 } from "typeorm-extension";
 
 /**
  * Get many users.
  *
- * Request example
- * - url: /users?page[limit]=10&page[offset]=0&include=profile&filter[id]=1&fields[user]=id,name
+ * ...
  *
- * Return Example:
- * {
- *     data: [
- *         {id: 1, name: 'tada5hi', profile: {avatar: 'avatar.jpg', cover: 'cover.jpg'}}
- *      ],
- *     meta: {
- *        total: 1,
- *        limit: 20,
- *        offset: 0
- *    }
- * }
  * @param req
  * @param res
  */
 export async function getUsers(req: Request, res: Response) {
     // const {fields, filter, include, page, sort} = req.query;
 
-    const output: QueryParseOutput = parseQuery(req.query, {
-        [QueryKey.FIELDS]: {
+    const output: ParseOutput = parseQuery(req.query, {
+        fields: {
             defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id', 'profile.avatar']
         },
-        [QueryKey.FILTER]: {
+        filters: {
             defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id']
         },
-        [QueryKey.INCLUDE]: {
+        relations: {
             allowed: ['profile']
         },
-        [QueryKey.PAGE]: {
+        pagination: {
             maxLimit: 20
         },
-        [QueryKey.SORT]: {
+        sort: {
             defaultAlias: 'user',
             allowed: ['id', 'name', 'profile.id']
         }
@@ -351,7 +365,8 @@ export async function getUsers(req: Request, res: Response) {
 
     // -----------------------------------------------------
 
-    const parsed = applyParsed(query, output);
+    // apply parsed data on the db query.
+    const parsed = applyParsedQuery(query, output);
 
     // -----------------------------------------------------
 
@@ -362,7 +377,7 @@ export async function getUsers(req: Request, res: Response) {
             data: entities,
             meta: {
                 total,
-                ...parsed[QueryKey.PAGE]
+                ...output.pagination
             }
         }
     });
@@ -374,105 +389,24 @@ export async function getUsers(req: Request, res: Response) {
 It can even be much easier to parse the query key values, because `typeorm-extension` uses `@trapi/query` under the hood ⚡.
 This is much shorter than the previous example and has less direct dependencies 😁.
 
-```typescript
-import {getRepository} from "typeorm";
-import {Request, Response} from 'express';
-import {
-    applyFields,
-    applyFilters,
-    applyRelations,
-    applyPagination,
-    applySort
-} from "typeorm-extension";
-
-/**
- * Get many users.
- *
- * Request example
- * - url: /users?page[limit]=10&page[offset]=0&include=profile&filter[id]=1&fields[user]=id,name
- *
- * Return Example:
- * {
- *     data: [
- *         {id: 1, name: 'tada5hi', profile: {avatar: 'avatar.jpg', cover: 'cover.jpg'}}
- *      ],
- *     meta: {
- *        total: 1,
- *        limit: 20,
- *        offset: 0
- *    }
- * }
- * @param req
- * @param res
- */
-export async function getUsers(req: Request, res: Response) {
-    const {fields, filter, include, page, sort} = req.query;
-
-    const repository = getRepository(User);
-    const query = repository.createQueryBuilder('user');
-
-    // -----------------------------------------------------
-
-    const relations = applyRelations(query, include, {
-        defaultAlias: 'user',
-        allowed: ['profile']
-    });
-
-    applySort(query, sort, {
-        defaultAlias: 'user',
-        allowed: ['id', 'name', 'profile.id'],
-        // profile.id can only be used as sorting key, if the relation 'profile' is included.
-        relations: relations
-    });
-
-    applyFields(query, fields, {
-        defaultAlias: 'user',
-        allowed: ['id', 'name', 'profile.id', 'profile.avatar'],
-        // porfile fields can only be included, if the relation 'profile' is included.
-        relations: relations
-    })
-
-    // only allow filtering users by id & name
-    applyFilters(query, filter, {
-        defaultAlias: 'user',
-        allowed: ['id', 'name', 'profile.id'],
-        // porfile.id can only be used as a filter, if the relation 'profile' is included.
-        relations: relations
-    });
-
-    // only allow to select 20 items at maximum.
-    const pagination = applyPagination(query, page, {maxLimit: 20});
-
-    // -----------------------------------------------------
-
-    const [entities, total] = await query.getManyAndCount();
-
-    return res.json({
-        data: {
-            data: entities,
-            meta: {
-                total,
-                ...pagination
-            }
-        }
-    });
-}
-```
+[read more](https://www.npmjs.com/package/typeorm-extension)
 
 ## Functions
 
 ## buildQuery
 
-▸ `function` **buildQuery**<`T`>(`record: QueryRecord<T>`, `options?: QueryBuildOptions`): `string`
+▸ `function` **buildQuery**<`T`>(`record: BuildInput<T>`, `options?: BuildOptions`): `string`
 
-Build a query string from a provided [QueryRecord](#queryrecord).
+Build a query string from a provided [BuildInput](#buildinput).
 
 #### Example
 **`Simple`**
 
 ```typescript
-// Only drop database if it does exists.
-import {buildQuery, QueryKey} from "@trapi/query";
+import {
+    buildQuery,
+    Parameter
+} from "@trapi/query";
 
 type User = {
     id: number,
@@ -481,8 +415,8 @@ type User = {
 }
 
 const query: string = buildQuery<T>({
-    [QueryKey.FIELDS]: ['+age'],
-    [QueryKey.FILTER]: {
+    fields: ['+age'],
+    relations: {
         name: '~pe'
     }
 });
@@ -502,8 +436,8 @@ console.log(query);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `record` | `QueryRecord`<`T`> | Query specification [more](#record). |
-| `options` | `QueryBuildOptions` | Options for building fields, filter, include, ...
+| `input` | `BuildInput`<`T`> | Input specification [more](#buildinput). |
+| `options` | `BuildOptions` | Options for building fields, filter, include, ...
 
 #### Returns
 
@@ -515,27 +449,28 @@ I.e. `/users?page[limit]=10&page[offset]=0&include=profile&filter[id]=1&fields[u
 
 ## parseQuery
 
-▸ `function` **parseQuery**<`T`>(`input: QueryParseInput`, `options?: QueryParseOptions`): `QueryParseOutput`
+▸ `function` **parseQuery**(`input: ParseInput`, `options?: ParseOptions`): `ParseOutput`
 
 Parse a query string to an efficient data structure ⚡. The output will
-be an object with each possible value of the [QueryKey](#querykey) enum as property key and the
+be an object with each possible value of the [Parameter](#parameter) enum as property key and the
 parsed data as value.
 
 #### Example
 **`Simple`**
 
 ```typescript
-// Only drop database if it does exists.
 import {
     FieldOperator,
     FilterOperator,
     parseQuery,
-    QueryParseOutput
+    ParseOutput,
+    URLParameter
 } from "@trapi/query";
+import {URLParameter} from "@trapi/query/src";
 
-const output: QueryParseOutput = parseQuery({
-    [QueryKey.FIELDS]: ['+age'],
-    [QueryKey.FILTER]: {
+const output: ParseOutput = parseQuery({
+    fields: ['+age'],
+    filters: {
         name: '~pe'
     }
 });
@@ -545,7 +480,7 @@ console.log(output);
 //    fields: [
 //        {key: 'age', operator: FieldOperator.INCLUDE}
 //    ],
-//    filter: [
+//    filters: [
 //        {key: 'name', value: 'pe', operator: FilterOperator.LIKE}
 //   ]
 //}
@@ -561,108 +496,287 @@ console.log(output);
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `input` | `QueryParseInput` | Query input data passed i.e. via URL [more](#queryparseinput). |
-| `options` | `QueryParseOptions` | Options for parsing fields, filter, include, ... [more](#queryparseoptions)
+| `input` | `ParseInput` | Query input data passed i.e. via URL [more](#parseinput). |
+| `options` | `ParseOptions` | Options for parsing fields, filter, include, ... [more](#parseoptions)
 
 #### Returns
 
-[QueryParseOutput](#queryparseoutput)
+[ParseOutput](#parseoutput)
+
+The function returns an object.
+
+## parseQueryParameter
+
+▸ `function` **parseQueryParameter**<`T extends Parameter`>(
+`key: T`,
+`input: unknown`,
+`options?: ParseParameterOptions<T>`
+): `ParseParameterOutput<T>`
+
+Parse a specific query [Parameter](#parameter) value to an efficient data structure ⚡.
+
+#### Example
+**`fields`**
+
+```typescript
+import {
+    FieldOperator,
+    FieldsParsed,
+    Parameter,
+    parseQueryParameter,
+    URLParameter
+} from "@trapi/query";
+
+const output: FieldsParsed = parseQueryParameter(
+    // 'fields' ||
+    // Parameter.FIELDS | URLParameter.FIELDS
+    'fields',
+    ['+name'],
+    {
+        allowed: ['id', 'name'],
+        defaultAlias: 'user'
+    }
+);
+
+console.log(output);
+// [{key: 'id', value: FieldOperator.INCLUDE}] ||
+// [{key: 'id', value: '+'}]
+```
+
+**`filters`**
+
+```typescript
+import {
+    FiltersParsed,
+    Parameter,
+    parseQueryParameter,
+    URLParameter
+} from "@trapi/query";
+
+const output: FiltersParsed = parseQueryParameter(
+    // 'filters' | 'filter' |
+    // Parameter.FILTERS | URLParameter.FILTERS
+    'filters',
+    {id: 1},
+    {
+        allowed: ['id', 'name'],
+        defaultAlias: 'user'
+    }
+);
+
+console.log(output);
+// [{alias: 'user', key: 'id', value: 1, }]
+```
+
+**`pagination`**
+
+```typescript
+import {
+    PaginationParsed,
+    Parameter,
+    parseQueryParameter,
+    URLParameter
+} from "@trapi/query";
+
+const output: PaginationParsed = parseQueryParameter(
+    // 'pagination' | 'page' |
+    // Parameter.PAGINATION | URLParameter.PAGINATION
+    'pagination',
+    {limit: 100},
+    {
+        maxLimit: 50
+    }
+);
+
+console.log(output);
+// {limit: 50}
+```
+
+**`relations`**
+
+```typescript
+import {
+    RelationsParsed,
+    Parameter,
+    parseQueryParameter,
+    URLParameter
+} from "@trapi/query";
+
+const output: RelationsParsed = parseQueryParameter(
+    // 'relations' || 'include' ||
+    // Parameter.RELATIONS | URLParameter.RELATIONS
+    'relations',
+    ['roles'],
+    {
+        allowed: ['roles', 'photos'],
+        defaultAlias: 'user'
+    }
+);
+
+console.log(output);
+// [{key: 'user.roles', value: 'roles'}]
+```
+
+**`sort`**
+
+```typescript
+import {
+    SortParsed,
+    Parameter,
+    parseQueryParameter,
+    URLParameter
+} from "@trapi/query";
+
+const output: SortParsed = parseQueryParameter(
+    // 'sort' ||
+    // Parameter.SORT || URLParameter.SORT
+    'sort',
+    ['-name'],
+    {
+        allowed: ['id', 'name'],
+        defaultAlias: 'user'
+    }
+);
+
+console.log(output);
+// [{alias: 'user', key: 'name', value: 'DESC'}]
+```
+#### Type parameters
+
+| Name | Description |
+| :------ | :------ |
+
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `input` | `unknown` | Query input data passed i.e. via URL [more](#parseinput). |
+| `options` | `ParseParameterOptions<Parameter>` | Options for parsing fields, filter, include, ... [more](#parseoptions)
+
+#### Returns
+
+[ParseOutput](#parseoutput)
 
 The function returns an object.
 ## Types
 
-### Key
-#### QueryKey
+### Build
+#### BuildOptions
 ```typescript
-export enum QueryKey {
-    FILTER = 'filter',
+export type BuildOptions = {
+    // empty type for now :)
+}
+```
+#### BuildInput
+```typescript
+export type BuildInput<
+    V extends Record<string, any>
+> = {
+    [T in Parameter | URLParameter]?: BuildParameterInput<T, V>
+}
+```
+
+### Parse
+
+#### ParseOptions
+
+```typescript
+export type ParseOptions = {
+    /**
+     * On default all query keys are enabled.
+     */
+    [K in Parameter]?: ParseParameterOptions<K> | boolean
+}
+```
+[ParseParameterOptions](#parseparameter)
+
+#### ParseInput
+
+````typescript
+export type ParseInput = {
+    [K in Parameter | URLParameter]?: any
+}
+````
+[Parameter/URLParameter](#parameter)
+
+#### ParseOutput
+
+```typescript
+export type ParseOutput = {
+    [K in Parameter]?: ParseParameterOutput<K>
+}
+```
+[ParseParameterOutput](#parseparameter)
+
+#### ParseParameter
+- `ParseParameterOptions<T extends ParameterType | URLParameterType>`
+is a generic type and returns the available options for a given parameter type, i.e:
+  - [FieldsParseOptions](#fields),
+  - [FiltersParseOptions](#filters)
+  - ...
+- `ParseParameterOutput<T extends ParameterType | URLParameterType>`
+is a generic type and returns the parsed output data for a given parameter type, i.e:
+  - [FieldsParseOutput](#fields)
+  - [FiltersParseOutput](#filters)
+  - ...
+
+
+### Parameter
+
+`Parameter`
+```typescript
+export enum Parameter {
+    FILTERS = 'filters',
     FIELDS = 'fields',
-    SORT = 'sort',
-    INCLUDE = 'include',
-    PAGE = 'page'
+    PAGINATION = 'pagination',
+    RELATIONS = 'relations',
+    SORT = 'sort'
+}
+
+export type ParameterType = `${Parameter}`;
+```
+
+`URLParameter`
+```typescript
+export enum URLParameter {
+    FILTERS = 'filter',
+    FIELDS = 'fields',
+    PAGINATION = 'page',
+    RELATIONS = 'include',
+    SORT = 'sort'
+}
+
+export type URLParameterType = `${Parameter}`;
+```
+
+#### Fields
+
+`FieldsParseOptions`
+```typescript
+export type FieldsParseOptions = ParseOptionsBase<Parameter.FIELDS, Record<string, string[]> | string[]>;
+```
+The type looks like this from the structure:
+```text
+{
+    aliasMapping?: Record<string, string>,
+    allowed?: Record<string, string[]> | string[],
+    relations?: RelationsParsed,
+    defaultAlias?: string
 }
 ```
 
-#### QueryKeyParseOptions
-```typescript
-export type QueryKeyParseOptions<T extends QueryKey> = T extends QueryKey.FIELDS ?
-        FieldsOptions :
-    T extends QueryKey.FILTER ?
-            FiltersOptions :
-        T extends  QueryKey.INCLUDE ?
-                IncludesOptions :
-            T extends QueryKey.PAGE ?
-                    PaginationOptions :
-                T extends QueryKey.SORT ?
-                        SortOptions :
-                        never;
-```
-
-### Record
-#### QueryRecord
-```typescript
-export type QueryRecord<R extends Record<string, any>> = {
-    [K in QueryKey]?: QueryRecordType<K,R>
-}
-
-export type QueryRecordType<
-    T extends QueryKey,
-    R extends Record<string, any>
-    > = T extends QueryKey.FIELDS ?
-    FilterRecord<R> :
-    T extends QueryKey.FILTER ?
-        FieldRecord<R> :
-        T extends QueryKey.INCLUDE ?
-            IncludeRecord<R> :
-            T extends QueryKey.PAGE ?
-                PaginationRecord<R> :
-                T extends QueryKey.SORT ?
-                    SortRecord<R> :
-                    never;
-```
-
-#### QueryRecordParsed
-```typescript
-export type QueryRecordParsed<T extends QueryKey> =
-    T extends QueryKey.FIELDS ?
-    FieldsParsed :
-    T extends QueryKey.FILTER ?
-        FiltersParsed :
-        T extends QueryKey.INCLUDE ?
-            RelationsParsed :
-            T extends QueryKey.PAGE ?
-                PaginationParsed :
-                T extends QueryKey.SORT ?
-                    SortParsed :
-                    never;
-```
-
-### Parse Types
-
-#### QueryParseInput
-```typescript
-export type QueryParseOutput = {
-    [K in QueryKey]?: any
-}
-```
-
-#### QueryParseOutput
-```typescript
-export type QueryParseOutput = {
-    [K in QueryKey]?: QueryRecordParsed<K>
-}
-```
-
-#### FieldsParsed
-
+`FieldsParseOutput`
 ```typescript
 export enum FieldOperator {
     INCLUDE = '+',
     EXCLUDE = '-'
 }
 
-export type FieldsParsedElement = ParsedElementBase<QueryKey.FIELDS, FieldOperator>;
-export type FieldsParsed = FieldsParsedElement[];
+export type FieldsParseOutputElement =
+    ParseOutputElementBase<Parameter.FIELDS, FieldOperator>;
+export type FieldsParseOutput =
+    FieldsParseOutputElement[];
 ```
 The type looks like this from the structure:
 ```text
@@ -678,8 +792,24 @@ The type looks like this from the structure:
 }
 ```
 
-#### FiltersParsed
+#### Filters
 
+`FiltersParseOptions`
+```typescript
+export type FiltersParseOptions =
+    ParseOptionsBase<Parameter.FILTERS>
+```
+The type looks like this from the structure:
+```text
+{
+    aliasMapping?: Record<string, string>,
+    allowed?: string[],
+    relations?: RelationsParsed,
+    defaultAlias?: string
+}
+```
+
+`FiltersParseOutput`
 ```typescript
 export enum FilterOperatorLabel {
     NEGATION = 'negation',
@@ -687,12 +817,16 @@ export enum FilterOperatorLabel {
     IN = 'in'
 }
 
-export type FiltersParsedElement = ParsedElementBase<QueryKey.FILTER, FilterValue<string | number | boolean | null>> & {
-    operator?: {
-        [K in FilterOperatorLabel]?: boolean
-    }
-};
-export type FiltersParsed = FiltersParsedElement[];
+export type FiltersParseOutputElement =
+    ParseOutputElementBase<
+        Parameter.FILTERS,
+        FilterValue<string | number | boolean | null>
+    > & {
+        operator?: {
+            [K in FilterOperatorLabel]?: boolean
+        }
+    };
+export type FiltersParseOutput = FiltersParseOutputElement[];
 ```
 ```text
 {
@@ -710,12 +844,52 @@ export type FiltersParsed = FiltersParsedElement[];
     value: FilterValue<string | number | boolean | null>
 }
 ```
+#### Pagination
 
-#### RelationsParsed
-
+`PaginationParseOptions`
 ```typescript
-export type RelationParsedElement = ParsedElementBase<QueryKey.INCLUDE, string>;
-export type RelationsParsed = RelationParsedElement[];
+export type PaginationParseOptions =
+    ParseOptionsBase<Parameter.PAGINATION> & {
+        maxLimit?: number
+    };
+```
+The type looks like this from the structure:
+```text
+{
+    maxLimit?: number
+}
+```
+
+`PaginationParseOutput`
+```typescript
+export type PaginationParseOutput = {
+    limit?: number,
+    offset?: number
+};
+```
+
+#### Relations
+
+`RelationsParseOptions`
+```typescript
+export type ParseOptionsBase =
+    ParseOutputElementBase<Parameter.SORT, string[] | string[][]>;
+```
+The type looks like this from the structure:
+```text
+{
+    aliasMapping?: Record<string, string>,
+    allowed?: string[],
+    defaultAlias?: string,
+    includeParents?: boolean | string[] | string
+}
+```
+
+`RelationsParseOutput`
+```typescript
+export type RelationsParseOutputElement =
+    ParseOutputElementBase<Parameter.RELATIONS, string>;
+export type RelationsParseOutput = RelationsParseOutputElement[];
 ```
 The type looks like this from the structure:
 ```text
@@ -728,25 +902,32 @@ The type looks like this from the structure:
 }
 ```
 
-#### PaginationParsed
-
+#### Sort
+`SortParseOptions`
 ```typescript
-export type PaginationParsed = {
-    limit?: number,
-    offset?: number
-};
+export type SortOptions = ParseOptionsBase<Parameter.SORT, string[] | string[][]>;
 ```
 
-#### SortParsed
+The type looks like this from the structure:
+```text
+{
+    aliasMapping?: Record<string, string>,
+    allowed?: string[] | string[][],
+    defaultAlias?: string
+    relations?: RelationsParsed
+}
+```
 
+`SortParseOutput`
 ```typescript
 export enum SortDirection {
     ASC = 'ASC',
     DESC = 'DESC'
 }
 
-export type SortParsedElement = ParsedElementBase<QueryKey.SORT, SortDirection>;
-export type SortParsed = SortParsedElement[];
+export type SortParseOutputElement =
+    ParseOutputElementBase<Parameter.SORT, SortDirection>;
+export type SortParseOutput = SortParseOutputElement[];
 ```
 The type looks like this from the structure:
 ```text
@@ -759,86 +940,5 @@ The type looks like this from the structure:
 
     // 'ASC' | 'DESC'
     value: SortDirection
-}
-```
-
-### ParseOptions Types
-
-#### QueryParseOptions
-```typescript
-export type QueryParseOptions = {
-    /**
-     * On default all query keys are enabled.
-     */
-    [K in QueryKey]?: QueryKeyParseOptions<K> | boolean
-}
-```
-
-#### FieldsParseOptions
-```typescript
-export type FieldsParseOptions = ParseOptionsBase<QueryKey.FIELDS, Record<string, string[]> | string[]>;
-```
-The type looks like this from the structure:
-```text
-{
-    aliasMapping?: Record<string, string>,
-    allowed?: Record<string, string[]> | string[],
-    relations?: RelationsParsed,
-    defaultAlias?: string
-}
-```
-
-#### FiltersParseOptions
-```typescript
-export type FiltersParseOptions = ParseOptionsBase<QueryKey.FILTER>
-```
-The type looks like this from the structure:
-```text
-{
-    aliasMapping?: Record<string, string>,
-    allowed?: string[],
-    relations?: RelationsParsed,
-    defaultAlias?: string
-}
-```
-#### PaginationParseOptions
-```typescript
-export type PaginationParseOptions = ParseOptionsBase<QueryKey.PAGE> & {
-    maxLimit?: number
-};
-```
-The type looks like this from the structure:
-```text
-{
-    maxLimit?: number
-}
-```
-
-#### RelationsParseOptions
-```typescript
-export type RelationsParseOptions = ParseOptionsBase<QueryKey.SORT, string[] | string[][]>;
-```
-The type looks like this from the structure:
-```text
-{
-    aliasMapping?: Record<string, string>,
-    allowed?: string[],
-    defaultAlias?: string,
-    includeParents?: boolean | string[] | string
-}
-```
-
-#### SortParseOptions
-```typescript
-export type SortOptions = ParseOptionsBase<QueryKey.SORT, string[] | string[][]>;
-```
-
-The type looks like this from the structure:
-```text
-{
-    aliasMapping?: Record<string, string>,
-    allowed?: string[] | string[][],
-    defaultAlias?: string
-    relations?: RelationsParsed
 }
 ```

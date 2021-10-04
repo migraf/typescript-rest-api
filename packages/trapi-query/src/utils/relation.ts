@@ -5,12 +5,12 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {RelationsParsed} from "../relations";
+import {RelationsParseOutput} from "../parameter";
 import {FieldDetails, getFieldDetails} from "./field";
 
-export function isFieldAllowedByIncludes(
+export function isFieldAllowedByRelations(
     field: string | FieldDetails,
-    includes?: RelationsParsed,
+    includes?: RelationsParseOutput,
     options?: {defaultAlias?: string}
 ) : boolean {
     if(typeof includes === 'undefined') {

@@ -5,53 +5,53 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {parseRelations, parseSort, SortDirection, SortParseOptions, SortParsed} from "../../src";
+import {parseQueryRelations, parseQuerySort, SortDirection, SortParseOptions, SortParseOutput} from "../../src";
 
 describe('src/sort/index.ts', () => {
     it('should transform sort data', () => {
         // sort asc
-        let transformed = parseSort('id', {allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParsed);
+        let transformed = parseQuerySort('id', {allowed: ['id']});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParseOutput);
 
         // sort desc
-        transformed = parseSort('-id', {allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParsed);
+        transformed = parseQuerySort('-id', {allowed: ['id']});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParseOutput);
 
         // empty allowed
-        transformed = parseSort('-id', {allowed: []});
-        expect(transformed).toEqual([] as SortParsed);
+        transformed = parseQuerySort('-id', {allowed: []});
+        expect(transformed).toEqual([] as SortParseOutput);
 
         // undefined allowed
-        transformed = parseSort('-id', {allowed: undefined});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParsed);
+        transformed = parseQuerySort('-id', {allowed: undefined});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParseOutput);
 
         // wrong allowed
-        transformed = parseSort('-id', {allowed: ['a']});
-        expect(transformed).toEqual([] as SortParsed);
+        transformed = parseQuerySort('-id', {allowed: ['a']});
+        expect(transformed).toEqual([] as SortParseOutput);
 
         // array data
-        transformed = parseSort(['-id'], {allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParsed);
+        transformed = parseQuerySort(['-id'], {allowed: ['id']});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}]as SortParseOutput);
 
         // object data
-        transformed = parseSort({id: 'ASC'}, {allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParsed);
+        transformed = parseQuerySort({id: 'ASC'}, {allowed: ['id']});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParseOutput);
 
         // wrong input data data
-        transformed = parseSort({id: 'Right'}, {allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParsed);
+        transformed = parseQuerySort({id: 'Right'}, {allowed: ['id']});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParseOutput);
 
         // with query alias
-        transformed = parseSort('-id',  {allowed: ['id'], defaultAlias: 'user'});
-        expect(transformed).toEqual([{alias: 'user', key: 'id', value: SortDirection.DESC}]as SortParsed);
+        transformed = parseQuerySort('-id',  {allowed: ['id'], defaultAlias: 'user'});
+        expect(transformed).toEqual([{alias: 'user', key: 'id', value: SortDirection.DESC}]as SortParseOutput);
 
         // with alias mapping
-        transformed = parseSort('-pit',  {aliasMapping: {pit: 'id'}, allowed: ['id']});
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}] as SortParsed);
+        transformed = parseQuerySort('-pit',  {aliasMapping: {pit: 'id'}, allowed: ['id']});
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.DESC}] as SortParseOutput);
 
         // with alias mapping & query alias
-        transformed = parseSort('-pit', {aliasMapping: {pit: 'id'}, allowed: ['id'], defaultAlias: 'user'});
-        expect(transformed).toEqual([{alias: 'user', key: 'id', value: SortDirection.DESC}]as SortParsed);
+        transformed = parseQuerySort('-pit', {aliasMapping: {pit: 'id'}, allowed: ['id'], defaultAlias: 'user'});
+        expect(transformed).toEqual([{alias: 'user', key: 'id', value: SortDirection.DESC}]as SortParseOutput);
     });
 
     it('should transform sort with sort indexes', () => {
@@ -63,36 +63,36 @@ describe('src/sort/index.ts', () => {
         };
 
         // simple
-        let transformed = parseSort(['id'], options);
-        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParsed);
+        let transformed = parseQuerySort(['id'], options);
+        expect(transformed).toEqual([{key: 'id', value: SortDirection.ASC}]as SortParseOutput);
 
         // correct order
-        transformed = parseSort(['name', 'email'], options);
+        transformed = parseQuerySort(['name', 'email'], options);
         expect(transformed).toStrictEqual([
             {key: 'name', value: SortDirection.ASC},
             {key: 'email', value: SortDirection.ASC}
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // incorrect order
-        transformed = parseSort(['email', 'name'], options);
+        transformed = parseQuerySort(['email', 'name'], options);
         expect(transformed).toStrictEqual([
             {key: 'name', value: SortDirection.ASC},
             {key: 'email', value: SortDirection.ASC}
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // incomplete match
-        transformed = parseSort(['email', 'id'], options);
+        transformed = parseQuerySort(['email', 'id'], options);
         expect(transformed).toStrictEqual([
             {key: 'id', value: SortDirection.ASC},
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // no match
-        transformed = parseSort(['email'], options);
+        transformed = parseQuerySort(['email'], options);
         expect(transformed).toStrictEqual([]);
     });
 
     it('should transform sort data with includes', () => {
-        const includes = parseRelations(['profile', 'user_roles.role']);
+        const includes = parseQueryRelations(['profile', 'user_roles.role']);
 
         const options : SortParseOptions = {
             allowed: ['id', 'profile.id', 'user_roles.role.id'],
@@ -100,36 +100,36 @@ describe('src/sort/index.ts', () => {
         };
 
         // simple
-        let transformed = parseSort(['id'], options);
+        let transformed = parseQuerySort(['id'], options);
         expect(transformed).toEqual([
             {key: 'id', value: SortDirection.ASC}
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // with query alias
-        transformed = parseSort(['id'], {...options, defaultAlias: 'user'});
+        transformed = parseQuerySort(['id'], {...options, defaultAlias: 'user'});
         expect(transformed).toEqual([
             {alias: 'user', key: 'id', value: SortDirection.ASC},
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // with include
-        transformed = parseSort(['id', 'profile.id'], options);
+        transformed = parseQuerySort(['id', 'profile.id'], options);
         expect(transformed).toEqual([
             {key: 'id', value: SortDirection.ASC},
             {alias: 'profile', key: 'id', value: SortDirection.ASC}
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // with include & query alias
-        transformed = parseSort(['id', 'profile.id'], {...options, defaultAlias: 'user'});
+        transformed = parseQuerySort(['id', 'profile.id'], {...options, defaultAlias: 'user'});
         expect(transformed).toEqual([
             {alias: 'user', key: 'id', value: SortDirection.ASC},
             {alias: 'profile', key: 'id', value: SortDirection.ASC}
-        ]as SortParsed);
+        ]as SortParseOutput);
 
         // with deep nested include
-        transformed = parseSort(['id', 'user_roles.role.id', 'user_roles.user.id'], options);
+        transformed = parseQuerySort(['id', 'user_roles.role.id', 'user_roles.user.id'], options);
         expect(transformed).toEqual([
             {key: 'id', value: SortDirection.ASC},
             {alias: 'role', key: 'id', value: SortDirection.ASC}
-        ]as SortParsed);
+        ]as SortParseOutput);
     });
 });

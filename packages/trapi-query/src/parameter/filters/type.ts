@@ -6,9 +6,9 @@
  */
 
 
-import {ParsedElementBase, ParseOptionsBase} from "../parse";
-import {QueryKey} from "../type";
-import {Flatten, OnlyObject, OnlyScalar} from "../utils";
+import {ParseOutputElementBase, ParseOptionsBase} from "../../parse";
+import {Parameter} from "../../type";
+import {Flatten, OnlyObject, OnlyScalar} from "../../utils";
 
 // -----------------------------------------------------------
 // Build
@@ -36,21 +36,21 @@ type FilterValueWithOperator<V> = V extends string | number | boolean ? (FilterV
 
 type FilterValueOperator<V extends string | number | boolean> = `!${V}` | `!~${V}` | `~${V}`;
 
-export type FiltersQueryRecord<T> = {
+export type FiltersBuildInput<T> = {
     [K in keyof T]?: T[K] extends OnlyScalar<T[K]> ?
         T[K] | FilterValueWithOperator<T[K]> | FilterOperatorConfig<T[K], FilterOperator> :
-        T[K] extends OnlyObject<T[K]> ? FiltersQueryRecord<Flatten<T[K]>> : never
+        T[K] extends OnlyObject<T[K]> ? FiltersBuildInput<Flatten<T[K]>> : never
 }
 
 // -----------------------------------------------------------
 // Parse
 // -----------------------------------------------------------
 
-export type FiltersParseOptions = ParseOptionsBase<QueryKey.FILTER>;
+export type FiltersParseOptions = ParseOptionsBase<Parameter.FILTERS>;
 
-export type FiltersParsedElement = ParsedElementBase<QueryKey.FILTER, FilterValue<string | number | boolean | null>> & {
+export type FiltersParseOutputElement = ParseOutputElementBase<Parameter.FILTERS, FilterValue<string | number | boolean | null>> & {
     operator?: {
         [K in FilterOperatorLabel]?: boolean
     }
 };
-export type FiltersParsed = FiltersParsedElement[];
+export type FiltersParseOutput = FiltersParseOutputElement[];

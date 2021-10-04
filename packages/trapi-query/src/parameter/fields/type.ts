@@ -5,9 +5,9 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {ParsedElementBase, ParseOptionsBase} from "../parse";
-import {QueryKey} from "../type";
-import {Flatten, KeyWithOptionalPrefix, OnlyObject, ToOneAndMany} from "../utils";
+import {ParseOutputElementBase, ParseOptionsBase} from "../../parse";
+import {Parameter} from "../../type";
+import {Flatten, KeyWithOptionalPrefix, OnlyObject, ToOneAndMany} from "../../utils";
 
 export const DEFAULT_ALIAS_ID: string = '__DEFAULT__';
 
@@ -24,10 +24,10 @@ type FieldWithOperator<T extends Record<string, any>> =
     KeyWithOptionalPrefix<keyof T, FieldOperator> |
     KeyWithOptionalPrefix<keyof T, FieldOperator>[];
 
-export type FieldsQueryRecord<T> =
+export type FieldsBuildInput<T> =
     {
         [K in keyof T]?: T[K] extends OnlyObject<T[K]> ?
-        (FieldsQueryRecord<Flatten<T[K]>> | FieldWithOperator<Flatten<T[K]>>) : never
+        (FieldsBuildInput<Flatten<T[K]>> | FieldWithOperator<Flatten<T[K]>>) : never
     } |
     {
         [key: string]: ToOneAndMany<KeyWithOptionalPrefix<keyof T, FieldOperator>[]>,
@@ -38,7 +38,7 @@ export type FieldsQueryRecord<T> =
 // Parse
 // -----------------------------------------------------------
 
-export type FieldsParseOptions = ParseOptionsBase<QueryKey.FIELDS, Record<string, string[]> | string[]>;
+export type FieldsParseOptions = ParseOptionsBase<Parameter.FIELDS, Record<string, string[]> | string[]>;
 
-export type FieldsParsedElement = ParsedElementBase<QueryKey.FIELDS, FieldOperator>;
-export type FieldsParsed = FieldsParsedElement[];
+export type FieldsParseOutputElement = ParseOutputElementBase<Parameter.FIELDS, FieldOperator>;
+export type FieldsParseOutput = FieldsParseOutputElement[];

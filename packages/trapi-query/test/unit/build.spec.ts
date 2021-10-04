@@ -6,7 +6,7 @@
  */
 
 
-import {buildQuery, FilterOperator, QueryKey, SortDirection} from "../../src";
+import {buildQuery, FilterOperator, Parameter, SortDirection, URLParameter} from "../../src";
 import {buildURLQueryString} from "../../src/utils";
 
 describe('src/build.ts', () => {
@@ -30,7 +30,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {id: 1}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {id: 1}}));
 
         record = buildQuery<Entity>({
             filter: {
@@ -40,7 +40,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {['child.id']: 1}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {['child.id']: 1}}));
 
         record = buildQuery<Entity>({
             filter: {
@@ -50,7 +50,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {['siblings.id']: 1}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {['siblings.id']: 1}}));
 
         record = buildQuery<Entity>({
             filter: {
@@ -58,7 +58,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {id: '!1'}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {id: '!1'}}));
 
         record = buildQuery<Entity>({
             filter: {
@@ -69,7 +69,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {id: '~1'}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {id: '~1'}}));
 
         record = buildQuery<Entity>({
             filter: {
@@ -83,7 +83,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {id: '!~1,2,3'}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {id: '!~1,2,3'}}));
 
         // with wrong operator order :)
         record = buildQuery<Entity>({
@@ -98,7 +98,7 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({filter: {id: '!~1,2,3'}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.FILTERS]: {id: '!~1,2,3'}}));
     });
 
     it('should format fields record', () => {
@@ -143,19 +143,19 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({sort: {id: 'DESC'}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.SORT]: {id: 'DESC'}}));
 
         record = buildQuery<Entity>({
             sort: '-id'
         });
 
-        expect(record).toEqual(buildURLQueryString({sort: '-id'}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.SORT]: '-id'}));
 
         record = buildQuery<Entity>({
             sort: ['id', 'name']
         });
 
-        expect(record).toEqual(buildURLQueryString({sort: ['id', 'name']}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.SORT]: ['id', 'name']}));
 
         record = buildQuery<Entity>({
             sort: {
@@ -165,23 +165,23 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({sort: {'child.id': 'DESC'}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.SORT]: {'child.id': 'DESC'}}));
     });
 
     it('should format page record', () => {
         let record = buildQuery<Entity>({
-            [QueryKey.PAGE]: {
+            [Parameter.PAGINATION]: {
                 limit: 10,
                 offset: 0
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({[QueryKey.PAGE]: {limit: 10, offset: 0}}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.PAGINATION]: {limit: 10, offset: 0}}));
     });
 
     it('should format include record', () => {
         let record = buildQuery<Entity>({
-            [QueryKey.INCLUDE]: {
+            [Parameter.RELATIONS]: {
                 child: true,
                 siblings: {
                     child: true
@@ -189,6 +189,6 @@ describe('src/build.ts', () => {
             }
         });
 
-        expect(record).toEqual(buildURLQueryString({[QueryKey.INCLUDE]: ['child', 'siblings.child']}));
+        expect(record).toEqual(buildURLQueryString({[URLParameter.RELATIONS]: ['child', 'siblings.child']}));
     });
 });

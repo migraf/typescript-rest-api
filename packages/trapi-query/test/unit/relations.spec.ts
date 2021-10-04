@@ -5,27 +5,27 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {RelationsParsed, parseRelations} from "../../src";
+import {RelationsParseOutput, parseQueryRelations} from "../../src";
 
 describe('src/relations/index.ts', () => {
     it('should transform request relations', () => {
         // single data matching
-        let allowed = parseRelations('profile', {allowed: ['profile']});
+        let allowed = parseQueryRelations('profile', {allowed: ['profile']});
         expect(allowed).toEqual([
             {key: 'profile', value: 'profile'}
         ]);
 
-        allowed = parseRelations([], {allowed: ['profile']});
+        allowed = parseQueryRelations([], {allowed: ['profile']});
         expect(allowed).toEqual([]);
 
         // with alias
-        allowed = parseRelations('pro', {aliasMapping: {pro: 'profile'}, allowed: ['profile']});
+        allowed = parseQueryRelations('pro', {aliasMapping: {pro: 'profile'}, allowed: ['profile']});
         expect(allowed).toEqual([
             {key: 'profile', value: 'profile'}
         ]);
 
         // with nested alias
-        allowed = parseRelations(['abc.photos'], {
+        allowed = parseQueryRelations(['abc.photos'], {
             allowed: ['profile.photos'],
             defaultAlias: 'user',
             aliasMapping: {'abc.photos': 'profile.photos'}
@@ -33,10 +33,10 @@ describe('src/relations/index.ts', () => {
         expect(allowed).toEqual([
             {key: 'user.profile', value: 'profile'},
             {key: 'profile.photos', value: 'photos'}
-        ] as RelationsParsed);
+        ] as RelationsParseOutput);
 
         // with nested alias & includeParents
-        allowed = parseRelations(['abc.photos'], {
+        allowed = parseQueryRelations(['abc.photos'], {
             allowed: ['profile.photos'],
             defaultAlias: 'user',
             aliasMapping: {'abc.photos': 'profile.photos'},
@@ -44,10 +44,10 @@ describe('src/relations/index.ts', () => {
         });
         expect(allowed).toEqual([
             {key: 'profile.photos', value: 'photos'}
-        ] as RelationsParsed);
+        ] as RelationsParseOutput);
 
         // with nested alias & limited includeParents ( no user_roles rel)
-        allowed = parseRelations(['abc.photos', 'user_roles.role'], {
+        allowed = parseQueryRelations(['abc.photos', 'user_roles.role'], {
             allowed: ['profile.photos', 'user_roles.role'],
             defaultAlias: 'user',
             aliasMapping: {'abc.photos': 'profile.photos'},
@@ -57,38 +57,38 @@ describe('src/relations/index.ts', () => {
             {key: 'user.profile', value: 'profile'},
             {key: 'profile.photos', value: 'photos'},
             {key: 'user_roles.role', value: 'role'}
-        ] as RelationsParsed);
+        ] as RelationsParseOutput);
 
 
         // multiple data matching
-        allowed = parseRelations(['profile', 'abc'], {allowed: ['profile']});
-        expect(allowed).toEqual([{key: 'profile', value: 'profile'}] as RelationsParsed);
+        allowed = parseQueryRelations(['profile', 'abc'], {allowed: ['profile']});
+        expect(allowed).toEqual([{key: 'profile', value: 'profile'}] as RelationsParseOutput);
 
         // no allowed
-        allowed = parseRelations(['profile'], {allowed: []});
-        expect(allowed).toEqual([] as RelationsParsed);
+        allowed = parseQueryRelations(['profile'], {allowed: []});
+        expect(allowed).toEqual([] as RelationsParseOutput);
 
         // all allowed
-        allowed = parseRelations(['profile'], {allowed: undefined});
-        expect(allowed).toEqual([{key: 'profile', value: 'profile'}] as RelationsParsed);
+        allowed = parseQueryRelations(['profile'], {allowed: undefined});
+        expect(allowed).toEqual([{key: 'profile', value: 'profile'}] as RelationsParseOutput);
 
         // nested data with alias
-        allowed = parseRelations(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos'], defaultAlias: 'user'});
+        allowed = parseQueryRelations(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos'], defaultAlias: 'user'});
         expect(allowed).toEqual([
             {key: 'user.profile', value: 'profile'},
             {key: 'profile.photos', value: 'photos'}
-        ] as RelationsParsed);
+        ] as RelationsParseOutput);
 
         // nested data with alias
-        allowed = parseRelations(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos**'], defaultAlias: 'user'});
+        allowed = parseQueryRelations(['profile.photos', 'profile.photos.abc', 'profile.abc'], {allowed: ['profile.photos**'], defaultAlias: 'user'});
         expect(allowed).toEqual([
             {key: 'user.profile', value: 'profile'},
             {key: 'profile.photos', value: 'photos'},
             {key: 'photos.abc', value: 'abc'}
-        ] as RelationsParsed);
+        ] as RelationsParseOutput);
 
         // null data
-        allowed = parseRelations(null);
+        allowed = parseQueryRelations(null);
         expect(allowed).toEqual([]);
     });
 });

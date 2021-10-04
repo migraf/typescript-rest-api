@@ -7,12 +7,26 @@
 
 // -----------------------------------------------------------
 
-export enum QueryKey {
-    FILTER = 'filter',
+export enum Parameter {
+    FILTERS = 'filters',
     FIELDS = 'fields',
-    SORT = 'sort',
-    INCLUDE = 'include',
-    PAGE = 'page'
+    PAGINATION = 'pagination',
+    RELATIONS = 'relations',
+    SORT = 'sort'
 }
+
+export type ParameterType = `${Parameter}`;
+
 // -----------------------------------------------------------
+
+export enum URLParameter {
+    FILTERS = 'filter',
+    FIELDS = 'fields',
+    PAGINATION = 'page',
+    RELATIONS = 'include',
+    SORT = 'sort'
+}
+
+export type URLParameterType = `${Parameter}`;
+
 

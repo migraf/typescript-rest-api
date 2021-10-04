@@ -6,9 +6,9 @@
  */
 
 import minimatch from 'minimatch';
-import {buildObjectFromStringArray} from "../utils";
+import {buildObjectFromStringArray} from "../../utils";
 
-import {RelationsParseOptions, RelationsParsed} from "./type";
+import {RelationsParseOutput, RelationsParseOptions} from "./type";
 
 // --------------------------------------------------
 
@@ -57,10 +57,10 @@ function includeParents(
     return ret;
 }
 
-export function parseRelations(
+export function parseQueryRelations(
     data: unknown,
     options?: RelationsParseOptions
-): RelationsParsed {
+): RelationsParseOutput {
     options ??= {};
 
     // If it is an empty array nothing is allowed

@@ -6,23 +6,23 @@
  */
 
 
-import {parsePagination} from "../../src";
+import {parseQueryPagination} from "../../src";
 
 describe('src/pagination/index.ts', () => {
     it('should transform pagination', () => {
-        let pagination = parsePagination(undefined, {maxLimit: 50});
+        let pagination = parseQueryPagination(undefined, {maxLimit: 50});
         expect(pagination).toEqual({offset: 0, limit: 50});
 
-        pagination = parsePagination(undefined, undefined);
+        pagination = parseQueryPagination(undefined, undefined);
         expect(pagination).toEqual({});
 
-        pagination = parsePagination( {limit: 100}, {maxLimit: 50});
+        pagination = parseQueryPagination( {limit: 100}, {maxLimit: 50});
         expect(pagination).toEqual({offset: 0, limit: 50});
 
-        pagination = parsePagination( {limit: 50}, {maxLimit: 50});
+        pagination = parseQueryPagination( {limit: 50}, {maxLimit: 50});
         expect(pagination).toEqual({offset: 0, limit: 50});
 
-        pagination = parsePagination( {offset: 20, limit: 20}, {maxLimit: 50});
+        pagination = parseQueryPagination( {offset: 20, limit: 20}, {maxLimit: 50});
         expect(pagination).toEqual({offset: 20, limit: 20});
     });
 });

@@ -5,14 +5,15 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
+
 import {
     buildFieldWithAlias,
     buildObjectFromStringArray,
     FieldDetails,
     getFieldDetails,
-    isFieldAllowedByIncludes
-} from "../utils";
-import {SortDirection, SortParseOptions, SortParsed} from "./type";
+    isFieldAllowedByRelations
+} from "../../utils";
+import {SortDirection, SortParseOptions, SortParseOutput} from "./type";
 
 // --------------------------------------------------
 
@@ -31,10 +32,10 @@ function isMultiDimensionalArray(arr: unknown) : arr is unknown[][] {
  * @param data
  * @param options
  */
-export function parseSort(
+export function parseQuerySort(
     data: unknown,
     options?: SortParseOptions
-) : SortParsed {
+) : SortParseOutput {
     options = options ?? {};
 
     // If it is an empty array nothing is allowed
@@ -105,7 +106,7 @@ export function parseSort(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.relations, {defaultAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByRelations(fieldDetails, options.relations, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 
@@ -141,7 +142,7 @@ export function parseSort(
     if(isMultiDimensionalArray(options.allowed)) {
         outerLoop:
         for(let i=0; i<options.allowed.length; i++) {
-            const temp : SortParsed = [];
+            const temp : SortParseOutput = [];
 
             for(let j=0; j<options.allowed[i].length; j++) {
                 const keyWithAlias : string = options.allowed[i][j];

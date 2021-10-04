@@ -5,35 +5,42 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {parseFields} from "../fields";
-import {parseFilters} from "../filters";
-import {RelationsParsed, parseRelations} from "../relations";
-import {parsePagination} from "../pagination";
-import {parseSort} from "../sort";
-import {QueryKey} from "../type";
-import {QueryKeyParseOptions, QueryParseInput, QueryParseOptions, QueryParseOutput} from "./type";
+import {FieldsParseOutput} from "../parameter";
+import {FiltersParseOutput} from "../parameter";
+import {PaginationParseOutput} from "../parameter";
+import {RelationsParseOutput} from "../parameter";
+import {SortParseOutput} from "../parameter";
+import {Parameter, URLParameter} from "../type";
+import {parseQueryParameter} from "./parameter";
+import {ParseInput, ParseOptions, ParseOutput} from "./type";
 
 export function parseQuery(
-    input: QueryParseInput,
-    options?: QueryParseOptions
-) : QueryParseOutput {
+    input: ParseInput,
+    options?: ParseOptions
+) : ParseOutput {
     options ??= {};
 
-    const output : QueryParseOutput = {};
+    const output : ParseOutput = {};
 
     const nonEnabled : boolean = Object.keys(options).length === 0;
 
-    let includes : RelationsParsed | undefined;
-    if(!!options[QueryKey.INCLUDE] || nonEnabled) {
-        includes = parseRelations(input[QueryKey.INCLUDE], getOptionsForQueryKey(options, QueryKey.INCLUDE));
-        output[QueryKey.INCLUDE] = includes;
+    let relations : RelationsParseOutput | undefined;
+    if(!!options[Parameter.RELATIONS] || nonEnabled) {
+        relations = parseQueryParameter(
+            Parameter.RELATIONS,
+            input[Parameter.RELATIONS] ?? input[URLParameter.RELATIONS]
+            ,
+            options[Parameter.RELATIONS]
+        );
+
+        output[Parameter.RELATIONS] = relations;
     }
 
-    const keys : QueryKey[] = [
-        QueryKey.FIELDS,
-        QueryKey.FILTER,
-        QueryKey.PAGE,
-        QueryKey.SORT
+    const keys : Parameter[] = [
+        Parameter.FIELDS,
+        Parameter.FILTERS,
+        Parameter.PAGINATION,
+        Parameter.SORT
     ];
 
     for(let i=0; i< keys.length; i++) {
@@ -42,20 +49,40 @@ export function parseQuery(
 
         if(!enabled) continue;
 
-        const key : QueryKey = keys[i];
+        const key : Parameter = keys[i];
 
-        switch (key){
-            case QueryKey.FIELDS:
-                output[key] = parseFields(input[key], getOptionsForQueryKey(options, key, includes));
+        switch (key) {
+            case Parameter.FIELDS:
+                output[Parameter.FIELDS] = parseQueryParameter(
+                    keys[i],
+                    input[Parameter.FIELDS] ?? input[URLParameter.FIELDS],
+                    options[Parameter.FIELDS],
+                    relations
+                ) as FieldsParseOutput;
                 break;
-            case QueryKey.FILTER:
-                output[key] = parseFilters(input[key], getOptionsForQueryKey(options, key, includes));
+            case Parameter.FILTERS:
+                output[Parameter.FILTERS] = parseQueryParameter(
+                    keys[i],
+                    input[Parameter.FILTERS] ?? input[URLParameter.FILTERS],
+                    options[Parameter.FILTERS],
+                    relations
+                ) as FiltersParseOutput;
                 break;
-            case QueryKey.PAGE:
-                output[key] = parsePagination(input[key], getOptionsForQueryKey(options, key, includes));
+            case Parameter.PAGINATION:
+                output[Parameter.PAGINATION] = parseQueryParameter(
+                    keys[i],
+                    input[Parameter.PAGINATION] ?? input[URLParameter.PAGINATION],
+                    options[Parameter.PAGINATION],
+                    relations
+                ) as PaginationParseOutput;
                 break;
-            case QueryKey.SORT:
-                output[key] = parseSort(input[key], getOptionsForQueryKey(options, key, includes));
+            case Parameter.SORT:
+                output[Parameter.SORT] = parseQueryParameter(
+                    keys[i],
+                    input[Parameter.SORT] ?? input[URLParameter.SORT],
+                    options[Parameter.SORT],
+                    relations
+                ) as SortParseOutput;
                 break;
         }
     }
@@ -63,16 +90,3 @@ export function parseQuery(
     return output;
 }
 
-function getOptionsForQueryKey<K extends QueryKey>(
-    options: QueryParseOptions,
-    key: K,
-    includeParsed?: K extends Extract<QueryKey,QueryKey.INCLUDE> ? never : RelationsParsed
-) : QueryKeyParseOptions<K> {
-    return typeof options[key] === 'boolean' ||
-    typeof options[key] === 'undefined' ?
-        {} as QueryKeyParseOptions<K> :
-        {
-            ...(options[key] as QueryKeyParseOptions<K>),
-            ...(key === QueryKey.INCLUDE ? {} : {includes: includeParsed})
-        };
-}

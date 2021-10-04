@@ -10,9 +10,9 @@ import {
     buildFieldWithAlias,
     FieldDetails,
     getFieldDetails,
-    isFieldAllowedByIncludes
-} from "../utils";
-import {FilterOperator, FilterOperatorLabel, FiltersParseOptions, FiltersParsed, FiltersParsedElement} from "./type";
+    isFieldAllowedByRelations
+} from "../../utils";
+import {FilterOperator, FilterOperatorLabel, FiltersParseOptions, FiltersParseOutput, FiltersParseOutputElement} from "./type";
 
 // --------------------------------------------------
 
@@ -32,10 +32,10 @@ function buildOptions(options?: FiltersParseOptions) : FiltersParseOptions {
     return options;
 }
 
-export function parseFilters(
+export function parseQueryFilters(
     data: unknown,
     options?: FiltersParseOptions
-) : FiltersParsed {
+) :  FiltersParseOutput {
     options = options ?? {};
 
     // If it is an empty array nothing is allowed
@@ -98,7 +98,7 @@ export function parseFilters(
         }
 
         const fieldDetails : FieldDetails = getFieldDetails(key);
-        if(!isFieldAllowedByIncludes(fieldDetails, options.relations, {defaultAlias: options.defaultAlias})) {
+        if(!isFieldAllowedByRelations(fieldDetails, options.relations, {defaultAlias: options.defaultAlias})) {
             continue;
         }
 
@@ -130,7 +130,7 @@ export function parseFilters(
         };
     }
 
-    const items : FiltersParsed = [];
+    const items : FiltersParseOutput = [];
 
     /* istanbul ignore next */
     for (const key in temp) {
@@ -139,7 +139,7 @@ export function parseFilters(
             continue;
         }
 
-        const filter : FiltersParsedElement = {
+        const filter : FiltersParseOutputElement = {
             ...(temp[key].alias ? {alias:  temp[key].alias} : {}),
             key: temp[key].key,
             value:  temp[key].value

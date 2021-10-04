@@ -1,8 +1,10 @@
-import {PaginationParseOptions, PaginationParsed} from "./type";
+import {ParseParameterOptions, ParseParameterOutput} from "../../parse";
+import {Parameter} from "../../type";
+import {PaginationParseOptions, PaginationParseOutput} from "./type";
 
 // --------------------------------------------------
 
-function finalizePagination(data: PaginationParsed, options: PaginationParseOptions) : PaginationParsed {
+function finalizePagination(data: PaginationParseOutput, options: PaginationParseOptions) : PaginationParseOutput {
     if (typeof options.maxLimit !== 'undefined') {
         if (
             typeof data.limit === 'undefined' ||
@@ -28,13 +30,13 @@ function finalizePagination(data: PaginationParsed, options: PaginationParseOpti
  * @param data
  * @param options
  */
-export function parsePagination(
+export function parseQueryPagination(
     data: unknown,
     options?: PaginationParseOptions
-) : PaginationParsed {
+) : PaginationParseOutput {
     options ??= {};
 
-    const pagination : PaginationParsed = {};
+    const pagination : PaginationParseOutput = {};
 
     const prototype: string = Object.prototype.toString.call(data);
     if (prototype !== '[object Object]') {

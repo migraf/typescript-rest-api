@@ -5,35 +5,43 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {parseQuery, QueryParseOutput, QueryKey} from "../../src";
+import {FieldsParseOutput, Parameter, ParseOutput, parseQuery, parseQueryParameter} from "../../src";
 
 describe('src/parse.ts', function () {
     it('should parse query', () => {
         let value = parseQuery({
             fields: ['id', 'name']
         },{
-            [QueryKey.FIELDS]: true
+            [Parameter.FIELDS]: true
         });
 
         expect(value).toEqual({
-            [QueryKey.FIELDS]: [
+            [Parameter.FIELDS]: [
                 {key: 'id'},
                 {key: 'name'}
-            ]} as QueryParseOutput);
+            ]} as ParseOutput);
 
         value = parseQuery({
-            [QueryKey.FIELDS]: ['id', 'name']
+            [Parameter.FIELDS]: ['id', 'name']
         });
 
         expect(value).toEqual({
-            [QueryKey.FIELDS]: [
+            [Parameter.FIELDS]: [
                 {key: "id"},
                 {key: "name"}
             ],
-            [QueryKey.FILTER]: [],
-            [QueryKey.INCLUDE]: [],
-            [QueryKey.PAGE]: {},
-            [QueryKey.SORT]: []
-        } as QueryParseOutput);
-    })
+            [Parameter.FILTERS]: [],
+            [Parameter.RELATIONS]: [],
+            [Parameter.PAGINATION]: {},
+            [Parameter.SORT]: []
+        } as ParseOutput);
+    });
+
+    it('should parse single query parameter', () => {
+        let value = parseQueryParameter(Parameter.FIELDS, ['id', 'name']);
+        expect(value).toEqual([
+                {key: 'id'},
+                {key: 'name'}
+            ] as FieldsParseOutput);
+    });
 });
